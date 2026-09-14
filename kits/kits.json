@@ -1,0 +1,320 @@
+{
+ "format": "flac",
+ "layers": 5,
+ "velocity": [
+  [
+   1,
+   26
+  ],
+  [
+   27,
+   52
+  ],
+  [
+   53,
+   77
+  ],
+  [
+   78,
+   102
+  ],
+  [
+   103,
+   127
+  ]
+ ],
+ "credit": "AVL Drumkits by Glen MacArthur \u2014 CC BY-SA 3.0",
+ "kits": {
+  "blackpearl": {
+   "name": "Black Pearl",
+   "voices": {
+    "kick": [
+     "blackpearl/kick-1.flac",
+     "blackpearl/kick-2.flac",
+     "blackpearl/kick-3.flac",
+     "blackpearl/kick-4.flac",
+     "blackpearl/kick-5.flac"
+    ],
+    "snare": [
+     "blackpearl/snare-1.flac",
+     "blackpearl/snare-2.flac",
+     "blackpearl/snare-3.flac",
+     "blackpearl/snare-4.flac",
+     "blackpearl/snare-5.flac"
+    ],
+    "rim": [
+     "blackpearl/rim-1.flac",
+     "blackpearl/rim-2.flac",
+     "blackpearl/rim-3.flac",
+     "blackpearl/rim-4.flac",
+     "blackpearl/rim-5.flac"
+    ],
+    "clap": [
+     "blackpearl/clap-1.flac",
+     "blackpearl/clap-2.flac",
+     "blackpearl/clap-3.flac",
+     "blackpearl/clap-4.flac",
+     "blackpearl/clap-5.flac"
+    ],
+    "hh": [
+     "blackpearl/hh-1.flac",
+     "blackpearl/hh-2.flac",
+     "blackpearl/hh-3.flac",
+     "blackpearl/hh-4.flac",
+     "blackpearl/hh-5.flac"
+    ],
+    "oh": [
+     "blackpearl/oh-1.flac",
+     "blackpearl/oh-2.flac",
+     "blackpearl/oh-3.flac",
+     "blackpearl/oh-4.flac",
+     "blackpearl/oh-5.flac"
+    ],
+    "ride": [
+     "blackpearl/ride-1.flac",
+     "blackpearl/ride-2.flac",
+     "blackpearl/ride-3.flac",
+     "blackpearl/ride-4.flac",
+     "blackpearl/ride-5.flac"
+    ],
+    "tom": [
+     "blackpearl/tom-1.flac",
+     "blackpearl/tom-2.flac",
+     "blackpearl/tom-3.flac",
+     "blackpearl/tom-4.flac",
+     "blackpearl/tom-5.flac"
+    ],
+    "perc": [
+     "blackpearl/perc-1.flac",
+     "blackpearl/perc-2.flac",
+     "blackpearl/perc-3.flac",
+     "blackpearl/perc-4.flac",
+     "blackpearl/perc-5.flac"
+    ]
+   },
+   "rms": {
+    "kick": [
+     0.202976,
+     0.25665,
+     0.230002,
+     0.288231,
+     0.282533
+    ],
+    "snare": [
+     0.032978,
+     0.099413,
+     0.160872,
+     0.174569,
+     0.187019
+    ],
+    "rim": [
+     0.033513,
+     0.068844,
+     0.066039,
+     0.059656,
+     0.062383
+    ],
+    "clap": [
+     0.042208,
+     0.05963,
+     0.084239,
+     0.106059,
+     0.117225
+    ],
+    "hh": [
+     0.033687,
+     0.038231,
+     0.071548,
+     0.071479,
+     0.086544
+    ],
+    "oh": [
+     0.067132,
+     0.082635,
+     0.087783,
+     0.115962,
+     0.107065
+    ],
+    "ride": [
+     0.028415,
+     0.034748,
+     0.08376,
+     0.086193,
+     0.09519
+    ],
+    "tom": [
+     0.186128,
+     0.293674,
+     0.362808,
+     0.392371,
+     0.417716
+    ],
+    "perc": [
+     0.051388,
+     0.072603,
+     0.102571,
+     0.129144,
+     0.142745
+    ]
+   }
+  },
+  "redzeppelin": {
+   "name": "Red Zeppelin",
+   "voices": {
+    "kick": [
+     "redzeppelin/kick-1.flac",
+     "redzeppelin/kick-2.flac",
+     "redzeppelin/kick-3.flac",
+     "redzeppelin/kick-4.flac",
+     "redzeppelin/kick-5.flac"
+    ],
+    "snare": [
+     "redzeppelin/snare-1.flac",
+     "redzeppelin/snare-2.flac",
+     "redzeppelin/snare-3.flac",
+     "redzeppelin/snare-4.flac",
+     "redzeppelin/snare-5.flac"
+    ],
+    "rim": [
+     "redzeppelin/rim-1.flac",
+     "redzeppelin/rim-2.flac",
+     "redzeppelin/rim-3.flac",
+     "redzeppelin/rim-4.flac",
+     "redzeppelin/rim-5.flac"
+    ],
+    "clap": [
+     "redzeppelin/clap-1.flac",
+     "redzeppelin/clap-2.flac",
+     "redzeppelin/clap-3.flac",
+     "redzeppelin/clap-4.flac",
+     "redzeppelin/clap-5.flac"
+    ],
+    "hh": [
+     "redzeppelin/hh-1.flac",
+     "redzeppelin/hh-2.flac",
+     "redzeppelin/hh-3.flac",
+     "redzeppelin/hh-4.flac",
+     "redzeppelin/hh-5.flac"
+    ],
+    "oh": [
+     "redzeppelin/oh-1.flac",
+     "redzeppelin/oh-2.flac",
+     "redzeppelin/oh-3.flac",
+     "redzeppelin/oh-4.flac",
+     "redzeppelin/oh-5.flac"
+    ],
+    "ride": [
+     "redzeppelin/ride-1.flac",
+     "redzeppelin/ride-2.flac",
+     "redzeppelin/ride-3.flac",
+     "redzeppelin/ride-4.flac",
+     "redzeppelin/ride-5.flac"
+    ],
+    "tom": [
+     "redzeppelin/tom-1.flac",
+     "redzeppelin/tom-2.flac",
+     "redzeppelin/tom-3.flac",
+     "redzeppelin/tom-4.flac",
+     "redzeppelin/tom-5.flac"
+    ],
+    "perc": [
+     "redzeppelin/perc-1.flac",
+     "redzeppelin/perc-2.flac",
+     "redzeppelin/perc-3.flac",
+     "redzeppelin/perc-4.flac",
+     "redzeppelin/perc-5.flac"
+    ]
+   },
+   "rms": {
+    "kick": [
+     0.217543,
+     0.261219,
+     0.279036,
+     0.286435,
+     0.29592
+    ],
+    "snare": [
+     0.085694,
+     0.142949,
+     0.130468,
+     0.138936,
+     0.113085
+    ],
+    "rim": [
+     0.033513,
+     0.068844,
+     0.066039,
+     0.059656,
+     0.062383
+    ],
+    "clap": [
+     0.042208,
+     0.05963,
+     0.084239,
+     0.106059,
+     0.117225
+    ],
+    "hh": [
+     0.033687,
+     0.038231,
+     0.071548,
+     0.071479,
+     0.086544
+    ],
+    "oh": [
+     0.067132,
+     0.082635,
+     0.087783,
+     0.115962,
+     0.107065
+    ],
+    "ride": [
+     0.028293,
+     0.047512,
+     0.051838,
+     0.064795,
+     0.088172
+    ],
+    "tom": [
+     0.099748,
+     0.153256,
+     0.22857,
+     0.231589,
+     0.22857
+    ],
+    "perc": [
+     0.051388,
+     0.072603,
+     0.102571,
+     0.129144,
+     0.142745
+    ]
+   }
+  }
+ },
+ "synth": {
+  "rmsAtFull": {
+   "kick": 0.478041,
+   "snare": 0.066729,
+   "rim": 0.026062,
+   "clap": 0.038595,
+   "hh": 0.000929,
+   "oh": 0.009805,
+   "ride": 0.010989,
+   "tom": 0.277441,
+   "perc": 0.030881
+  },
+  "velExp": {
+   "kick": 0.265,
+   "snare": 0.727,
+   "rim": 0.908,
+   "clap": 0.941,
+   "hh": 0.875,
+   "oh": 0.993,
+   "ride": 0.992,
+   "tom": 0.513,
+   "perc": 0.925
+  },
+  "note": "measured from this engine offline, dry, master=1, first 250ms \u2014 the sampler reproduces this law"
+ }
+}
