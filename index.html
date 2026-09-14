@@ -200,7 +200,7 @@ select{font-family:var(--mono);font-size:12px;background:var(--well);color:var(-
 <body>
 <main id="unit">
   <div class="brand">
-    <h1>Deep Pocket</h1><span class="mk">RHYTHM&nbsp;TRAINER</span><span class="ver" id="ver">v14 web</span>
+    <h1>Deep Pocket</h1><span class="mk">RHYTHM&nbsp;TRAINER</span><span class="ver" id="ver">v15 web</span>
     <span class="sub">nine voices · 18 grooves · 32-bar arranger<br>built for bass practice</span>
   </div>
 
@@ -2168,7 +2168,12 @@ function tick(){
 }
 
 function start(){
-  if(!audioLive()){ audioLost(); revive(true); return; }
+  if(!audioLive()){
+    // pressing Play IS a gesture — spend it, and if the clock comes back, actually start
+    audioLost();
+    revive(true).then(function(ok){ if(ok && !S.playing) start(); });
+    return;
+  }
   S.playing=true; S.step=0; S.absBar=0; S.countLeft=S.countin;
   S.bpm=S.baseBpm; setBpm(S.bpm);
   nextTime = eng.now + 0.08; sched.length=0;
@@ -2287,7 +2292,8 @@ function showSplash(mode){
 /** The clock died under us. Stop claiming to play. */
 function audioLost(){
   if(S.playing) stop();
-  showSplash("resume");
+  // a machine that was never started is not "still here" — say the true thing
+  showSplash(MEM.audio ? "resume" : "boot");
 }
 
 /**
@@ -2297,9 +2303,16 @@ function audioLost(){
  */
 function revive(fromGesture){
   if(reviving) return Promise.resolve(false);
-  var c = eng.ctx;
-  if(!c) return Promise.resolve(false);
   if(SPL.dataset.mode === "reload"){ location.reload(); return Promise.resolve(false); }
+  var c = eng.ctx;
+  if(!c){                                  // nothing to resume — cold start instead
+    reviving = true;
+    return eng.unlock().then(function(){
+      reviving = false;
+      if(eng.ctx && eng.ctx.state === "running"){ MEM.audio = true; hideSplash(); watchAudio(); return true; }
+      showSplash("resume"); return false;
+    }, function(){ reviving = false; showSplash("resume"); return false; });
+  }
   reviving = true;
   var p;
   try { p = Promise.resolve(c.resume()); } catch(e){ p = Promise.resolve(); }
@@ -2339,7 +2352,7 @@ function watchAudio(){
  * and lets me ask what a phone is actually doing without guessing. Reads only. */
 window.DeepPocket = { eng: eng, revive: revive, audioLive: audioLive,
   state: function(){ return { ctx: eng.state ? eng.state() : "none", now: eng.now,
-    playing: S.playing, booted: MEM.audio, mem: MEM.kind, ver: $("ver").textContent }; } };
+    playing: !!S.playing, booted: !!MEM.audio, mem: MEM.kind, ver: $("ver").textContent }; } };
 
 // ---------- sampled kit ----------
 // The rendered kit plays through the SAME per-voice gains, sends and master chain as the
