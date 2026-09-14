@@ -200,7 +200,7 @@ select{font-family:var(--mono);font-size:12px;background:var(--well);color:var(-
 <body>
 <main id="unit">
   <div class="brand">
-    <h1>Deep Pocket</h1><span class="mk">RHYTHM&nbsp;TRAINER</span><span class="ver" id="ver">v20 web</span>
+    <h1>Deep Pocket</h1><span class="mk">RHYTHM&nbsp;TRAINER</span><span class="ver" id="ver">v21 web</span>
     <span class="sub">nine voices · 18 grooves · 32-bar arranger<br>built for bass practice</span>
   </div>
 
@@ -394,6 +394,13 @@ select{font-family:var(--mono);font-size:12px;background:var(--well);color:var(-
   // exponential ramps may never target zero
   function pk(v) { return v > MIN * 2 ? v : MIN * 2; }
 
+  // Headroom trim into the bus, and the fader scaling that puts a default master
+  // at roughly -14 LUFS integrated — the streaming target. Both solved by
+  // rendering loops out of the app and reading them with an EBU R128 meter,
+  // not by ear.
+  var TRIM = 0.50;
+  var MASTER_CAL = 1.10;
+
   function Engine() {
     this._ctx = null;
     this._ready = false;
@@ -480,29 +487,39 @@ select{font-family:var(--mono);font-size:12px;background:var(--well);color:var(-
     this.busIn = ctx.createGain();
     this.busIn.gain.value = 1;
 
-    this.comp = ctx.createDynamicsCompressor();
-    this._setP(this.comp.threshold, -12);
-    this._setP(this.comp.ratio, 4);
-    this._setP(this.comp.knee, 6);
-    this._setP(this.comp.attack, 0.003);
-    this._setP(this.comp.release, 0.12);
+    // Headroom trim. The nine voices sum well past unity on a busy groove; this
+    // gives that sum somewhere to live instead of slamming the compressor.
+    this.trim = ctx.createGain();
+    this.trim.gain.value = TRIM;
 
+    this.comp = ctx.createDynamicsCompressor();
+    this._setP(this.comp.threshold, -10);
+    this._setP(this.comp.ratio, 2);      // glue, not a mangle
+    this._setP(this.comp.knee, 12);
+    this._setP(this.comp.attack, 0.005);
+    this._setP(this.comp.release, 0.18);
+
+    // Safety limiter, LAST. Linear below -2.5 dBFS; only rounds true peaks.
     this.clip = ctx.createWaveShaper();
-    this.clip.curve = this._curve(2048, 1.9);
-    this.clip.oversample = '2x';
+    this.clip.curve = this._limitCurve(4096, 0.75);
+    this.clip.oversample = '4x';
 
     this.masterGain = ctx.createGain();
-    this.masterGain.gain.value = this.master;
+    this.masterGain.gain.value = this.master * MASTER_CAL;
 
     this.analyser = ctx.createAnalyser();
     this.analyser.fftSize = 1024;
     if ('smoothingTimeConstant' in this.analyser) this.analyser.smoothingTimeConstant = 0.3;
     this._lvl = new Float32Array(this.analyser.fftSize);
 
-    this.busIn.connect(this.comp);
-    this.comp.connect(this.clip);
-    this.clip.connect(this.masterGain);
-    this.masterGain.connect(this.analyser);
+    // The limiter is AFTER the fader on purpose. It used to sit before it, so
+    // the master could not undo distortion that had already happened — which is
+    // why turning a voice down helped and turning the master down did not.
+    this.busIn.connect(this.trim);
+    this.trim.connect(this.comp);
+    this.comp.connect(this.masterGain);
+    this.masterGain.connect(this.clip);
+    this.clip.connect(this.analyser);
     this.analyser.connect(ctx.destination);
 
     // --- reverb (procedural IR) ----------------------------------------
@@ -558,6 +575,21 @@ select{font-family:var(--mono);font-size:12px;background:var(--well);color:var(-
     this.kickSat.curve = this._curve(2048, 2.6);
     this.kickSat.oversample = '2x';
     this.kickSat.connect(this.vgain.kick);
+  };
+
+  /**
+   * Safety limiter: dead linear below `t`, then a soft knee asymptotic to 1.0.
+   * Unlike a normalised tanh (which adds ~6 dB at low level and colours
+   * everything), this does nothing at all until the signal is genuinely near
+   * full scale. It exists to make overs impossible, not to make a sound.
+   */
+  Engine.prototype._limitCurve = function (n, t) {
+    var c = new Float32Array(n), span = 1 - t;
+    for (var i = 0; i < n; i++) {
+      var x = (i / (n - 1)) * 2 - 1, a = Math.abs(x), s = x < 0 ? -1 : 1;
+      c[i] = a <= t ? x : s * (t + span * Math.tanh((a - t) / span));
+    }
+    return c;
   };
 
   Engine.prototype._curve = function (n, drive) {
@@ -1140,7 +1172,7 @@ select{font-family:var(--mono);font-size:12px;background:var(--well);color:var(-
   };
   Engine.prototype.setMaster = function (g) {
     this.master = clamp(num(g, this.master), 0, 1.5);
-    if (this._ready && this.masterGain) this._ramp(this.masterGain.gain, this.master);
+    if (this._ready && this.masterGain) this._ramp(this.masterGain.gain, this.master * MASTER_CAL);
   };
   Engine.prototype.setReverb = function (a) {
     this.reverbAmt = clamp(num(a, this.reverbAmt), 0, 1);
