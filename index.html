@@ -165,6 +165,7 @@ select{font-family:var(--mono);font-size:12px;background:var(--well);color:var(-
 .row{display:flex;gap:7px;flex-wrap:wrap;align-items:center}
 .sep{height:1px;background:#322d28;margin:10px 0}
 #splash{position:fixed;inset:0;background:rgba(12,11,10,.94);display:flex;align-items:center;justify-content:center;z-index:50;padding:24px}
+#splash.off{display:none}
 #splash div{text-align:center;max-width:380px}
 #splash h2{font-size:26px;letter-spacing:.08em;text-transform:uppercase;margin:0 0 6px}
 #splash p{font-family:var(--mono);font-size:12px;line-height:1.6;color:var(--dim);margin:0 0 18px}
@@ -199,7 +200,7 @@ select{font-family:var(--mono);font-size:12px;background:var(--well);color:var(-
 <body>
 <main id="unit">
   <div class="brand">
-    <h1>Deep Pocket</h1><span class="mk">RHYTHM&nbsp;TRAINER</span><span class="ver" id="ver">v13 web</span>
+    <h1>Deep Pocket</h1><span class="mk">RHYTHM&nbsp;TRAINER</span><span class="ver" id="ver">v14 web</span>
     <span class="sub">nine voices · 18 grooves · 32-bar arranger<br>built for bass practice</span>
   </div>
 
@@ -412,7 +413,8 @@ select{font-family:var(--mono);font-size:12px;background:var(--well);color:var(-
   Engine.prototype.unlock = function () {
     var self = this;
     if (this._ready && this._ctx) {
-      if (this._ctx.state === 'suspended' && this._ctx.resume) {
+      // iOS parks a backgrounded context in 'suspended', or Safari's own 'interrupted'.
+      if (this._ctx.state !== 'running' && this._ctx.resume) {
         try { return Promise.resolve(this._ctx.resume()).then(function () { return self; }); }
         catch (e) { /* ignore */ }
       }
@@ -431,7 +433,7 @@ select{font-family:var(--mono);font-size:12px;background:var(--well);color:var(-
       try { self._build(); self._ready = true; } catch (e) { self._ready = false; }
 
       var done = function () { resolve(self); };
-      if (ctx.state === 'suspended' && ctx.resume) {
+      if (ctx.state !== 'running' && ctx.resume) {
         try { Promise.resolve(ctx.resume()).then(done, done); } catch (e) { done(); }
       } else { done(); }
     });
@@ -572,6 +574,12 @@ select{font-family:var(--mono);font-size:12px;background:var(--well);color:var(-
     get: function () { return this._ctx ? this._ctx.currentTime : 0; },
     enumerable: true, configurable: true
   });
+
+  /** 'running' | 'suspended' | 'interrupted' | 'closed' | 'none'. */
+  Engine.prototype.state = function () { return this._ctx ? this._ctx.state : 'none'; };
+
+  /** The only question that matters: is the clock actually moving? */
+  Engine.prototype.alive = function () { return !!this._ctx && this._ctx.state === 'running'; };
 
   /* ------------------------------------------------------------------ *
    * small helpers
@@ -2147,14 +2155,20 @@ function scheduleStep(){
   }
 }
 
+var lastNow = -1, stalls = 0;
 function tick(){
   if(!S.playing) return;
+  // a frozen audio clock across 16 ticks (~400ms) is a dead context, not a slow one
+  var t = eng.now;
+  if(t === lastNow){ if(++stalls > 16){ stalls = 0; audioLost(); return; } }
+  else { stalls = 0; lastNow = t; }
   var horizon = eng.now + LOOK;
   var guard = 0;
   while(nextTime < horizon && guard++ < 64) scheduleStep();
 }
 
 function start(){
+  if(!audioLive()){ audioLost(); revive(true); return; }
   S.playing=true; S.step=0; S.absBar=0; S.countLeft=S.countin;
   S.bpm=S.baseBpm; setBpm(S.bpm);
   nextTime = eng.now + 0.08; sched.length=0;
@@ -2221,8 +2235,10 @@ document.addEventListener("keydown", function(e){
 
 // ---------- boot ----------
 $("boot").onclick=function(){
+  if(MEM.audio){ revive(true); return; }      // coming back, not starting up
   eng.unlock().then(function(){
-    $("splash").remove();
+    hideSplash();
+    watchAudio();
     eng.setMaster(S.master); eng.setReverb(S.verb);
     eng.setBassGain(S.bassg); eng.setClickGain(S.clickg);
     VOICES.forEach(function(v){ eng.setVoiceGain(v,S.gains[v]); });
@@ -2234,6 +2250,96 @@ $("boot").onclick=function(){
     toast("Ready. Space to play.");
   });
 };
+
+
+/* ---------- waking up ------------------------------------------------------
+ * iOS parks the AudioContext when you leave a standalone web app. The clock
+ * stops dead, so every note the scheduler books lands in a past that never
+ * arrives — the page looks alive and the button still reads "Stop" while
+ * nothing comes out of the speaker. Nothing below starts audio on its own
+ * (browsers only resume on a real gesture); it makes the app tell the truth
+ * and puts a tap target back on screen.
+ */
+var SPL  = $("splash");
+var SPL_H = SPL.querySelector("h2"), SPL_P = SPL.querySelector("p"), SPL_B = $("boot");
+var BOOT_COPY = { h: SPL_H.textContent, p: SPL_P.textContent, b: SPL_B.textContent };
+var reviving = false;
+
+function audioLive(){ return !!eng.ctx && eng.ctx.state === "running"; }
+function hideSplash(){ SPL.classList.add("off"); }
+
+function showSplash(mode){
+  if(mode === "resume"){
+    SPL_H.textContent = "Still here";
+    SPL_P.textContent = "iOS put the audio to sleep while you were away. One tap brings it back — pattern, tempo and kit are exactly where you left them.";
+    SPL_B.textContent = "Tap to resume";
+  } else if(mode === "reload"){
+    SPL_H.textContent = "Needs a restart";
+    SPL_P.textContent = "The audio engine did not come back. Reloading rebuilds it — your last setup is saved on this device and will be offered back.";
+    SPL_B.textContent = "Reload";
+  } else {
+    SPL_H.textContent = BOOT_COPY.h; SPL_P.textContent = BOOT_COPY.p; SPL_B.textContent = BOOT_COPY.b;
+  }
+  SPL.dataset.mode = mode || "boot";
+  SPL.classList.remove("off");
+}
+
+/** The clock died under us. Stop claiming to play. */
+function audioLost(){
+  if(S.playing) stop();
+  showSplash("resume");
+}
+
+/**
+ * Bring the clock back, and PROVE it moved before saying so — on iOS resume()
+ * can settle happily on a context that never ticks again. If it doesn't move,
+ * say so and offer the one thing that always works.
+ */
+function revive(fromGesture){
+  if(reviving) return Promise.resolve(false);
+  var c = eng.ctx;
+  if(!c) return Promise.resolve(false);
+  if(SPL.dataset.mode === "reload"){ location.reload(); return Promise.resolve(false); }
+  reviving = true;
+  var p;
+  try { p = Promise.resolve(c.resume()); } catch(e){ p = Promise.resolve(); }
+  return p.then(null, function(){}).then(function(){
+    var t0 = c.currentTime;
+    return new Promise(function(res){ setTimeout(function(){ res(c.currentTime > t0); }, 180); });
+  }).then(function(moved){
+    reviving = false;
+    if(moved){ hideSplash(); if(fromGesture) toast("Back. Hit play."); }
+    else showSplash(fromGesture ? "reload" : "resume");
+    return moved;
+  }, function(){ reviving = false; showSplash("resume"); return false; });
+}
+
+function checkAudio(){
+  if(!MEM.audio) return;               // never powered on — the boot plate is correct
+  if(audioLive()){ hideSplash(); return; }
+  audioLost();
+  revive(false);                       // some returns resume without a gesture; try quietly
+}
+
+/** Wired once, after the first successful unlock. */
+function watchAudio(){
+  if(eng.ctx) { try { eng.ctx.onstatechange = function(){ if(!audioLive()) audioLost(); else hideSplash(); }; } catch(e){} }
+  document.addEventListener("visibilitychange", function(){
+    if(document.visibilityState === "visible") setTimeout(checkAudio, 60);
+  });
+  window.addEventListener("pageshow", function(){ setTimeout(checkAudio, 60); });
+  window.addEventListener("focus",    function(){ setTimeout(checkAudio, 60); });
+  // any touch anywhere is a gesture — spend it, whether or not the plate was hit
+  document.addEventListener("pointerdown", function(){
+    if(MEM.audio && !audioLive()) revive(true);
+  }, true);
+}
+
+/* A small, deliberate diagnostics surface. Lets the wake path be tested for real,
+ * and lets me ask what a phone is actually doing without guessing. Reads only. */
+window.DeepPocket = { eng: eng, revive: revive, audioLive: audioLive,
+  state: function(){ return { ctx: eng.state ? eng.state() : "none", now: eng.now,
+    playing: S.playing, booted: MEM.audio, mem: MEM.kind, ver: $("ver").textContent }; } };
 
 // ---------- sampled kit ----------
 // The rendered kit plays through the SAME per-voice gains, sends and master chain as the
