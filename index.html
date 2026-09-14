@@ -200,7 +200,7 @@ select{font-family:var(--mono);font-size:12px;background:var(--well);color:var(-
 <body>
 <main id="unit">
   <div class="brand">
-    <h1>Deep Pocket</h1><span class="mk">RHYTHM&nbsp;TRAINER</span><span class="ver" id="ver">v15 web</span>
+    <h1>Deep Pocket</h1><span class="mk">RHYTHM&nbsp;TRAINER</span><span class="ver" id="ver">v16 web</span>
     <span class="sub">nine voices · 18 grooves · 32-bar arranger<br>built for bass practice</span>
   </div>
 
@@ -229,6 +229,11 @@ select{font-family:var(--mono);font-size:12px;background:var(--well);color:var(-
       <span class="lbl" style="margin-left:10px">Bass</span>
       <button class="key sm on" id="bassbtn">On</button>
       <span class="hint" id="kithint">loading…</span>
+    </div>
+    <div class="kitbar">
+      <span class="lbl">Lock screen</span>
+      <button class="key sm" id="bgbtn">Off</button>
+      <span class="hint" id="bghint">off — audio stops when the screen locks</span>
     </div>
   </section>
 
@@ -352,6 +357,7 @@ select{font-family:var(--mono);font-size:12px;background:var(--well);color:var(-
   <p>A drum machine that browsers only let me start after you touch it. Plug in, turn it up, grab the bass.</p>
   <button class="key play" id="boot" style="min-width:180px">Power on</button>
 </div></div>
+<audio id="bgplay" loop playsinline preload="auto"></audio>
 <div id="toast"></div>
 
 <script>/* PocketAudio — Web Audio drum synthesis engine.
@@ -438,6 +444,18 @@ select{font-family:var(--mono);font-size:12px;background:var(--well);color:var(-
       } else { done(); }
     });
     return this._unlocking;
+  };
+
+  /**
+   * Build this engine's whole graph on a context somebody else owns — an
+   * OfflineAudioContext, for bouncing a loop to a file. Same nodes, same
+   * settings, same sound; it just renders faster than real time.
+   */
+  Engine.prototype.bindOffline = function (ctx) {
+    this._ctx = ctx;
+    this._build();
+    this._ready = true;
+    return this;
   };
 
   Engine.prototype._build = function () {
@@ -2160,7 +2178,7 @@ function tick(){
   if(!S.playing) return;
   // a frozen audio clock across 16 ticks (~400ms) is a dead context, not a slow one
   var t = eng.now;
-  if(t === lastNow){ if(++stalls > 16){ stalls = 0; audioLost(); return; } }
+  if(t === lastNow){ if(++stalls > 16){ stalls = 0; if(!BG.on) audioLost(); return; } }
   else { stalls = 0; lastNow = t; }
   var horizon = eng.now + LOOK;
   var guard = 0;
@@ -2168,6 +2186,7 @@ function tick(){
 }
 
 function start(){
+  if(BG.on){ if(BG.stale || !AUD.src){ bgPrint(true); } else { bgStart(); } return; }
   if(!audioLive()){
     // pressing Play IS a gesture — spend it, and if the clock comes back, actually start
     audioLost();
@@ -2181,6 +2200,7 @@ function start(){
   timer=setInterval(tick, TICK); tick();
 }
 function stop(){
+  if(BG.on){ bgStop(); return; }
   S.playing=false; clearInterval(timer); timer=null; eng.panic();
   $("play").textContent="Play"; $("play").classList.remove("on");
   document.querySelectorAll(".st.pl").forEach(function(e){e.classList.remove("pl");});
@@ -2257,6 +2277,218 @@ $("boot").onclick=function(){
 };
 
 
+
+/* ---------- lock-screen playback -------------------------------------------
+ * iOS suspends the AudioContext when a web app is backgrounded. Nothing keeps a
+ * live Web Audio graph running behind the lock screen — but a plain <audio>
+ * element playing real media does keep running, the way any web music player
+ * does. So we bounce the loop through the SAME engine into an
+ * OfflineAudioContext, encode WAV, and let <audio loop> carry it.
+ * Same graph, same samples, same swing and feel — just printed instead of live.
+ */
+var BG = { on:false, url:null, busy:false, stale:false, secs:0, reTimer:null };
+var AUD = $("bgplay");
+
+/** Interleaved 16-bit PCM WAV. iOS plays this natively, no codec, no worker. */
+function toWav(buf, frames){
+  var ch = Math.min(2, buf.numberOfChannels), sr = buf.sampleRate;
+  var data = new ArrayBuffer(44 + frames*ch*2), v = new DataView(data), o = 0;
+  function str(x){ for(var i=0;i<x.length;i++) v.setUint8(o++, x.charCodeAt(i)); }
+  function u32(x){ v.setUint32(o, x, true); o+=4; }
+  function u16(x){ v.setUint16(o, x, true); o+=2; }
+  str("RIFF"); u32(36 + frames*ch*2); str("WAVE");
+  str("fmt "); u32(16); u16(1); u16(ch); u32(sr); u32(sr*ch*2); u16(ch*2); u16(16);
+  str("data"); u32(frames*ch*2);
+  var chans = []; for(var c=0;c<ch;c++) chans.push(buf.getChannelData(c));
+  for(var i=0;i<frames;i++){
+    for(var c2=0;c2<ch;c2++){
+      var x = chans[c2][i];
+      x = x < -1 ? -1 : x > 1 ? 1 : x;
+      v.setInt16(o, x < 0 ? x*0x8000 : x*0x7FFF, true); o += 2;
+    }
+  }
+  return new Blob([data], { type:"audio/wav" });
+}
+
+/** Exact loop length in seconds. Cheap, and it has to be right or the loop ticks. */
+function loopSeconds(bars){
+  var t = 0;
+  for(var b=0;b<bars;b++){
+    var slot = S.arrange[b];
+    var pat = S.slots[slot===null ? S.slot : slot];
+    t += (60/S.baseBpm) * beatsPerBar(pat.steps);
+  }
+  return t;
+}
+
+/**
+ * Bounce the current loop. Runs the real scheduleStep() against an offline
+ * engine by swapping `eng` underneath it — so what gets printed is what you
+ * hear, not a second implementation that drifts.
+ */
+function renderLoop(){
+  var OC = window.OfflineAudioContext || window.webkitOfflineAudioContext;
+  if(!OC || !eng.ctx) return Promise.reject(new Error("no offline audio"));
+  var bars = loopLen();
+  var body = loopSeconds(bars);
+  if(!(body > 0.2)) return Promise.reject(new Error("nothing to render"));
+  var TAIL = 3.0;                              // room for cymbals and the room tail
+  var sr = eng.ctx.sampleRate || 44100;
+  var oc = new OC(2, Math.ceil((body + TAIL) * sr), sr);
+
+  var off = new window.PocketAudio.Engine();
+  off.bindOffline(oc);
+  off.setMaster(S.master); off.setReverb(S.verb);
+  off.setBassGain(S.bassg); off.setClickGain(S.clickg);
+  VOICES.forEach(function(v){
+    off.setVoiceGain(v, S.gains[v]);
+    off.setVoiceMute(v, !!S.mutes[v]);
+  });
+
+  // swap the world, schedule, put it back — no matter what happens
+  var liveEng = eng, liveNext = nextTime, liveSched = sched.slice();
+  var keep = { step:S.step, absBar:S.absBar, countLeft:S.countLeft, bpm:S.bpm,
+               ramp:S.ramp, playing:S.playing };
+  var loopEnd = body;
+  try {
+    eng = off;
+    S.step=0; S.absBar=0; S.countLeft=0; S.ramp=0; S.playing=false;
+    S.bpm=S.baseBpm; nextTime=0; sched.length=0;
+    var guard = 0;
+    while(S.absBar < bars && guard++ < 20000) scheduleStep();
+    loopEnd = nextTime;
+  } finally {
+    eng = liveEng; nextTime = liveNext;
+    sched.length = 0; liveSched.forEach(function(x){ sched.push(x); });
+    S.step=keep.step; S.absBar=keep.absBar; S.countLeft=keep.countLeft;
+    S.ramp=keep.ramp; S.playing=keep.playing; S.bpm=keep.bpm;
+  }
+
+  return oc.startRendering().then(function(buf){
+    var frames = Math.round(loopEnd * sr);
+    // fold the decay tail back over the top of the loop, or every pass clicks
+    var tail = Math.min(buf.length - frames, Math.round(TAIL * sr));
+    var nch = Math.min(2, buf.numberOfChannels), c, i, d, peak = 0;
+    for(c=0;c<nch;c++){
+      d = buf.getChannelData(c);
+      for(i=0;i<tail;i++) d[i] += d[frames + i];
+      for(i=0;i<frames;i++){ var a = d[i] < 0 ? -d[i] : d[i]; if(a > peak) peak = a; }
+    }
+    // the fold stacks a decaying tail on top of bar 1 and can push past full scale —
+    // measured 2026-09-14: body peaked 0.79, the folded head hit 1.0 and clipped 24
+    // samples, which is a tick at exactly the loop point the fold exists to remove.
+    // Trim the WHOLE loop so there is no level step, not just the head.
+    if(peak > 0.985){
+      var g = 0.985 / peak;
+      for(c=0;c<nch;c++){ d = buf.getChannelData(c); for(i=0;i<frames;i++) d[i] *= g; }
+    }
+    if(BG.url){ try { URL.revokeObjectURL(BG.url); } catch(e){} }
+    BG.url = URL.createObjectURL(toWav(buf, frames));
+    BG.secs = loopEnd;
+    BG.stale = false;
+    return BG.url;
+  });
+}
+
+function bgLabel(){
+  $("bgbtn").textContent = BG.on ? "On" : "Off";
+  $("bgbtn").classList.toggle("on", BG.on);
+  $("bghint").textContent = BG.busy ? "printing the loop…"
+    : BG.on ? (Math.round(BG.secs) + "s loop · keeps playing when the screen locks · edits reprint")
+            : "off — audio stops when the screen locks";
+}
+
+/** Lock-screen title and buttons. Nothing here makes sound; it labels it. */
+function bgMeta(){
+  if(!("mediaSession" in navigator)) return;
+  var g = cur();
+  try {
+    navigator.mediaSession.metadata = new window.MediaMetadata({
+      title: (g && g.name ? g.name : "Pattern " + "ABCD"[S.slot]) + " · " + Math.round(S.baseBpm) + " BPM",
+      artist: "Deep Pocket",
+      album: bars1() + "-bar loop",
+      artwork: [{ src:"icon-512.png", sizes:"512x512", type:"image/png" },
+                { src:"icon-192.png", sizes:"192x192", type:"image/png" }]
+    });
+  } catch(e){}
+  try {
+    navigator.mediaSession.setActionHandler("play",  function(){ if(!S.playing) $("play").click(); });
+    navigator.mediaSession.setActionHandler("pause", function(){ if(S.playing) $("play").click(); });
+    navigator.mediaSession.setActionHandler("stop",  function(){ if(S.playing) $("play").click(); });
+  } catch(e){}
+}
+function bars1(){ return loopLen(); }
+
+function bgStart(){
+  AUD.currentTime = 0;
+  var p = AUD.play();
+  if(p && p.catch) p.catch(function(){ toast("iOS blocked playback — tap play again."); });
+  // hand the audio session to the element. A live AudioContext alongside it can
+  // hold the page in a session category that stops on lock — and there is nothing
+  // for the graph to do anyway while the printed loop is the one making sound.
+  try { eng.panic(); if(eng.ctx && eng.ctx.state === "running") eng.ctx.suspend(); } catch(e){}
+  S.playing = true;
+  $("play").textContent="Stop"; $("play").classList.add("on");
+  bgMeta();
+  if("mediaSession" in navigator) try { navigator.mediaSession.playbackState = "playing"; } catch(e){}
+}
+function bgStop(){
+  try { AUD.pause(); } catch(e){}
+  S.playing = false;
+  $("play").textContent="Play"; $("play").classList.remove("on");
+  document.querySelectorAll(".st.pl").forEach(function(e){e.classList.remove("pl");});
+  document.querySelectorAll(".cell.now").forEach(function(e){e.classList.remove("now");});
+  $("barv").textContent="1"; $("beatv").textContent="1";
+  if("mediaSession" in navigator) try { navigator.mediaSession.playbackState = "paused"; } catch(e){}
+}
+
+/** Print (or reprint) and, if we were playing, pick straight back up. */
+function bgPrint(thenPlay){
+  if(BG.busy) return Promise.resolve(false);
+  BG.busy = true; bgLabel();
+  return renderLoop().then(function(url){
+    AUD.src = url;
+    BG.busy = false; bgLabel();
+    if(thenPlay) bgStart();
+    return true;
+  }, function(err){
+    BG.busy = false; BG.on = false; bgLabel();
+    toast("Couldn't print the loop: " + (err && err.message ? err.message : "unknown"));
+    return false;
+  });
+}
+
+$("bgbtn").onclick = function(){
+  if(BG.on){
+    var wasPlaying = S.playing;
+    bgStop(); BG.on = false; bgLabel();
+    // this click is the gesture that buys the context back
+    revive(true).then(function(ok){
+      if(ok && wasPlaying) start();
+      toast(ok ? "Live again — stops when the screen locks." : "Live mode needs one more tap.");
+    });
+    return;
+  }
+  if(!audioLive()){ revive(true); return; }
+  var wasPlaying = S.playing;
+  if(wasPlaying) stop();
+  BG.on = true; bgLabel();
+  bgPrint(wasPlaying).then(function(ok){
+    if(ok) toast(S.ramp ? "Printed. Tempo ramp is ignored while this is on." : "Printed. Lock the screen — it keeps going.");
+  });
+};
+
+/** Anything that changes the sound invalidates the print. Reprint, quietly. */
+function bgTouch(){
+  if(!BG.on) return;
+  BG.stale = true;
+  clearTimeout(BG.reTimer);
+  BG.reTimer = setTimeout(function(){
+    var wasPlaying = S.playing;
+    bgPrint(wasPlaying);
+  }, 700);
+}
+
 /* ---------- waking up ------------------------------------------------------
  * iOS parks the AudioContext when you leave a standalone web app. The clock
  * stops dead, so every note the scheduler books lands in a past that never
@@ -2268,7 +2500,7 @@ $("boot").onclick=function(){
 var SPL  = $("splash");
 var SPL_H = SPL.querySelector("h2"), SPL_P = SPL.querySelector("p"), SPL_B = $("boot");
 var BOOT_COPY = { h: SPL_H.textContent, p: SPL_P.textContent, b: SPL_B.textContent };
-var reviving = false;
+var reviving = null;   // the in-flight revive promise, or null
 
 function audioLive(){ return !!eng.ctx && eng.ctx.state === "running"; }
 function hideSplash(){ SPL.classList.add("off"); }
@@ -2291,6 +2523,7 @@ function showSplash(mode){
 
 /** The clock died under us. Stop claiming to play. */
 function audioLost(){
+  if(BG.on) return;                    // the printed loop does not need the clock
   if(S.playing) stop();
   // a machine that was never started is not "still here" — say the true thing
   showSplash(MEM.audio ? "resume" : "boot");
@@ -2302,33 +2535,43 @@ function audioLost(){
  * say so and offer the one thing that always works.
  */
 function revive(fromGesture){
-  if(reviving) return Promise.resolve(false);
+  // `reviving` holds the IN-FLIGHT promise, not a flag: a second caller joins it.
+  // Found 2026-09-14 — the capture-phase "any tap revives" handler fires on the same
+  // click as the Lock-screen toggle, won the race, and the toggle was handed a flat
+  // false, so it never gave playback back to the live scheduler.
+  if(reviving) return reviving;
   if(SPL.dataset.mode === "reload"){ location.reload(); return Promise.resolve(false); }
+
+  var done = function(ok, quiet){
+    reviving = null;
+    if(ok){ hideSplash(); if(fromGesture && !quiet) toast("Back. Hit play."); }
+    else showSplash(fromGesture ? "reload" : "resume");
+    return ok;
+  };
+
   var c = eng.ctx;
   if(!c){                                  // nothing to resume — cold start instead
-    reviving = true;
-    return eng.unlock().then(function(){
-      reviving = false;
-      if(eng.ctx && eng.ctx.state === "running"){ MEM.audio = true; hideSplash(); watchAudio(); return true; }
-      showSplash("resume"); return false;
-    }, function(){ reviving = false; showSplash("resume"); return false; });
+    reviving = eng.unlock().then(function(){
+      if(eng.ctx && eng.ctx.state === "running"){ MEM.audio = true; watchAudio(); return done(true, true); }
+      return done(false);
+    }, function(){ return done(false); });
+    return reviving;
   }
-  reviving = true;
+
   var p;
   try { p = Promise.resolve(c.resume()); } catch(e){ p = Promise.resolve(); }
-  return p.then(null, function(){}).then(function(){
+  reviving = p.then(null, function(){}).then(function(){
+    // iOS can settle resume() on a context that never ticks again — prove it moved
     var t0 = c.currentTime;
     return new Promise(function(res){ setTimeout(function(){ res(c.currentTime > t0); }, 180); });
-  }).then(function(moved){
-    reviving = false;
-    if(moved){ hideSplash(); if(fromGesture) toast("Back. Hit play."); }
-    else showSplash(fromGesture ? "reload" : "resume");
-    return moved;
-  }, function(){ reviving = false; showSplash("resume"); return false; });
+  }).then(function(moved){ return done(moved); },
+          function(){ return done(false); });
+  return reviving;
 }
 
 function checkAudio(){
   if(!MEM.audio) return;               // never powered on — the boot plate is correct
+  if(BG.on) return;                    // lock-screen mode: the context is meant to be asleep
   if(audioLive()){ hideSplash(); return; }
   audioLost();
   revive(false);                       // some returns resume without a gesture; try quietly
@@ -2344,6 +2587,7 @@ function watchAudio(){
   window.addEventListener("focus",    function(){ setTimeout(checkAudio, 60); });
   // any touch anywhere is a gesture — spend it, whether or not the plate was hit
   document.addEventListener("pointerdown", function(){
+    if(BG.on) return;                    // lock-screen mode: the context is meant to be asleep
     if(MEM.audio && !audioLive()) revive(true);
   }, true);
 }
@@ -2351,7 +2595,9 @@ function watchAudio(){
 /* A small, deliberate diagnostics surface. Lets the wake path be tested for real,
  * and lets me ask what a phone is actually doing without guessing. Reads only. */
 window.DeepPocket = { eng: eng, revive: revive, audioLive: audioLive,
+  bg: BG, audioEl: AUD, print: bgPrint,
   state: function(){ return { ctx: eng.state ? eng.state() : "none", now: eng.now,
+    bg: BG.on, bgSrc: !!AUD.src, bgSecs: BG.secs, bgBusy: BG.busy,
     playing: !!S.playing, booted: !!MEM.audio, mem: MEM.kind, ver: $("ver").textContent }; } };
 
 // ---------- sampled kit ----------
