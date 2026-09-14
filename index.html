@@ -200,7 +200,7 @@ select{font-family:var(--mono);font-size:12px;background:var(--well);color:var(-
 <body>
 <main id="unit">
   <div class="brand">
-    <h1>Deep Pocket</h1><span class="mk">RHYTHM&nbsp;TRAINER</span><span class="ver" id="ver">v18 web</span>
+    <h1>Deep Pocket</h1><span class="mk">RHYTHM&nbsp;TRAINER</span><span class="ver" id="ver">v19 web</span>
     <span class="sub">nine voices · 18 grooves · 32-bar arranger<br>built for bass practice</span>
   </div>
 
@@ -223,12 +223,9 @@ select{font-family:var(--mono);font-size:12px;background:var(--well);color:var(-
       <div class="meter" title="output"><i id="mtr"></i></div>
     </div>
     <div class="kitbar">
-      <span class="lbl">Kit</span>
-      <button class="key sm" id="kitroom">Room</button>
-      <button class="key sm" id="kitsynth">Synth</button>
-      <span class="lbl" style="margin-left:10px">Bass</span>
+      <span class="lbl">Bass</span>
       <button class="key sm on" id="bassbtn">On</button>
-      <span class="hint" id="kithint">loading…</span>
+      <span class="hint">every voice synthesised live at its exact velocity</span>
     </div>
     <div class="kitbar">
       <span class="lbl">Lock screen</span>
@@ -1887,7 +1884,7 @@ select{font-family:var(--mono);font-size:12px;background:var(--well);color:var(-
   window.PocketPresets = { GROOVES: GROOVES, PROGRESSIONS: PROGRESSIONS, VOICES: VOICES };
 })();
 </script>
-<script src="kit-room.js"></script>
+
 <script>
 (function(){
 "use strict";
@@ -2316,7 +2313,6 @@ $("boot").onclick=function(){
     eng.setBassGain(S.bassg); eng.setClickGain(S.clickg);
     VOICES.forEach(function(v){ eng.setVoiceGain(v,S.gains[v]); });
     MEM.audio = true;
-    loadKit("room").then(function(ok){ KIT.on = !!ok; kitLabel(); });
     document.addEventListener("pointerdown", function(){ touched = true; }, true);
     document.addEventListener("keydown", function(){ touched = true; }, true);
     VOICES.forEach(function(v){ eng.setVoiceGain(v,S.gains[v]); eng.setVoiceMute(v,!!S.mutes[v]); });
@@ -2758,19 +2754,10 @@ function hit(name, time, vel){
   eng.trigger(name, time, { vel: vel });
 }
 
-function kitLabel(){
-  var b = $("kitroom"), s = $("kitsynth");
-  if (!b) return;
-  b.classList.toggle("on", KIT.on && KIT.ready);
-  s.classList.toggle("on", !KIT.on);
-  b.textContent = KIT.loading ? "Loading…" : "Room";
-  $("kithint").textContent = KIT.loading ? "loading the kit…" :
-    KIT.on && KIT.ready ? "sampled kit · 3 velocity layers · 2 round-robins" :
-    KIT.ready ? "realtime synthesis" : "synth — kit not loaded";
-}
+/** No Kit row to label while no kit ships. Kept so loadKit() needs no edits. */
+function kitLabel(){}
 
-$("kitsynth").onclick = function(){ KIT.on = false; kitLabel(); toast("Synth kit"); };
-$("kitroom").onclick = function(){
+var _kitPicker = function(){
   if (!eng.ctx) { toast("Power on first."); return; }
   if (KIT.ready) { KIT.on = true; kitLabel(); toast("Room kit"); return; }
   loadKit("room").then(function(ok){
@@ -2796,7 +2783,7 @@ function snapshot(){
     slot:S.slot, slots:S.slots, arrange:S.arrange, roots:S.roots, chords:S.chords,
     rootmode:S.rootmode, clickmode:S.clickmode, gap:S.gap, ramp:S.ramp, countin:S.countin, loop:S.loop,
     bassg:S.bassg, clickg:S.clickg, gains:S.gains, mutes:S.mutes,
-    prog:$("prog").value, grooveId:(cur()||{}).id||null, kit:(typeof KIT!=="undefined"&&KIT.on)?"room":"synth"
+    prog:$("prog").value, grooveId:(cur()||{}).id||null
   };
 }
 function applySnapshot(d){
@@ -2832,8 +2819,7 @@ function applySnapshot(d){
     document.querySelectorAll("#mix input").forEach(function(r,i){ var v=VOICES[i]; r.value=Math.round((S.gains[v]||0.8)*100); });
     if(MEM.audio) VOICES.forEach(function(v){ eng.setVoiceGain(v,S.gains[v]); eng.setVoiceMute(v,!!S.mutes[v]); });
     drawGrid(); drawArr(); info();
-    if(typeof KIT!=="undefined" && d.kit){ if(d.kit==="synth"){ KIT.on=false; kitLabel(); }
-      else if(!KIT.on && eng.ctx) $("kitroom").click(); }
+    // d.kit is ignored — saves from when a sampled kit shipped restore as synth
     return true;
   }catch(err){ return false; }
 }
