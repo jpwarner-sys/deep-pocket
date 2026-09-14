@@ -1,0 +1,30 @@
+{
+  "name": "Deep Pocket",
+  "short_name": "Deep Pocket",
+  "description": "Rhythm trainer for bass practice \u2014 nine voices, 18 grooves, 32-bar arranger.",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#141312",
+  "theme_color": "#141312",
+  "start_url": "./",
+  "scope": "./",
+  "icons": [
+    {
+      "src": "icon-180.png",
+      "sizes": "180x180",
+      "type": "image/png"
+    },
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}
