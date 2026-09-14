@@ -200,7 +200,7 @@ select{font-family:var(--mono);font-size:12px;background:var(--well);color:var(-
 <body>
 <main id="unit">
   <div class="brand">
-    <h1>Deep Pocket</h1><span class="mk">RHYTHM&nbsp;TRAINER</span><span class="ver" id="ver">v16 web</span>
+    <h1>Deep Pocket</h1><span class="mk">RHYTHM&nbsp;TRAINER</span><span class="ver" id="ver">v17 web</span>
     <span class="sub">nine voices · 18 grooves · 32-bar arranger<br>built for bass practice</span>
   </div>
 
@@ -314,7 +314,7 @@ select{font-family:var(--mono);font-size:12px;background:var(--well);color:var(-
       <div class="ctl"><span class="lbl">Feel</span>
         <input type="range" id="feel" min="-40" max="20" value="-12" aria-label="Feel"><span class="val num" id="feelvv">−12</span></div>
       <div class="ctl"><span class="lbl">Room</span>
-        <input type="range" id="verb" min="0" max="100" value="22" aria-label="Room"><span class="val num" id="verbv">22</span></div>
+        <input type="range" id="verb" min="0" max="100" value="12" aria-label="Room"><span class="val num" id="verbv">12</span></div>
       <div class="note"><b>Drop out</b> is the real one. The drums vanish, you keep the time, they come back — and you find out whether you were actually in the pocket or just following.</div>
     </section>
 
@@ -375,7 +375,11 @@ select{font-family:var(--mono);font-size:12px;background:var(--well);color:var(-
   var METAL_RATIOS = [1, 1.342, 1.2312, 1.6532, 1.9523, 2.1523];
 
   // per-voice reverb send factors (only these four get a send)
-  var SEND = { snare: 0.28, clap: 0.42, ride: 0.22, perc: 0.30 };
+  // Per-voice feed into the room. The ride is the only one of these with real
+  // sustain, so its own tail overlaps the next hit and smears — at 174bpm on
+  // straight 8ths that is six hits a second washing into each other. It gets
+  // less than half of what a transient gets.
+  var SEND = { snare: 0.28, clap: 0.42, ride: 0.13, perc: 0.30 };
 
   // default trim so the kit is balanced out of the box
   var DEFAULT_GAIN = {
@@ -1442,16 +1446,16 @@ select{font-family:var(--mono);font-size:12px;background:var(--well);color:var(-
       swing: 0.03,
       bars: 2,
       feel: 0,
-      note: "Second bar shoves the backbeat a 16th late — that displacement is the whole break.",
+      note: "Half-time. Kick on 1, snare on 3, kick answering straight after it — the same in both bars. Bar two adds one pickup into the turnaround; the backbeat never moves.",
       ghost: true,
       p: {
         kick: [
           1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0.85, 0, 0, 0, 0, 0,
-          0.95, 0, 0, 0, 0, 0, 0, 0, 0, 0.8, 0, 0, 0, 0, 0, 0
+          0.95, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0.85, 0, 0, 0, 0.75, 0
         ],
         snare: [
-          0, 0, 0, 0, 1, 0, 0.22, 0, 0, 0, 0, 0.24, 0.95, 0, 0, 0.2,
-          0, 0, 0, 0, 1, 0, 0.2, 0, 0, 0, 0, 0.22, 0, 0.9, 0, 0.26
+          0, 0, 0, 0.20, 0, 0, 0, 0, 1, 0, 0, 0.22, 0, 0, 0.18, 0,
+          0, 0, 0, 0.18, 0, 0, 0.20, 0, 1, 0, 0, 0.24, 0, 0, 0, 0.20
         ],
         ride: [
           0.55, 0, 0.4, 0, 0.5, 0, 0.4, 0, 0.55, 0, 0.4, 0, 0.5, 0, 0.42, 0,
@@ -1879,7 +1883,7 @@ var eng = new window.PocketAudio.Engine();
 var S = {
   slots: [blank(),blank(),blank(),blank()],
   slot: 0,
-  bpm: 116, swing:0.16, feel:-0.012, verb:0.22, master:0.8,
+  bpm: 116, swing:0.16, feel:-0.012, verb:0.12, master:0.8,
   arrange: new Array(32), roots: new Array(32), chords: new Array(32),
   rootmode:"1", clickmode:"off", gap:0, ramp:0, countin:1, loop:0,
   bassg:0.55, clickg:0.45,
@@ -1893,6 +1897,18 @@ VOICES.forEach(function(v){ S.gains[v]=0.8; S.mutes[v]=false; });
 function blank(){ var p={}; VOICES.forEach(function(v){ p[v]=new Array(16).fill(0); });
   return {steps:16,bars:1,p:p,name:"empty",sub:"",note:""}; }
 function cur(){ return S.slots[S.slot]; }
+/* ---------- room amount ----------------------------------------------------
+ * The Room dial was linear (amount = dial/100). The only usable setting was 2, so
+ * 98 percent of the travel did nothing he wanted and every useful value was
+ * crushed into the first two ticks. ROOM_K is chosen so dial 6 gives exactly the
+ * amount dial 2 used to — that anchor, honoured exactly — while 100 still reaches
+ * a real room:  6/100 ^ 1.39 = 0.02.  Old 22 now lands at about 12.
+ */
+var ROOM_K = 1.39;
+function roomAmount(dial){ return Math.pow(Math.max(0, Math.min(1, dial)), ROOM_K); }
+/** Old saves stored the raw amount. Invert the curve so they sound unchanged. */
+function roomDialFromAmount(a){ return Math.pow(Math.max(0, Math.min(1, a)), 1/ROOM_K); }
+
 function beatsPerBar(steps){ return steps===14?3.5:(steps===20?5:4); }
 /** How many bars before it comes round again. 0 = follow the changes. */
 function loopLen(){
@@ -2073,7 +2089,7 @@ $("bmin").onclick=function(){ setBpm(S.bpm-1); S.baseBpm=S.bpm; };
 $("bplus").onclick=function(){ setBpm(S.bpm+1); S.baseBpm=S.bpm; };
 $("swing").oninput=function(){ setSwing(+$("swing").value); };
 $("feel").oninput=function(){ setFeel(+$("feel").value); };
-$("verb").oninput=function(){ S.verb=$("verb").value/100; $("verbv").textContent=$("verb").value; eng.setReverb(S.verb); };
+$("verb").oninput=function(){ S.verb=$("verb").value/100; $("verbv").textContent=$("verb").value; eng.setReverb(roomAmount(S.verb)); };
 $("master").oninput=function(){ S.master=$("master").value/100; $("masterv").textContent=$("master").value; eng.setMaster(S.master); };
 $("bassg").oninput=function(){ S.bassg=$("bassg").value/100; $("bassgv").textContent=$("bassg").value; eng.setBassGain(S.bassg); };
 $("clickg").oninput=function(){ S.clickg=$("clickg").value/100; $("clickgv").textContent=$("clickg").value; eng.setClickGain(S.clickg); };
@@ -2264,7 +2280,7 @@ $("boot").onclick=function(){
   eng.unlock().then(function(){
     hideSplash();
     watchAudio();
-    eng.setMaster(S.master); eng.setReverb(S.verb);
+    eng.setMaster(S.master); eng.setReverb(roomAmount(S.verb));
     eng.setBassGain(S.bassg); eng.setClickGain(S.clickg);
     VOICES.forEach(function(v){ eng.setVoiceGain(v,S.gains[v]); });
     MEM.audio = true;
@@ -2338,7 +2354,7 @@ function renderLoop(){
 
   var off = new window.PocketAudio.Engine();
   off.bindOffline(oc);
-  off.setMaster(S.master); off.setReverb(S.verb);
+  off.setMaster(S.master); off.setReverb(roomAmount(S.verb));
   off.setBassGain(S.bassg); off.setClickGain(S.clickg);
   VOICES.forEach(function(v){
     off.setVoiceGain(v, S.gains[v]);
@@ -2477,6 +2493,27 @@ $("bgbtn").onclick = function(){
     if(ok) toast(S.ramp ? "Printed. Tempo ramp is ignored while this is on." : "Printed. Lock the screen — it keeps going.");
   });
 };
+
+/**
+ * Anything that changes the sound invalidates the print. Rather than remember to
+ * call bgTouch() from thirty handlers — I shipped v16 having wired exactly one,
+ * which made the "edits reprint" hint a lie — listen once, in capture, for the
+ * element kinds that can actually change the sound. Inert taps are ignored, and
+ * the transport and the splash must never trigger a reprint of themselves.
+ */
+(function watchEdits(){
+  var SKIP = { play:1, bgbtn:1, boot:1, tap:1 };
+  function isEdit(t){
+    if(!t || SKIP[t.id]) return false;
+    if(t.closest && t.closest("#splash")) return false;
+    var tag = t.tagName;
+    if(tag === "INPUT" || tag === "SELECT" || tag === "TEXTAREA") return true;
+    return !!(t.closest && t.closest(".cell,.gv,.slot,.st,.key,.lane,.sq"));
+  }
+  ["click","change","input"].forEach(function(ev){
+    document.addEventListener(ev, function(e){ if(BG.on && isEdit(e.target)) bgTouch(); }, true);
+  });
+})();
 
 /** Anything that changes the sound invalidates the print. Reprint, quietly. */
 function bgTouch(){
@@ -2723,7 +2760,7 @@ var LKEY = "deeppocket.v1";
 function snapshot(){
   return {
     v:1, at:new Date().toISOString(),
-    bpm:S.bpm, baseBpm:S.baseBpm, swing:S.swing, feel:S.feel, verb:S.verb, master:S.master,
+    bpm:S.bpm, baseBpm:S.baseBpm, swing:S.swing, feel:S.feel, verb:S.verb, verbCurve:2, master:S.master,
     slot:S.slot, slots:S.slots, arrange:S.arrange, roots:S.roots, chords:S.chords,
     rootmode:S.rootmode, clickmode:S.clickmode, gap:S.gap, ramp:S.ramp, countin:S.countin, loop:S.loop,
     bassg:S.bassg, clickg:S.clickg, gains:S.gains, mutes:S.mutes,
@@ -2738,7 +2775,12 @@ function applySnapshot(d){
     S.gains = d.gains||S.gains; S.mutes = d.mutes||S.mutes;
     S.baseBpm = d.baseBpm||d.bpm||S.bpm;
     setBpm(d.bpm||S.bpm); setSwing(Math.round((d.swing||0)*100)); setFeel(Math.round((d.feel||0)*1000));
-    S.verb=d.verb!=null?d.verb:S.verb; $("verb").value=Math.round(S.verb*100); $("verbv").textContent=$("verb").value;
+    if(d.verb!=null){
+      // saves from before the curve stored the raw amount — convert, so a restored
+      // setup sounds exactly as it did rather than four times drier
+      S.verb = (d.verbCurve === 2) ? d.verb : roomDialFromAmount(d.verb);
+    }
+    $("verb").value=Math.round(S.verb*100); $("verbv").textContent=$("verb").value;
     S.master=d.master!=null?d.master:S.master; $("master").value=Math.round(S.master*100); $("masterv").textContent=$("master").value;
     S.bassg=d.bassg!=null?d.bassg:S.bassg; $("bassg").value=Math.round(S.bassg*100); $("bassgv").textContent=$("bassg").value;
     S.clickg=d.clickg!=null?d.clickg:S.clickg; $("clickg").value=Math.round(S.clickg*100); $("clickgv").textContent=$("clickg").value;
