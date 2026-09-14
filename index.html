@@ -200,7 +200,7 @@ select{font-family:var(--mono);font-size:12px;background:var(--well);color:var(-
 <body>
 <main id="unit">
   <div class="brand">
-    <h1>Deep Pocket</h1><span class="mk">RHYTHM&nbsp;TRAINER</span><span class="ver" id="ver">v19 web</span>
+    <h1>Deep Pocket</h1><span class="mk">RHYTHM&nbsp;TRAINER</span><span class="ver" id="ver">v20 web</span>
     <span class="sub">nine voices · 18 grooves · 32-bar arranger<br>built for bass practice</span>
   </div>
 
@@ -223,9 +223,13 @@ select{font-family:var(--mono);font-size:12px;background:var(--well);color:var(-
       <div class="meter" title="output"><i id="mtr"></i></div>
     </div>
     <div class="kitbar">
-      <span class="lbl">Bass</span>
+      <span class="lbl">Kit</span>
+      <button class="key sm on" id="kitsynth">Synth</button>
+      <button class="key sm" id="kitbp">Black Pearl</button>
+      <button class="key sm" id="kitrz">Red Zeppelin</button>
+      <span class="lbl" style="margin-left:10px">Bass</span>
       <button class="key sm on" id="bassbtn">On</button>
-      <span class="hint">every voice synthesised live at its exact velocity</span>
+      <span class="hint" id="kithint">synthesised live at exact velocity</span>
     </div>
     <div class="kitbar">
       <span class="lbl">Lock screen</span>
@@ -2669,42 +2673,68 @@ window.DeepPocket = { eng: eng, revive: revive, audioLive: audioLive,
 // The rendered kit plays through the SAME per-voice gains, sends and master chain as the
 // synth (eng.vgain[name]), so the mixer, mutes, room and meter keep working untouched.
 // Velocity picks a layer (timbre, not just level); round-robins alternate so repeats differ.
-var KIT = { on:true, ready:false, loading:false, buf:{}, rr:{}, oh:[] };
-var LAYER_NOM = [0.30, 0.65, 1.00];
-function pickLayer(v){ return v < 0.40 ? 0 : v < 0.85 ? 1 : 2; }
+var KIT = { id:null, on:false, ready:false, loading:false, buf:{}, man:null, oh:[], seed:1 };
 
-function uriToArrayBuffer(uri){
-  var b = atob(uri.slice(uri.indexOf(",") + 1));
-  var n = b.length, a = new Uint8Array(n);
-  for (var i = 0; i < n; i++) a[i] = b.charCodeAt(i);
-  return a.buffer;
+/* AVL's five layers come straight from the SFZ velocity split. */
+function pickLayer(vel){
+  var v = Math.max(1, Math.min(127, Math.round(vel * 127)));
+  return v <= 26 ? 0 : v <= 52 ? 1 : v <= 77 ? 2 : v <= 102 ? 3 : 4;
 }
 
+/**
+ * The gain that makes a sample behave like the synth it is replacing.
+ *
+ * AVL normalises every file, so the layers carry the TIMBRE of a soft or hard
+ * hit and none of its loudness — the kick's five layers measure 2.4 dB apart and
+ * all peak at 1.000. Their SFZ sets no amp_veltrack, so the SFZ default of 100
+ * applies: the player supplies the velocity gain. Divide AVL's normalisation
+ * back out, then apply this engine's own measured law on top.
+ */
+function kitGain(name, vel, li){
+  var m = KIT.man; if(!m) return 1;
+  var k = m.kits[KIT.id]; if(!k) return 1;
+  var sr = (k.rms[name]||[])[li];
+  if(!sr) return 1;
+  var want = (m.synth.rmsAtFull[name] || 0.05) * Math.pow(Math.max(0.001, vel),
+                                                          m.synth.velExp[name] != null ? m.synth.velExp[name] : 0.9);
+  return Math.max(0.02, Math.min(8, want / sr));
+}
+
+/** Cheap deterministic scatter — AVL has no round-robins, so repeats would machine-gun. */
+function jitter(){ KIT.seed = (KIT.seed * 1103515245 + 12345) & 0x7fffffff; return KIT.seed / 0x7fffffff; }
+
 function loadKit(id){
-  var kit = (window.PocketKits || {})[id];
-  if (!kit || !eng.ctx) return Promise.resolve(false);
+  if (!eng.ctx) return Promise.resolve(false);
   if (KIT.ready && KIT.id === id) return Promise.resolve(true);
   KIT.loading = true; kitLabel();
-  var jobs = [], map = {};
-  VOICES.forEach(function(v){
-    var layers = kit.voices[v] || [];
-    map[v] = layers.map(function(rrs){ return rrs.map(function(){ return null; }); });
-    layers.forEach(function(rrs, li){
-      rrs.forEach(function(uri, ri){
-        jobs.push(new Promise(function(res){
-          try {
-            var p = eng.ctx.decodeAudioData(uriToArrayBuffer(uri),
-              function(buf){ map[v][li][ri] = buf; res(); },
-              function(){ res(); });
-            if (p && p.then) p.then(function(buf){ map[v][li][ri] = buf; res(); }, function(){ res(); });
-          } catch (e) { res(); }
-        }));
+  var base = "kits/";
+  return fetch(base + "kits.json").then(function(r){ return r.json(); }).then(function(man){
+    KIT.man = man;
+    var spec = man.kits[id];
+    if (!spec) throw new Error("no kit " + id);
+    var map = {}, jobs = [];
+    VOICES.forEach(function(v){
+      var files = spec.voices[v] || [];
+      map[v] = files.map(function(){ return null; });
+      files.forEach(function(f, li){
+        jobs.push(fetch(base + f).then(function(r){ return r.arrayBuffer(); }).then(function(ab){
+          return new Promise(function(res){
+            var p = eng.ctx.decodeAudioData(ab, function(b){ map[v][li] = b; res(); }, function(){ res(); });
+            if (p && p.then) p.then(function(b){ map[v][li] = b; res(); }, function(){ res(); });
+          });
+        }, function(){}));
       });
     });
-  });
-  return Promise.all(jobs).then(function(){
-    KIT.buf = map; KIT.id = id; KIT.ready = true; KIT.loading = false; kitLabel();
-    return true;
+    return Promise.all(jobs).then(function(){
+      var got = 0; VOICES.forEach(function(v){ (map[v]||[]).forEach(function(b){ if(b) got++; }); });
+      if (!got) throw new Error("nothing decoded");
+      KIT.buf = map; KIT.id = id; KIT.ready = true; KIT.on = true; KIT.loading = false; kitLabel();
+      return true;
+    });
+  }).catch(function(e){
+    KIT.loading = false; KIT.ready = false; KIT.on = false; kitLabel();
+    toast("Kit didn't load — staying on the synth.");
+    return false;
   });
 }
 
@@ -2728,36 +2758,53 @@ function hit(name, time, vel){
     var layers = KIT.buf[name];
     if (layers && layers.length) {
       var li = Math.min(pickLayer(vel), layers.length - 1);
-      var lay = layers[li] || [];
-      var n = lay.filter(Boolean).length;
-      if (n) {
-        var idx = (KIT.rr[name] = ((KIT.rr[name] || 0) + 1)) % lay.length;
-        var buf = lay[idx] || lay[0];
-        if (buf) {
-          try {
-            var src = eng.ctx.createBufferSource(); src.buffer = buf;
-            var g = eng.ctx.createGain();
-            // the layer already carries the loudness; this only fills in between layers
-            g.gain.value = Math.max(0.55, Math.min(1.45, vel / LAYER_NOM[li]));
-            src.connect(g); g.connect(eng.vgain && eng.vgain[name] ? eng.vgain[name] : eng.busIn);
-            if (name === "hh") chokeOpenHat(time);
-            src.start(time);
-            src.stop(time + buf.duration + 0.02);
-            if (name === "oh") KIT.oh.push({ g:g, src:src, end:time + buf.duration });
-            if (KIT.oh.length > 8) KIT.oh = KIT.oh.slice(-8);
-            return;
-          } catch (e) { /* fall through to synth */ }
-        }
+      var buf = layers[li];
+      if (!buf) { for (var j = li; j >= 0 && !buf; j--) buf = layers[j]; }   // never drop a hit
+      if (buf) {
+        try {
+          var src = eng.ctx.createBufferSource(); src.buffer = buf;
+          // no round-robins in this library, so scatter each hit a little or
+          // repeated velocities machine-gun: +/-1.2% rate, +/-0.5 dB
+          src.playbackRate.value = 1 + (jitter() - 0.5) * 0.024;
+          var g = eng.ctx.createGain();
+          g.gain.value = kitGain(name, vel, li) * (1 + (jitter() - 0.5) * 0.12);
+          src.connect(g); g.connect(eng.vgain && eng.vgain[name] ? eng.vgain[name] : eng.busIn);
+          if (name === "hh") chokeOpenHat(time);
+          src.start(time);
+          src.stop(time + buf.duration + 0.02);
+          if (name === "oh") KIT.oh.push({ g:g, src:src, end:time + buf.duration });
+          if (KIT.oh.length > 8) KIT.oh = KIT.oh.slice(-8);
+          return;
+        } catch (e) { /* fall through to the synth rather than lose the note */ }
       }
     }
   }
   eng.trigger(name, time, { vel: vel });
 }
 
-/** No Kit row to label while no kit ships. Kept so loadKit() needs no edits. */
-function kitLabel(){}
+function kitLabel(){
+  var on = KIT.on && KIT.ready;
+  $("kitsynth").classList.toggle("on", !on);
+  $("kitbp").classList.toggle("on", on && KIT.id === "blackpearl");
+  $("kitrz").classList.toggle("on", on && KIT.id === "redzeppelin");
+  $("kithint").textContent = KIT.loading ? "loading the kit…"
+    : on ? ((KIT.man && KIT.man.kits[KIT.id] ? KIT.man.kits[KIT.id].name : "kit")
+            + " · 5 velocity layers · AVL Drumkits CC BY-SA")
+    : "synthesised live at exact velocity";
+}
+$("kitsynth").onclick = function(){ KIT.on = false; kitLabel(); bgTouch(); toast("Synth"); };
+function pickKit(id, label){
+  return function(){
+    if (!eng.ctx) { revive(true); return; }
+    if (KIT.ready && KIT.id === id) { KIT.on = true; kitLabel(); bgTouch(); toast(label); return; }
+    KIT.ready = false;
+    loadKit(id).then(function(ok){ if (ok) { bgTouch(); toast(label); } });
+  };
+}
+$("kitbp").onclick = pickKit("blackpearl", "Black Pearl");
+$("kitrz").onclick = pickKit("redzeppelin", "Red Zeppelin");
 
-var _kitPicker = function(){
+var _retired = function(){
   if (!eng.ctx) { toast("Power on first."); return; }
   if (KIT.ready) { KIT.on = true; kitLabel(); toast("Room kit"); return; }
   loadKit("room").then(function(ok){
@@ -2783,7 +2830,7 @@ function snapshot(){
     slot:S.slot, slots:S.slots, arrange:S.arrange, roots:S.roots, chords:S.chords,
     rootmode:S.rootmode, clickmode:S.clickmode, gap:S.gap, ramp:S.ramp, countin:S.countin, loop:S.loop,
     bassg:S.bassg, clickg:S.clickg, gains:S.gains, mutes:S.mutes,
-    prog:$("prog").value, grooveId:(cur()||{}).id||null
+    prog:$("prog").value, grooveId:(cur()||{}).id||null, kit:(KIT.on&&KIT.ready)?KIT.id:"synth"
   };
 }
 function applySnapshot(d){
@@ -2819,7 +2866,9 @@ function applySnapshot(d){
     document.querySelectorAll("#mix input").forEach(function(r,i){ var v=VOICES[i]; r.value=Math.round((S.gains[v]||0.8)*100); });
     if(MEM.audio) VOICES.forEach(function(v){ eng.setVoiceGain(v,S.gains[v]); eng.setVoiceMute(v,!!S.mutes[v]); });
     drawGrid(); drawArr(); info();
-    // d.kit is ignored — saves from when a sampled kit shipped restore as synth
+    if(d.kit && d.kit !== "synth" && KIT.man !== undefined){
+      if(d.kit === "blackpearl" || d.kit === "redzeppelin") loadKit(d.kit);
+    }
     return true;
   }catch(err){ return false; }
 }
