@@ -294,27 +294,27 @@
  },
  "synth": {
   "rmsAtFull": {
-   "kick": 0.478041,
-   "snare": 0.066729,
-   "rim": 0.026062,
-   "clap": 0.038595,
-   "hh": 0.000929,
-   "oh": 0.009805,
-   "ride": 0.010989,
-   "tom": 0.277441,
-   "perc": 0.030881
+   "kick": 0.397144,
+   "snare": 0.052047,
+   "rim": 0.032826,
+   "clap": 0.021999,
+   "hh": 0.001371,
+   "oh": 0.009863,
+   "ride": 0.013658,
+   "tom": 0.245725,
+   "perc": 0.038209
   },
   "velExp": {
-   "kick": 0.265,
-   "snare": 0.727,
-   "rim": 0.908,
-   "clap": 0.941,
-   "hh": 0.875,
-   "oh": 0.993,
-   "ride": 0.992,
-   "tom": 0.513,
-   "perc": 0.925
+   "kick": 0.624,
+   "snare": 0.977,
+   "rim": 0.95,
+   "clap": 0.871,
+   "hh": 0.882,
+   "oh": 0.996,
+   "ride": 0.994,
+   "tom": 0.77,
+   "perc": 0.953
   },
-  "note": "measured from this engine offline, dry, master=1, first 250ms \u2014 the sampler reproduces this law"
+  "note": "measured at busIn (before the master chain) and divided by the voice gain (because the sampler feeds into that same gain node). Either omission puts every sampled voice at the wrong level."
  }
 }
