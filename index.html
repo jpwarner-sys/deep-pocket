@@ -200,7 +200,7 @@ select{font-family:var(--mono);font-size:12px;background:var(--well);color:var(-
 <body>
 <main id="unit">
   <div class="brand">
-    <h1>Deep Pocket</h1><span class="mk">RHYTHM&nbsp;TRAINER</span><span class="ver" id="ver">v17 web</span>
+    <h1>Deep Pocket</h1><span class="mk">RHYTHM&nbsp;TRAINER</span><span class="ver" id="ver">v18 web</span>
     <span class="sub">nine voices · 18 grooves · 32-bar arranger<br>built for bass practice</span>
   </div>
 
@@ -314,7 +314,7 @@ select{font-family:var(--mono);font-size:12px;background:var(--well);color:var(-
       <div class="ctl"><span class="lbl">Feel</span>
         <input type="range" id="feel" min="-40" max="20" value="-12" aria-label="Feel"><span class="val num" id="feelvv">−12</span></div>
       <div class="ctl"><span class="lbl">Room</span>
-        <input type="range" id="verb" min="0" max="100" value="12" aria-label="Room"><span class="val num" id="verbv">12</span></div>
+        <input type="range" id="verb" min="0" max="10" step="1" value="3" aria-label="Room"><span class="val num" id="verbv">3</span></div>
       <div class="note"><b>Drop out</b> is the real one. The drums vanish, you keep the time, they come back — and you find out whether you were actually in the pocket or just following.</div>
     </section>
 
@@ -1231,6 +1231,7 @@ select{font-family:var(--mono);font-size:12px;background:var(--well);color:var(-
   var GROOVES = [
     {
       id: "motown",
+      room: 3,
       name: "Motown",
       sub: "Jamerson feel",
       bpm: 116,
@@ -1262,6 +1263,7 @@ select{font-family:var(--mono);font-size:12px;background:var(--well);color:var(-
 
     {
       id: "boombap",
+      room: 1,
       name: "Boom Bap",
       sub: "90s, dragging",
       bpm: 90,
@@ -1293,6 +1295,7 @@ select{font-family:var(--mono);font-size:12px;background:var(--well);color:var(-
 
     {
       id: "purdie",
+      room: 2,
       name: "Purdie Shuffle",
       sub: "Half-time 12/8",
       bpm: 98,
@@ -1320,6 +1323,7 @@ select{font-family:var(--mono);font-size:12px;background:var(--well);color:var(-
 
     {
       id: "bodiddley",
+      room: 3,
       name: "Bo Diddley",
       sub: "3-2 clave",
       bpm: 152,
@@ -1350,6 +1354,7 @@ select{font-family:var(--mono);font-size:12px;background:var(--well);color:var(-
 
     {
       id: "samba",
+      room: 2,
       name: "Samba",
       sub: "Surdo on 2",
       bpm: 96,
@@ -1381,6 +1386,7 @@ select{font-family:var(--mono);font-size:12px;background:var(--well);color:var(-
 
     {
       id: "afrobeat",
+      room: 2,
       name: "Afrobeat",
       sub: "Tony Allen",
       bpm: 108,
@@ -1412,6 +1418,7 @@ select{font-family:var(--mono);font-size:12px;background:var(--well);color:var(-
 
     {
       id: "neosoul",
+      room: 4,
       name: "Neo-Soul Drag",
       sub: "D'Angelo late",
       bpm: 72,
@@ -1439,6 +1446,7 @@ select{font-family:var(--mono);font-size:12px;background:var(--well);color:var(-
 
     {
       id: "dnb",
+      room: 1,
       name: "Drum & Bass",
       sub: "Amen flavour",
       bpm: 174,
@@ -1466,6 +1474,7 @@ select{font-family:var(--mono);font-size:12px;background:var(--well);color:var(-
 
     {
       id: "onedrop",
+      room: 4,
       name: "One Drop",
       sub: "No kick on 1",
       bpm: 74,
@@ -1501,6 +1510,7 @@ select{font-family:var(--mono);font-size:12px;background:var(--well);color:var(-
 
     {
       id: "secondline",
+      room: 3,
       name: "Second Line",
       sub: "NOLA big four",
       bpm: 94,
@@ -1532,6 +1542,7 @@ select{font-family:var(--mono);font-size:12px;background:var(--well);color:var(-
 
     {
       id: "funk16",
+      room: 1,
       name: "Funk 16ths",
       sub: "Stubblefield",
       bpm: 100,
@@ -1563,6 +1574,7 @@ select{font-family:var(--mono);font-size:12px;background:var(--well);color:var(-
 
     {
       id: "disco",
+      room: 3,
       name: "Disco",
       sub: "Four on floor",
       bpm: 122,
@@ -1597,6 +1609,7 @@ select{font-family:var(--mono);font-size:12px;background:var(--well);color:var(-
 
     {
       id: "odd78",
+      room: 3,
       name: "Seven Eight",
       sub: "2+2+3",
       bpm: 128,
@@ -1623,6 +1636,7 @@ select{font-family:var(--mono);font-size:12px;background:var(--well);color:var(-
 
     {
       id: "odd54",
+      room: 1,
       name: "Five Four",
       sub: "3+2 waltz-lean",
       bpm: 156,
@@ -1649,6 +1663,7 @@ select{font-family:var(--mono);font-size:12px;background:var(--well);color:var(-
 
     {
       id: "bossa",
+      room: 3,
       name: "Bossa Nova",
       sub: "Rim clave",
       bpm: 132,
@@ -1679,6 +1694,7 @@ select{font-family:var(--mono);font-size:12px;background:var(--well);color:var(-
 
     {
       id: "gospel",
+      room: 4,
       name: "Gospel Shuffle",
       sub: "12/8 church",
       bpm: 76,
@@ -1706,6 +1722,7 @@ select{font-family:var(--mono);font-size:12px;background:var(--well);color:var(-
 
     {
       id: "motorik",
+      room: 2,
       name: "Motorik",
       sub: "Neu! machine",
       bpm: 138,
@@ -1732,6 +1749,7 @@ select{font-family:var(--mono);font-size:12px;background:var(--well);color:var(-
 
     {
       id: "trap",
+      room: 1,
       name: "Trap",
       sub: "Half-time 808",
       bpm: 140,
@@ -1883,7 +1901,7 @@ var eng = new window.PocketAudio.Engine();
 var S = {
   slots: [blank(),blank(),blank(),blank()],
   slot: 0,
-  bpm: 116, swing:0.16, feel:-0.012, verb:0.12, master:0.8,
+  bpm: 116, swing:0.16, feel:-0.012, verb:0.3, master:0.8,
   arrange: new Array(32), roots: new Array(32), chords: new Array(32),
   rootmode:"1", clickmode:"off", gap:0, ramp:0, countin:1, loop:0,
   bassg:0.55, clickg:0.45,
@@ -1897,17 +1915,30 @@ VOICES.forEach(function(v){ S.gains[v]=0.8; S.mutes[v]=false; });
 function blank(){ var p={}; VOICES.forEach(function(v){ p[v]=new Array(16).fill(0); });
   return {steps:16,bars:1,p:p,name:"empty",sub:"",note:""}; }
 function cur(){ return S.slots[S.slot]; }
-/* ---------- room amount ----------------------------------------------------
- * The Room dial was linear (amount = dial/100). The only usable setting was 2, so
- * 98 percent of the travel did nothing he wanted and every useful value was
- * crushed into the first two ticks. ROOM_K is chosen so dial 6 gives exactly the
- * amount dial 2 used to — that anchor, honoured exactly — while 100 still reaches
- * a real room:  6/100 ^ 1.39 = 0.02.  Old 22 now lands at about 12.
+/* ---------- room --------------------------------------------------------------
+ * The dial is 0-10 in whole numbers — which is what it always looked like, and
+ * what it should have been. It used to run to 100 with everything useful below 3.
+ *
+ * Dial 10 is a real room, not a swimming pool: 0.35, a third of what the old
+ * slider could reach. ROOM_K is solved so dial 2 is exactly the setting arrived
+ * at by hand on the old control: 0.35 * 0.2^1.778 = 0.02.
+ *
+ *   dial  0     1      2      3      4      5      7      10
+ *   amt   0   .006   .020   .041   .068   .102   .186   .350
  */
-var ROOM_K = 1.39;
-function roomAmount(dial){ return Math.pow(Math.max(0, Math.min(1, dial)), ROOM_K); }
-/** Old saves stored the raw amount. Invert the curve so they sound unchanged. */
-function roomDialFromAmount(a){ return Math.pow(Math.max(0, Math.min(1, a)), 1/ROOM_K); }
+var ROOM_MAX = 0.35, ROOM_K = 1.778, ROOM_STEPS = 10;
+/** dial 0..1 (i.e. dial/10) -> send amount 0..ROOM_MAX */
+function roomAmount(n){ return ROOM_MAX * Math.pow(Math.max(0, Math.min(1, n)), ROOM_K); }
+/** and back, for migrating saves that stored an amount instead of a dial */
+function roomDialFromAmount(a){
+  return Math.pow(Math.max(0, Math.min(1, a / ROOM_MAX)), 1 / ROOM_K);
+}
+function setRoom(dial){
+  dial = Math.max(0, Math.min(ROOM_STEPS, Math.round(dial)));
+  S.verb = dial / ROOM_STEPS;
+  $("verb").value = dial; $("verbv").textContent = String(dial);
+  if(eng && eng.setReverb) eng.setReverb(roomAmount(S.verb));
+}
 
 function beatsPerBar(steps){ return steps===14?3.5:(steps===20?5:4); }
 /** How many bars before it comes round again. 0 = follow the changes. */
@@ -1942,6 +1973,7 @@ function loadGroove(i){
   setBpm(g.bpm); S.baseBpm=g.bpm;
   setSwing(Math.round((g.swing||0)*100));
   setFeel(Math.round((g.feel||0)*1000));
+  setRoom(g.room!=null ? g.room : 3);      // dense grooves smear; each one knows its own
   document.querySelectorAll(".gv").forEach(function(e,j){ e.classList.toggle("on", j===i); });
   drawGrid(); info(); toast(g.name+" → pattern "+"ABCD"[S.slot]);
 }
@@ -2089,7 +2121,7 @@ $("bmin").onclick=function(){ setBpm(S.bpm-1); S.baseBpm=S.bpm; };
 $("bplus").onclick=function(){ setBpm(S.bpm+1); S.baseBpm=S.bpm; };
 $("swing").oninput=function(){ setSwing(+$("swing").value); };
 $("feel").oninput=function(){ setFeel(+$("feel").value); };
-$("verb").oninput=function(){ S.verb=$("verb").value/100; $("verbv").textContent=$("verb").value; eng.setReverb(roomAmount(S.verb)); };
+$("verb").oninput=function(){ setRoom(+$("verb").value); };
 $("master").oninput=function(){ S.master=$("master").value/100; $("masterv").textContent=$("master").value; eng.setMaster(S.master); };
 $("bassg").oninput=function(){ S.bassg=$("bassg").value/100; $("bassgv").textContent=$("bassg").value; eng.setBassGain(S.bassg); };
 $("clickg").oninput=function(){ S.clickg=$("clickg").value/100; $("clickgv").textContent=$("clickg").value; eng.setClickGain(S.clickg); };
@@ -2760,7 +2792,7 @@ var LKEY = "deeppocket.v1";
 function snapshot(){
   return {
     v:1, at:new Date().toISOString(),
-    bpm:S.bpm, baseBpm:S.baseBpm, swing:S.swing, feel:S.feel, verb:S.verb, verbCurve:2, master:S.master,
+    bpm:S.bpm, baseBpm:S.baseBpm, swing:S.swing, feel:S.feel, verb:S.verb, verbCurve:3, master:S.master,
     slot:S.slot, slots:S.slots, arrange:S.arrange, roots:S.roots, chords:S.chords,
     rootmode:S.rootmode, clickmode:S.clickmode, gap:S.gap, ramp:S.ramp, countin:S.countin, loop:S.loop,
     bassg:S.bassg, clickg:S.clickg, gains:S.gains, mutes:S.mutes,
@@ -2776,11 +2808,15 @@ function applySnapshot(d){
     S.baseBpm = d.baseBpm||d.bpm||S.bpm;
     setBpm(d.bpm||S.bpm); setSwing(Math.round((d.swing||0)*100)); setFeel(Math.round((d.feel||0)*1000));
     if(d.verb!=null){
-      // saves from before the curve stored the raw amount — convert, so a restored
-      // setup sounds exactly as it did rather than four times drier
-      S.verb = (d.verbCurve === 2) ? d.verb : roomDialFromAmount(d.verb);
+      // Three generations of this field now. v1 stored the raw amount; v2 stored a
+      // 0-100 dial position whose amount was pos^1.39; v3 stores a 0-10 dial as
+      // 0..1. Convert the old two through their own amount so a restored setup
+      // sounds exactly as it did, rather than being reinterpreted on a new scale.
+      var n = d.verbCurve === 3 ? d.verb
+            : d.verbCurve === 2 ? roomDialFromAmount(Math.pow(d.verb, 1.39))
+            : roomDialFromAmount(d.verb);
+      setRoom(Math.round(n * ROOM_STEPS));
     }
-    $("verb").value=Math.round(S.verb*100); $("verbv").textContent=$("verb").value;
     S.master=d.master!=null?d.master:S.master; $("master").value=Math.round(S.master*100); $("masterv").textContent=$("master").value;
     S.bassg=d.bassg!=null?d.bassg:S.bassg; $("bassg").value=Math.round(S.bassg*100); $("bassgv").textContent=$("bassg").value;
     S.clickg=d.clickg!=null?d.clickg:S.clickg; $("clickg").value=Math.round(S.clickg*100); $("clickgv").textContent=$("clickg").value;
