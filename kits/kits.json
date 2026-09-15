@@ -290,6 +290,142 @@
      0.142745
     ]
    }
+  },
+  "tr808": {
+   "name": "TR-808 Fischer",
+   "credit": "Michael Fischer / tidalcycles sounds-tr808-fischer \u2014 CC0-1.0",
+   "source": "https://github.com/tidalcycles/sounds-tr808-fischer",
+   "note": "Roland TR-808 samples by Michael Fischer (Technopolis), 1994, CC0. Five layers per voice: decay/snappy as velocity where the 808 has knobs; single-shot voices (rim, clap, closed hat, cowbell) repeat the same file and the synth velocity law supplies the loudness. Kick is low-tune BD00xx (classic boom). Do not normalise \u2014 808 kick RMS is ~0.45\u00d7 AVL; if the mix is hot, trim/master/bus, not the samples.",
+   "voices": {
+    "kick": [
+     "tr808/kick-1.flac",
+     "tr808/kick-2.flac",
+     "tr808/kick-3.flac",
+     "tr808/kick-4.flac",
+     "tr808/kick-5.flac"
+    ],
+    "snare": [
+     "tr808/snare-1.flac",
+     "tr808/snare-2.flac",
+     "tr808/snare-3.flac",
+     "tr808/snare-4.flac",
+     "tr808/snare-5.flac"
+    ],
+    "rim": [
+     "tr808/rim-1.flac",
+     "tr808/rim-2.flac",
+     "tr808/rim-3.flac",
+     "tr808/rim-4.flac",
+     "tr808/rim-5.flac"
+    ],
+    "clap": [
+     "tr808/clap-1.flac",
+     "tr808/clap-2.flac",
+     "tr808/clap-3.flac",
+     "tr808/clap-4.flac",
+     "tr808/clap-5.flac"
+    ],
+    "hh": [
+     "tr808/hh-1.flac",
+     "tr808/hh-2.flac",
+     "tr808/hh-3.flac",
+     "tr808/hh-4.flac",
+     "tr808/hh-5.flac"
+    ],
+    "oh": [
+     "tr808/oh-1.flac",
+     "tr808/oh-2.flac",
+     "tr808/oh-3.flac",
+     "tr808/oh-4.flac",
+     "tr808/oh-5.flac"
+    ],
+    "ride": [
+     "tr808/ride-1.flac",
+     "tr808/ride-2.flac",
+     "tr808/ride-3.flac",
+     "tr808/ride-4.flac",
+     "tr808/ride-5.flac"
+    ],
+    "tom": [
+     "tr808/tom-1.flac",
+     "tr808/tom-2.flac",
+     "tr808/tom-3.flac",
+     "tr808/tom-4.flac",
+     "tr808/tom-5.flac"
+    ],
+    "perc": [
+     "tr808/perc-1.flac",
+     "tr808/perc-2.flac",
+     "tr808/perc-3.flac",
+     "tr808/perc-4.flac",
+     "tr808/perc-5.flac"
+    ]
+   },
+   "rms": {
+    "kick": [
+     0.08305,
+     0.102718,
+     0.09402,
+     0.113786,
+     0.127031
+    ],
+    "snare": [
+     0.046876,
+     0.047087,
+     0.040196,
+     0.05446,
+     0.069939
+    ],
+    "rim": [
+     0.045315,
+     0.045315,
+     0.045315,
+     0.045315,
+     0.045315
+    ],
+    "clap": [
+     0.026224,
+     0.026224,
+     0.026224,
+     0.026224,
+     0.026224
+    ],
+    "hh": [
+     0.031575,
+     0.031575,
+     0.031575,
+     0.031575,
+     0.031575
+    ],
+    "oh": [
+     0.08798,
+     0.135231,
+     0.111044,
+     0.094159,
+     0.094253
+    ],
+    "ride": [
+     0.046378,
+     0.042927,
+     0.039929,
+     0.035346,
+     0.033279
+    ],
+    "tom": [
+     0.064142,
+     0.068533,
+     0.07882,
+     0.093394,
+     0.10946
+    ],
+    "perc": [
+     0.033707,
+     0.033707,
+     0.033707,
+     0.033707,
+     0.033707
+    ]
+   }
   }
  },
  "synth": {
@@ -298,8 +434,8 @@
    "snare": 0.052047,
    "rim": 0.032826,
    "clap": 0.021999,
-   "hh": 0.001371,
-   "oh": 0.009863,
+   "hh": 0.028,
+   "oh": 0.036,
    "ride": 0.013658,
    "tom": 0.245725,
    "perc": 0.038209
@@ -315,6 +451,6 @@
    "tom": 0.77,
    "perc": 0.953
   },
-  "note": "measured at busIn (before the master chain) and divided by the voice gain (because the sampler feeds into that same gain node). Either omission puts every sampled voice at the wrong level."
+  "note": "measured at busIn (before the master chain) and divided by the voice gain (because the sampler feeds into that same gain node). Either omission puts every sampled voice at the wrong level. hh/oh rmsAtFull were raised in v24: a long-window RMS of a 50ms hat undercounted the synth by ~26 dB, so kit hats lit the grid and made no sound."
  }
 }
