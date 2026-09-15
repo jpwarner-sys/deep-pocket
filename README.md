@@ -4,10 +4,18 @@ A rhythm trainer for bass practice. Nine voices, 18 grooves, a 32-bar arranger
 with chord changes, a bass voice that follows the changes, and a lock-screen mode
 that keeps the loop playing when the phone sleeps.
 
-Everything runs in the browser — Web Audio synthesis, a lookahead scheduler with
-swing and per-groove micro-timing, and two sampled acoustic kits.
+Live (GitHub Pages, this repo only — not NOW, not BLOCKBALL):
 
-Saved setups live in this browser's local storage. Nothing is sent anywhere.
+https://jpwarner-sys.github.io/deep-pocket/
+
+Everything runs in the browser — Web Audio synthesis, a lookahead scheduler with
+swing and per-groove micro-timing, and sampled kits (AVL Black Pearl / Red Zeppelin, Fischer TR-808).
+
+Saved setups live in this browser under `deeppocket.*` keys. Nothing is sent anywhere.
+No service worker. Manifest `id` / `scope` / `start_url` are `/deep-pocket/` so iOS
+cannot key this install to another app on `jpwarner-sys.github.io`.
+
+v21 freeze: branch `backup/v21-20260915`.
 
 ## Kits
 
@@ -16,8 +24,13 @@ Saved setups live in this browser's local storage. Nothing is sent anywhere.
 **Black Pearl** and **Red Zeppelin** — samples from
 [AVL Drumkits](https://github.com/studiorack/avl-drumkits) by **Glen MacArthur**,
 used under **CC BY-SA 3.0**. Five velocity layers per voice, trimmed and
-tail-capped for this app; the samples in `kits/` are a derivative work and carry
-the same CC BY-SA 3.0 licence.
+tail-capped for this app; the samples in `kits/blackpearl` and `kits/redzeppelin`
+are a derivative work and carry the same CC BY-SA 3.0 licence.
+
+**TR-808** — Roland TR-808 samples by **Michael Fischer** (Technopolis, 1994),
+from [tidalcycles/sounds-tr808-fischer](https://github.com/tidalcycles/sounds-tr808-fischer),
+[CC0](https://creativecommons.org/publicdomain/zero/1.0/). Five layers per voice
+in `kits/tr808`.
 
 AVL normalises each sample, so its velocity layers carry the *timbre* of a soft
 or hard hit but not its loudness, and its SFZ sets no `amp_veltrack` — meaning
@@ -28,4 +41,5 @@ so a sampled kit has the same dynamics as the synth rather than a flat one.
 ## Licence
 
 App code: see `LICENSE` if present, otherwise all rights reserved by the author.
-Sample content under `kits/`: CC BY-SA 3.0, © Glen MacArthur (AVL Drumkits).
+Sample content under `kits/blackpearl` and `kits/redzeppelin`: CC BY-SA 3.0, © Glen MacArthur (AVL Drumkits).
+Sample content under `kits/tr808`: CC0, Michael Fischer / Technopolis.
