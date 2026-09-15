@@ -293,9 +293,8 @@
   },
   "tr808": {
    "name": "TR-808 Fischer",
-   "credit": "Michael Fischer / tidalcycles sounds-tr808-fischer \u2014 CC0-1.0",
-   "source": "https://github.com/tidalcycles/sounds-tr808-fischer",
-   "note": "Roland TR-808 samples by Michael Fischer (Technopolis), 1994, CC0. Five layers per voice: decay/snappy as velocity where the 808 has knobs; single-shot voices (rim, clap, closed hat, cowbell) repeat the same file and the synth velocity law supplies the loudness. Kick is low-tune BD00xx (classic boom). Do not normalise \u2014 808 kick RMS is ~0.45\u00d7 AVL; if the mix is hot, trim/master/bus, not the samples.",
+   "credit": "Roland TR-808 sample set (Michael Fischer, 1994) via tidalcycles/sounds-tr808-fischer \u2014 CC0 1.0",
+   "note": "rim, clap, hh and perc map one source sample to all five layers: the TR-808 has no velocity layers on those voices, so the duplication is the instrument, not a gap. Velocity still scales gain through kitGain; only timbre is constant. kick/snare/oh/ride layers are the 808's own decay settings.",
    "voices": {
     "kick": [
      "tr808/kick-1.flac",
@@ -363,67 +362,67 @@
    },
    "rms": {
     "kick": [
-     0.08305,
-     0.102718,
-     0.09402,
-     0.113786,
-     0.127031
+     0.091598,
+     0.153691,
+     0.284103,
+     0.318058,
+     0.36981
     ],
     "snare": [
-     0.046876,
-     0.047087,
-     0.040196,
-     0.05446,
-     0.069939
+     0.04688,
+     0.047097,
+     0.056848,
+     0.077021,
+     0.098912
     ],
     "rim": [
-     0.045315,
-     0.045315,
-     0.045315,
-     0.045315,
-     0.045315
+     0.045319,
+     0.045319,
+     0.045319,
+     0.045319,
+     0.045319
     ],
     "clap": [
-     0.026224,
-     0.026224,
-     0.026224,
-     0.026224,
-     0.026224
+     0.074109,
+     0.074109,
+     0.074109,
+     0.074109,
+     0.074109
     ],
     "hh": [
-     0.031575,
-     0.031575,
-     0.031575,
-     0.031575,
-     0.031575
+     0.031576,
+     0.031576,
+     0.031576,
+     0.031576,
+     0.031576
     ],
     "oh": [
-     0.08798,
-     0.135231,
-     0.111044,
-     0.094159,
-     0.094253
+     0.087988,
+     0.135244,
+     0.151031,
+     0.151425,
+     0.150664
     ],
     "ride": [
-     0.046378,
-     0.042927,
-     0.039929,
-     0.035346,
-     0.033279
+     0.111769,
+     0.116774,
+     0.117386,
+     0.119759,
+     0.118785
     ],
     "tom": [
-     0.064142,
-     0.068533,
-     0.07882,
-     0.093394,
-     0.10946
+     0.128274,
+     0.137058,
+     0.157631,
+     0.18678,
+     0.218906
     ],
     "perc": [
-     0.033707,
-     0.033707,
-     0.033707,
-     0.033707,
-     0.033707
+     0.082465,
+     0.082465,
+     0.082465,
+     0.082465,
+     0.082465
     ]
    }
   }
@@ -434,8 +433,8 @@
    "snare": 0.052047,
    "rim": 0.032826,
    "clap": 0.021999,
-   "hh": 0.028,
-   "oh": 0.036,
+   "hh": 0.001371,
+   "oh": 0.009863,
    "ride": 0.013658,
    "tom": 0.245725,
    "perc": 0.038209
@@ -451,6 +450,11 @@
    "tom": 0.77,
    "perc": 0.953
   },
-  "note": "measured at busIn (before the master chain) and divided by the voice gain (because the sampler feeds into that same gain node). Either omission puts every sampled voice at the wrong level. hh/oh rmsAtFull were raised in v24: a long-window RMS of a 50ms hat undercounted the synth by ~26 dB, so kit hats lit the grid and made no sound."
+  "note": "measured at busIn (before the master chain) and divided by the voice gain (because the sampler feeds into that same gain node). Either omission puts every sampled voice at the wrong level."
+ },
+ "rmsWindow": {
+  "seconds": 0.25,
+  "from": "onset at -60 dBFS of the file's own peak",
+  "note": "zero-padded if the sample is shorter; recovered by fitting the shipped AVL kits (median rel err 4e-06 over 90 samples)"
  }
 }
