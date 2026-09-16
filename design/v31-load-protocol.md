@@ -335,7 +335,62 @@ own line as a bare address, no scheme, no markdown wrapper — he reads these
 on a phone.
 
 ────────────────────────────────────────────────────────
-13. NEVER PUT THESE IN THE REPO
+13. STRIP THE PROSE. ICONS WHERE THEY EARN IT.
+────────────────────────────────────────────────────────
+This is a phone app used with a bass in your hands. It currently reads like a
+desktop web page: 30 static prose blocks in the markup, several of them
+paragraphs, plus a per-groove description injected at runtime.
+
+THE TEST: text stays if it NAMES a control you would otherwise guess at, or
+IS a value. Text that explains, teaches, reassures or sells goes. You read it
+once; after that it is clutter you look past a thousand times.
+
+DELETE OUTRIGHT (verified present in v30):
+  · "Click a step to cycle it: off -> ghost -> normal -> accent. Shift-click
+     clears a whole row."  — and note it says CLICK and SHIFT-CLICK, neither
+     of which exists on a phone
+  · "The big letters are the chord. Click a bar to cycle its pattern..."
+  · "Drop out is the real one. The drums vanish, you keep the time, they come
+     back — and you find out whether you were actually in the pocket..."
+  · "Your setup saves itself in the background. Nothing is ever loaded back
+     without you tapping for it."
+  · the keyboard hint row — "space play/stop", "t tap tempo", "1-4 pattern",
+     arrows tempo, "g drop-out on/off". Keyboard shortcuts on a phone-first
+     app are dead weight. Keep the key handlers, delete the printed hints.
+  · "nine voices · 18 grooves · 32-bar arranger" and "built for bass practice"
+  · "Grooves — tap to load into the selected pattern" (they are obviously taps)
+  · "synthesised live at exact velocity"
+  · "off — audio stops when the screen locks" (the lamp already says it)
+  · "Stuck on an old setup?" — leave the Reset to factory control, drop the line
+
+FIX, DO NOT JUST DELETE:
+  · Footer "Everything here is synthesised live — no samples, no network."
+    The first half is FALSE since v20; three sampled kits ship. Either make it
+    true and short or move it to an info surface. Do not ship a false claim.
+  · Splash copy can be far shorter, but the splash is the audio gesture
+    surface — it needs enough to invite a tap.
+  · The per-groove description ("Motown — backbeat hard on 2 and 4...") is
+    good writing and useful the first few times. DEMOTE it, do not delete it:
+    long-press, or an info toggle. Losing it is a real loss.
+
+KEEP — these are values, not prose:
+  dropdown options ("never — drums always on", "every 4th bar", "+1 BPM every
+  8 bars", "beats 1 & 3"), and specific destructive actions ("Copy to B",
+  "Reset to factory"). A word is right when the control is unusual.
+
+ICONS — where they EARN it, and nowhere else:
+  YES, universal and unambiguous: bass clef for BASS (already specced),
+  padlock for LOCK, sliders for MIX, layers for MEMORY, triangle for a small
+  transport pip.
+  NO: SWING, FEEL, ROOM, COUNT-IN, DROP OUT, TEMPO, KIT. Nobody has a glyph
+  for "drop out". An invented pictogram is worse than the word — it is a
+  thing to memorise instead of a thing to read.
+  Knob labels STAY. An unlabelled knob is a guess, and hardware labels its
+  knobs. The big PLAY key keeps its word; that is style, and style counts.
+  If you cannot name the icon in one word without a legend, use the word.
+
+────────────────────────────────────────────────────────
+14. NEVER PUT THESE IN THE REPO
 ────────────────────────────────────────────────────────
 design/ is published on the public internet. Device serial numbers, Wi-Fi or
 Bluetooth MAC addresses, IMEI, account names, real names, client or firm
