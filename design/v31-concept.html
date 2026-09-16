@@ -80,11 +80,12 @@ h3{font-size:11.5px;letter-spacing:.2em;color:#ffa02c;margin-bottom:8px;text-tra
 .gridw{display:grid;gap:3px}
 .grow{min-height:0}
 .grow{display:grid;grid-template-columns:var(--nc,54px) repeat(16,1fr);gap:3px;align-items:center}
+.grow:has(.gname[style*="none"]){grid-template-columns:repeat(16,1fr)}
 .gname{font-size:8px;letter-spacing:.06em;color:#a2988a;display:flex;align-items:center;gap:5px;white-space:nowrap;overflow:hidden}
 .stp{width:100%;max-width:var(--sh,20px);aspect-ratio:1;height:auto;justify-self:center;border-radius:50%;background:radial-gradient(circle at 38% 32%,#4a3320,#2a1a0d 46%,#160d06 78%);box-shadow:inset 0 0 0 1px rgba(0,0,0,.9),inset 0 1px 1px rgba(220,175,120,.22),inset 0 -2px 3px rgba(0,0,0,.6),0 1px 1px rgba(0,0,0,.5)}
 .stp.on{background:radial-gradient(circle at 38% 32%,#ffd79a,#ffa02c 58%,#a85f06);box-shadow:0 0 8px rgba(255,160,44,.7)}
 .stp.ph{box-shadow:inset 0 0 0 1px rgba(255,246,226,.5)}
-.ruler{display:grid;grid-template-columns:var(--nc,54px) repeat(16,1fr);gap:3px;font-size:7.5px;color:#6a6158;text-align:center;margin-bottom:3px}
+.ruler{display:grid;grid-template-columns:var(--nc,0px) repeat(16,1fr);gap:3px;font-size:7.5px;color:#6a6158;text-align:center;margin-bottom:3px}
 .arr{display:grid;grid-template-columns:repeat(32,1fr);gap:1px;height:var(--ah,34px);position:relative}
 .arr i{background:linear-gradient(180deg,#2c1c0e,#190f07);border-radius:1px}
 .arr i.hot{background:linear-gradient(180deg,#ffc978,#ff9c1f 60%,#c2700a);box-shadow:0 0 14px rgba(255,160,44,.65)}
@@ -134,7 +135,7 @@ function swRow(bass){return '<div style="display:flex;justify-content:space-arou
   bt('LOCK',1,1)+clef(bass)+bt('COUNT',0,0)+bt('DROP',0,0)+'</div>'}
 function grid(sh,nc){var h='<div class=ruler style="--nc:'+nc+'px"><span></span>';
   for(var i=1;i<=16;i++)h+='<span>'+((i-1)%4===0?i:'·')+'</span>';h+='</div><div class=gridw>';
-  V.forEach(function(n,r){h+='<div class=grow style="--nc:'+nc+'px"><div class=gname><i class="led'+(r<6?' on':'')+'"style="--ld:9px"></i>'+n+'</div>';
+  V.forEach(function(n,r){h+='<div class=grow style="--nc:'+nc+'px"><div class=gname'+(nc<10?' style="display:none"':'')+'><i class="led'+(r<6?' on':'')+'"style="--ld:9px"></i>'+n+'</div>';
    for(var s=0;s<16;s++){var on=PAT[r].indexOf(s)>-1;h+='<div class="stp'+(on?' on':'')+(s===10?' ph':'')+'" style="--sh:'+sh+'px"></div>'}h+='</div>'});
   return h+'</div>'}
 function arr(ah){var a='';for(var i=0;i<32;i++)a+='<i class="'+(i===10?'hot':'')+'"></i>';
@@ -183,14 +184,20 @@ function hPlay(){return '<div class=hdr style="margin-bottom:8px"><div class=bra
  '<div style="display:flex;flex-direction:column;gap:9px;align-items:center;padding-left:13px;border-left:1px solid rgba(107,74,36,.45)">'+
  '<div style="display:flex;gap:11px">'+kn('TEMPO','116',-16,46)+kn('KIT','PEARL',40,46)+kn('SWING','54%',-54,46)+'</div>'+
  '<div style="display:flex;gap:9px;align-items:flex-end">'+bt('LOCK',1,1)+clef(1)+bt('COUNT',0,0)+'<div class="key on" style="padding:10px 18px">PLAY</div></div></div></div>'}
-function hEdit(){return '<div class=hdr style="margin-bottom:7px"><div class=brand>DEEP POCKET<i>v31</i></div><div class="chip on">EDIT</div><div class=chip>PLAY</div>'+
- '<div style="margin-left:auto;display:flex;align-items:center;gap:8px"><span class=lb>BEAT</span>'+
- '<div class="bat dn lit" style="width:36px;height:19px;border-radius:10px"><i style="width:14px;height:14px;border-radius:50%;left:auto;right:3px;top:2px;margin:0"></i></div>'+
- '<span class="lb on">COMPOSE</span><span class="num" style="font-size:12px;color:#ffbf5e;margin-left:6px">116</span></div></div>'+
+function hEdit(mode){var beat = mode==='beat';
+ return '<div class=hdr style="margin-bottom:7px"><div class=brand>DEEP POCKET<i>v31</i></div><div class="chip on">EDIT</div><div class=chip>PLAY</div>'+
+ '<div style="margin-left:auto;display:flex;align-items:center;gap:8px"><span class="lb'+(beat?' on':'')+'">BEAT</span>'+
+ '<div class="bat '+(beat?'up':'dn')+' lit" style="width:36px;height:19px;border-radius:10px"><i style="width:14px;height:14px;border-radius:50%;left:auto;'+(beat?'left:3px':'right:3px')+';top:2px;margin:0"></i></div>'+
+ '<span class="lb'+(beat?'':' on')+'">COMPOSE</span><span class="num" style="font-size:12px;color:#ffbf5e;margin-left:6px">116</span></div></div>'+
  '<div style="display:flex;gap:11px;flex:1">'+
- '<div style="width:50%">'+grid(16,52)+'</div>'+
- '<div style="flex:1;display:flex;flex-direction:column"><div class=lb style="margin-bottom:4px">ARRANGER &nbsp; 32 BARS</div>'+arr(26)+
- '<div style="margin-top:22px">'+chordsRow(19)+'</div>'+
+ '<div style="width:'+(beat?'65%':'35%')+';display:flex;flex-direction:column;min-width:0">'+
+   (beat?'':'<div class=lb style="margin-bottom:4px">MONITOR</div>')+
+   grid(beat?26:11, beat?46:0)+
+ '</div>'+
+ '<div style="flex:1;display:flex;flex-direction:column;min-width:0"><div class=lb style="margin-bottom:4px">ARRANGER &nbsp; 32 BARS</div>'+arr(beat?20:34)+
+ (beat
+   ? '<div style="margin-top:16px;display:grid;grid-template-columns:1fr 1fr;gap:5px">'+plate('NOW','Am7',1,15)+plate('NEXT','D7',0,15)+'</div>'
+   : '<div style="margin-top:26px">'+chordsRow(21)+'</div>')+
  '<div style="display:flex;gap:6px;align-items:center;margin-top:auto"><div class=lb>PATTERN</div>'+
  '<div class="key on" style="padding:4px 10px">A</div><div class=key style="padding:4px 10px">B</div><div class=key style="padding:4px 10px">C</div><div class=key style="padding:4px 10px">D</div>'+
  '<div class=lb style="margin-left:auto">MIX</div><div class=lb>MEMORY</div></div></div></div>'}
@@ -198,5 +205,5 @@ function pv(f,c){return '<div><div class="bezelV walnut" style="width:300px"><di
 function ph(f,c){return '<div><div class="bezelH walnut" style="width:486px"><div class="faceH bw">'+f+'</div></div><div class=cap>'+c+'</div></div>'}
 
 document.getElementById('rv').innerHTML=pv(vLock(),'<b>V-LOCK</b> &nbsp;knobs + switches, no grid')+pv(vPlay(),'<b>V-PLAY</b> &nbsp;groove, PLAY, meters')+pv(vEdit(),'<b>V-EDIT</b> &nbsp;grid takes the face');
-document.getElementById('rh').innerHTML=ph(hLock(),'<b>H-LOCK</b> &nbsp;BPM hero, knob rail right')+ph(hPlay(),'<b>H-PLAY</b> &nbsp;chords left, hardware right')+ph(hEdit(),'<b>H-EDIT</b> &nbsp;BEAT | COMPOSE, fat arranger');
+document.getElementById('rh').innerHTML=ph(hLock(),'<b>H-LOCK</b> &nbsp;BPM hero, knob rail right')+ph(hPlay(),'<b>H-PLAY</b> &nbsp;chords left, hardware right')+ph(hEdit('beat'),'<b>H-EDIT / BEAT</b> &nbsp;grid 70%')+ph(hEdit('compose'),'<b>H-EDIT / COMPOSE</b> &nbsp;arranger 70%, grid is a monitor');
 </script></body></html>

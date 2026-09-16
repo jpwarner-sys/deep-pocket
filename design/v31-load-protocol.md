@@ -99,19 +99,31 @@ that, cut chrome — never cut steps.
 
 Same parts bin on all six. Different ratio. That's the whole trick.
 
-LANDSCAPE EDIT — the split is decided, the rest is yours
-BEAT | COMPOSE is a real toggle on the header rail, not tabs. In EITHER
-state the step grid holds AT LEAST HALF the width. The toggle shifts the
-balance; it does not hand one side the screen.
-  COMPOSE  grid ~50% left. The voice column collapses to a name plus one
-           lamp so the steps stay fat. Arranger ribbon and chord plates
-           take the other half.
-  BEAT     grid ~60-65%. Arranger compresses to a strip.
-An arranger at 35-40% still shows all 32 bars and the chord tiles — it is a
-ribbon and does not need half the display. Concept frames 80 and 81 give the
-arranger too much room: take material and lighting from them, not this
-ratio. You have 932 x 430 to work with, so the grid at half width is 460+
-points across 16 steps — the lamps should be genuinely large.
+LANDSCAPE EDIT — 65/35, and it SWAPS. This is decided.
+BEAT | COMPOSE is a real toggle on the header rail, not tabs, and it is a
+mirror: whichever side is favoured gets 65%, the other gets 35%.
+  BEAT     grid 65%  |  arranger 35%
+  COMPOSE  grid 35%  |  arranger 65%
+
+Measured at 932 x 430, after a 59pt Island inset and face padding:
+  BEAT     grid 545px -> 16 steps at 28px, 31px pitch. Row pitch 38px over
+           nine rows. That is a real sequencer you can hit with a thumb.
+           Arranger 293px -> 9px per bar. A ribbon. Chord plates drop to
+           NOW / NEXT only; four across does not fit and should not try.
+  COMPOSE  arranger 545px -> 17px per bar, and the chord tiles finally get
+           room to be the hero. Grid falls to 293px -> 16 steps at 15px,
+           18px pitch.
+
+THE 35% GRID IS A MONITOR, NOT AN EDITOR. 18px pitch is not a reliable touch
+target and you must not pretend otherwise. In COMPOSE the grid shows what is
+playing and nothing more: drop the voice-name column entirely, lamps only,
+label the block MONITOR, and do not accept step taps there — the user flips
+to BEAT to edit. That is what the toggle is FOR. Shipping 15px steps that
+look tappable and miss half the time is worse than not showing them.
+The grid still never disappears: you can always see the pattern running.
+
+Do not copy frames 80 and 81 on this ratio — they hand the arranger too much
+in both states. Take material and lighting from them, not proportion.
 
 ────────────────────────────────────────────────────────
 6. NINE ROWS — this one keeps getting broken, including by the art
