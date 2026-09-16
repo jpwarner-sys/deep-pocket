@@ -96,6 +96,20 @@ that, cut chrome — never cut steps.
 
 Same parts bin on all six. Different ratio. That's the whole trick.
 
+LANDSCAPE EDIT — the split is decided, the rest is yours
+BEAT | COMPOSE is a real toggle on the header rail, not tabs. In EITHER
+state the step grid holds AT LEAST HALF the width. The toggle shifts the
+balance; it does not hand one side the screen.
+  COMPOSE  grid ~50% left. The voice column collapses to a name plus one
+           lamp so the steps stay fat. Arranger ribbon and chord plates
+           take the other half.
+  BEAT     grid ~60-65%. Arranger compresses to a strip.
+An arranger at 35-40% still shows all 32 bars and the chord tiles — it is a
+ribbon and does not need half the display. Concept frames 80 and 81 give the
+arranger too much room: take material and lighting from them, not this
+ratio. You have 932 x 430 to work with, so the grid at half width is 460+
+points across 16 steps — the lamps should be genuinely large.
+
 ────────────────────────────────────────────────────────
 6. NINE ROWS — this one keeps getting broken, including by the art
 ────────────────────────────────────────────────────────
@@ -309,7 +323,7 @@ repo — comments count. Device MODEL is fine and useful. Identifiers are not.
 START BY
 ────────────────────────────────────────────────────────
 1. Read the live URL. Report: face version, voice-row count, current hh value.
-2. Open v31_CONCEPT.html in a browser and say what you think the material is
+2. Open v31-concept.html in a browser and say what you think the material is
    doing well and where the layout is weak.
 3. Tell Joe which surface you'll build first and what it will cost.
 Then build.
