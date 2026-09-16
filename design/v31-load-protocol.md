@@ -309,6 +309,8 @@ from it or you'll overwrite an edit Joe made.
         430 x 932, not 390 x 844
       · the four measured env(safe-area-inset-*) values, portrait and
         landscape, read off the phone in standalone
+      · the verbatim list of every text string you deleted or demoted, so
+        Joe can veto individual ones
       · proof the splash still unlocks audio: tap through, show ctx.state is
         'running' AND that currentTime advanced, play Motown, confirm the
         hats are audible on Black Pearl. The splash IS the gesture surface.
@@ -373,10 +375,22 @@ FIX, DO NOT JUST DELETE:
     good writing and useful the first few times. DEMOTE it, do not delete it:
     long-press, or an info toggle. Losing it is a real loss.
 
-KEEP — these are values, not prose:
-  dropdown options ("never — drums always on", "every 4th bar", "+1 BPM every
-  8 bars", "beats 1 & 3"), and specific destructive actions ("Copy to B",
-  "Reset to factory"). A word is right when the control is unusual.
+KEEP — and the burden of proof is on REMOVAL, not on keeping
+  The rule is not "delete small text". It is "delete text that does not earn
+  its place". Those are different jobs and only one of them is this one.
+  Text that carries a value, names an unusual control, or tells the user
+  something they cannot see from the face STAYS:
+    · dropdown options — "never — drums always on", "every 4th bar",
+      "+1 BPM every 8 bars", "beats 1 & 3". These ARE the setting.
+    · specific or destructive actions — "Copy to B", "Reset to factory".
+      A word is right when the control is unusual or the action is one-way.
+    · anything that states a fact the interface cannot show on its own.
+  WHEN IN DOUBT, KEEP IT AND ASK. An over-stripped face is harder to diagnose
+  than a slightly wordy one, because nobody can see what is missing.
+
+REPORT EVERY REMOVAL. In the done report, list the exact strings you deleted
+and the exact strings you demoted, verbatim. Joe vetoes from that list. Do not
+present a stripped face and let him discover the loss by missing something.
 
 ICONS — where they EARN it, and nowhere else:
   YES, universal and unambiguous: bass clef for BASS (already specced),
