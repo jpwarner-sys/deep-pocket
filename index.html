@@ -3968,5 +3968,18 @@ function memLabel(){
 
 </script>
 
+<script>
+(function () {
+  if (!("serviceWorker" in navigator)) return;
+  window.addEventListener("load", function () {
+    try {
+      navigator.serviceWorker.register("sw.js", { scope: "./" }).then(
+        function (reg) { window.__dpSW = reg; },
+        function () { /* no worker: the app runs online exactly as before */ }
+      );
+    } catch (e) { /* same */ }
+  });
+})();
+</script>
 </body>
 </html>
