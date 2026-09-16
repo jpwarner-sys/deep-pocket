@@ -33,7 +33,10 @@ REPO      github.com/jpwarner-sys/deep-pocket, branch main.
           Flat Pages tree: index.html, manifest.webmanifest, icon-180/192/512.png,
           kits/, README.md. There is NO src/ or site/ split on main — an
           earlier CSS/JS split was local-only and is dead. v31 STAYS SINGLE FILE.
-FROZEN    v21 on branch backup/v21-20260915 (164b3c1). Never delete, never force-push.
+FROZEN    backup/v30-20260916 — cut from main 2026-09-16. THIS is the rollback:
+          it has the v31-era engine and the hi-hat fix. Never delete or force-push.
+          backup/v21-20260915 (164b3c1) also stands, but it is two versions
+          stale and predates the hi-hat fix.
 KITS      Synth (live oscillators) + three sampled: Black Pearl, Red Zeppelin
           (AVL, CC BY-SA 3.0, Glen MacArthur) and TR-808 Fischer (45 FLAC, CC0).
           All on main, all 200 on the live URL. Keep both attributions.
@@ -145,9 +148,17 @@ origin. BLOCKBALL and NOW live there too. Without an absolute, directory-
 exact identity, iOS keys the install to the WRONG app's record — that is
 the real defect that once made opening /now/ launch BLOCKBALL.
 
-MUST hold on the live URL:
+MUST hold on the live URL. The manifest is ALREADY CORRECT as of 2026-09-16
+— confirm it, do not edit it:
   manifest.webmanifest:  "id", "scope", "start_url" ALL exactly "/deep-pocket/"
                          display "standalone", orientation "any"
+                         ("orientation" was "portrait" until 2026-09-16, which
+                          locked the installed app to portrait and made the
+                          landscape editor unreachable on the home screen)
+  iOS reads the manifest at Add-to-Home-Screen time only. An icon installed
+  before that fix stays pinned to portrait forever — it must be deleted from
+  the home screen and re-added. Tell Joe this, because it presents exactly
+  like a bug you introduced.
   meta apple-mobile-web-app-capable        = yes
   meta apple-mobile-web-app-status-bar-style = black-translucent
   meta apple-mobile-web-app-title          = Deep Pocket
