@@ -91,7 +91,7 @@ affordances. The bass is in his hands; he is not reading, he is glancing.
 
 EDIT is SCREEN-dense. Chrome collapses to a single line. Grid and arranger
 take every pixel they can get. Controls that aren't the grid go behind MIX
-and MEMORY. Target: grid + arranger ≥ 70% of face height. If you can't hit
+and MEMORY. Target: grid + arranger ≥ 70% of face height at 430 x 932. If you can't hit
 that, cut chrome — never cut steps.
 
 Same parts bin on all six. Different ratio. That's the whole trick.
@@ -143,10 +143,33 @@ MUST hold on the live URL:
   NO service worker anywhere. NO root-scoped anything.
   localStorage keys namespaced deeppocket.* — never bare keys.
 
-Because status-bar is black-translucent, the app draws under the notch:
-pad with env(safe-area-inset-*) on all four sides, and add extra top padding
-under @media (display-mode:standalone). Test it. A gorgeous layout with the
-clock sitting on the brand name is a fail.
+THE TARGET DEVICE — design to this, not to a generic phone
+  iPhone 16 Plus, iOS 26.x. This is the home for years. iPad and desktop are
+  a bonus and must not drive a single decision.
+    portrait  CSS viewport 430 x 932 points  (2796 x 1290 native, 3x)
+    landscape CSS viewport 932 x 430 points
+  NOT 390 x 844 — that is the base iPhone. Every earlier sizing note in this
+  project assumed 390 and is superseded. You have 40 more points of width
+  and 88 more of height in portrait, and 430 points of HEIGHT in landscape
+  instead of 390. The old "ten rows is tight on a 390-tall landscape" worry
+  is gone: nine rows on 430 is comfortable. Spend the room on the grid.
+  Design fluid with 430 as the reference, not hard-coded to it. 390 must
+  still lay out correctly; it just is not what you tune against.
+
+DYNAMIC ISLAND, NOT A NOTCH — and it moves when you rotate
+  Status-bar is black-translucent, so the app draws underneath it. Pad with
+  env(safe-area-inset-*) on ALL FOUR sides, plus extra top padding under
+  @media (display-mode:standalone).
+  Portrait insets run about 59pt top, 34pt bottom.
+  LANDSCAPE IS THE ONE THAT GETS FORGOTTEN: rotated, the Island eats a
+  horizontal strip, so the inset lands left or right depending on which way
+  the phone was turned. That is exactly where the landscape editor puts its
+  voice-name column, and it will clip. Handle left AND right.
+  Do not trust those numbers — MEASURE them. Render the four computed
+  env(safe-area-inset-*) values into the face behind a debug flag, have Joe
+  read them off the phone in standalone in both orientations and both
+  rotation directions, then size against what actually came back.
+  A gorgeous layout with the clock sitting on the brand name is a fail.
 
 iOS TRAPS ALREADY PAID FOR — inherit these, don't rediscover them:
   · On backgrounding iOS parks the AudioContext as 'suspended' OR Safari's
@@ -201,8 +224,8 @@ Grok project "DEEP POCKET", chat "Deep Pocket Bass App Concept Art":
 
 Grok build thread "Deep Pocket Rhythm Trainer Setup":
   The v21→v30 technical history. Volume calibration (v21 too loud at
-  MASTER_CAL 1.10, v22 too quiet at 0.50, 0.70 is the answer), the 390px
-  phone-width pass (v26), the portrait/landscape split (v27), the rotate fix
+  MASTER_CAL 1.10, v22 too quiet at 0.50, 0.70 is the answer), the phone-width
+  pass (v26, sized for 390 and now superseded by 430), the portrait/landscape split (v27), the rotate fix
   (v29), the TR-808 wire-in. Read it before you re-solve something.
 
 ────────────────────────────────────────────────────────
@@ -245,9 +268,15 @@ from it or you'll overwrite an edit Joe made.
   Plus, in your own words with numbers:
       · measured contrast ratio, lit step against its well
       · voice-row count in the built file
-      · grid + arranger as a % of face height in V-EDIT
-      · confirmation you opened it on a phone in standalone and nothing
-        is under the notch
+      · grid + arranger as a % of face height in V-EDIT, measured at
+        430 x 932, not 390 x 844
+      · the four measured env(safe-area-inset-*) values, portrait and
+        landscape, read off the phone in standalone
+      · proof the splash still unlocks audio: tap through, show ctx.state is
+        'running' AND that currentTime advanced, play Motown, confirm the
+        hats are audible on Black Pearl. The splash IS the gesture surface.
+        Reskinning it is the likeliest way to break sound in this pass, and
+        no pixel measurement will catch that.
 
 Pages lags. If the face still says v30, wait and re-read. Never declare done
 on a v30 face. "It should work" is not a report.
@@ -267,6 +296,14 @@ behalf; only ask when it's extremely material. Any paste you give him is the
 complete final paste — never a partial, never "append this". Links on their
 own line as a bare address, no scheme, no markdown wrapper — he reads these
 on a phone.
+
+────────────────────────────────────────────────────────
+13. NEVER PUT THESE IN THE REPO
+────────────────────────────────────────────────────────
+design/ is published on the public internet. Device serial numbers, Wi-Fi or
+Bluetooth MAC addresses, IMEI, account names, real names, client or firm
+references, and local file paths never go into any file that lands in this
+repo — comments count. Device MODEL is fine and useful. Identifiers are not.
 
 ────────────────────────────────────────────────────────
 START BY
