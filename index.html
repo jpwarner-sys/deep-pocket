@@ -784,15 +784,19 @@ body.orient-land .cell .chd{
   font-size:11px;line-height:1.1;
 }
 body.orient-land.land-beat .cell .chd{font-size:13px}
-/* COMPOSE only: tools in one strip so the 4×8 cells eat the panel. */
+/* COMPOSE only: size/arrangement. Wood/orange tokens unchanged. */
 body.orient-land.land-compose .arr-tools{
-  display:flex;flex-wrap:nowrap;align-items:stretch;gap:6px;
-  flex:0 0 auto;min-width:0;margin:0 0 4px;
+  display:flex;flex-wrap:nowrap;align-items:stretch;gap:5px;
+  flex:0 0 auto;min-width:0;margin:0 0 3px;
 }
-body.orient-land.land-compose .arr-tools > .row,
-body.orient-land.land-compose .arr-tools .row{
-  display:flex;flex-wrap:nowrap;margin:0 !important;gap:4px;min-width:0;flex:1 1 0;
+body.orient-land.land-compose .arr-tools > .row{
+  display:flex;flex-wrap:nowrap;margin:0 !important;gap:4px;min-width:0;
 }
+body.orient-land.land-compose .arr-tools > .row:nth-child(1){flex:0 0 auto}
+body.orient-land.land-compose .arr-tools > .row:nth-child(2){flex:0 1 9em}
+body.orient-land.land-compose .arr-tools > .row:nth-child(3){flex:1 1 12em}
+body.orient-land.land-compose .arr-tools .row .row{flex:0 0 auto;min-width:0}
+body.orient-land.land-compose #prog{display:none}
 body.orient-land.land-compose #arr{
   flex:1 1 auto;min-height:0;min-width:0;overflow:auto;
 }
@@ -806,16 +810,16 @@ body.orient-land.land-compose .cell .bn{left:10px}
 body.orient-land.land-compose .cell .sec{right:6px}
 body.orient-land.land-compose .cell .chd{font-size:20px;line-height:1.05}
 body.orient-land.land-compose .cell .chd.long{font-size:15px}
+body.orient-land.land-compose .cell.out{opacity:.7}
 body.orient-land.land-compose .cell.now{
   outline:2px solid var(--amber);outline-offset:-2px;
   box-shadow:inset 0 0 0 1px var(--amber-hi),0 0 10px var(--amber-glow);
 }
 body.orient-land.land-compose #face-arr > .row .lbl,
 body.orient-land.land-compose .arr-tools .lbl{display:none}
-body.orient-land.land-compose #face-arr .key.sm{min-height:32px;padding:4px 8px;font-size:11px}
-body.orient-land.land-compose #face-arr select{min-height:32px;padding:3px 6px;font-size:11px;flex:1 1 80px;max-width:none;min-width:0}
-body.orient-land.land-compose #prog{min-width:88px;flex:1 1 88px}
-body.orient-land.land-compose #chordin{min-height:32px !important;padding:4px 8px !important;font-size:12px !important;min-width:0 !important}
+body.orient-land.land-compose #face-arr .key.sm{min-height:36px;padding:4px 9px;font-size:11px}
+body.orient-land.land-compose #face-arr select{min-height:36px;padding:3px 6px;font-size:11px;flex:1 1 auto;max-width:none;min-width:0}
+body.orient-land.land-compose #chordin{min-height:36px !important;padding:4px 8px !important;font-size:12px !important;min-width:0 !important}
 body.orient-land #face-pat .hint,
 body.orient-land #face-arr .hint{display:none}
 body.orient-land .modebar{display:none}
