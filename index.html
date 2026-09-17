@@ -884,6 +884,9 @@ button.key#clr{
 button.key#play,
 button.key#play2{
   background-image:url("assets/buttons/btn-play.png") !important;
+  /* Square at Play/Stop thumb height so the squircle fills the key — no side voids. */
+  min-width:80px !important;min-height:80px !important;width:80px;height:80px;padding:0 !important;
+  border-radius:20px;
 }
 button.key#play.on,
 button.key#play2.on{
@@ -942,6 +945,14 @@ button.key#bgbtn.on:active{
 /* Landscape play: lock stays a chip, still a fat hit. */
 body.orient-land.mode-play #bgbtn{
   width:48px;height:48px;min-width:48px;min-height:48px;
+}
+/* H-EDIT chrome row is ~56px — keep transport Play a compact square, not 80. */
+body.orient-land:not(.mode-play) .transport button.key#play{
+  width:44px;height:36px;min-width:44px !important;min-height:36px !important;
+  border-radius:10px;
+}
+body.orient-land.mode-play .prow button.key#play2{
+  width:72px;height:72px;min-width:72px !important;min-height:72px !important;
 }
 
 </style>
