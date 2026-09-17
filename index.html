@@ -381,7 +381,7 @@ body.mode-play:not(.orient-land) .kitbar.land-hide #bgbtn.on{
 .ruler span{font-family:var(--mono);font-size:9px;color:var(--faint);text-align:center;letter-spacing:0}
 .ruler span.b{color:var(--dim)}
 
-.arr{display:grid;grid-template-columns:repeat(8,1fr);gap:4px}
+.arr{display:grid;grid-template-columns:repeat(4,1fr);gap:4px}
 .cell{
   position:relative;
   background:linear-gradient(180deg,#0a0705,#120b06);
@@ -761,22 +761,29 @@ body.orient-land .arr{
   grid-template-rows:repeat(4,minmax(0,1fr));
   gap:3px;flex:1;min-height:0;min-width:0;align-content:stretch;
 }
+body.orient-land.land-compose .arr{
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  grid-template-rows:repeat(8,minmax(0,1fr));
+}
 body.orient-land #arr{flex:1;min-height:0;min-width:0}
 body.orient-land .cell{
   min-height:0;min-width:0;overflow:hidden;
-  padding:12px 3px 4px 6px;
+  padding:10px 4px 2px 7px;
 }
 body.orient-land .cell .bn,
-body.orient-land .cell .sec{font-size:7px;top:2px}
-body.orient-land .cell .bn{left:6px}
-body.orient-land .cell .sec{right:3px}
+body.orient-land .cell .sec{font-size:8px;top:2px}
+body.orient-land .cell .bn{left:7px}
+body.orient-land .cell .sec{right:4px}
 body.orient-land .cell .chd{
   margin-top:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
-  font-size:11px;line-height:1.1;
+  font-size:12px;line-height:1.1;
 }
 body.orient-land.land-beat .cell .chd{font-size:13px}
-body.orient-land.land-compose .cell .chd{font-size:16px}
-body.orient-land.land-compose .cell .chd.long{font-size:13px}
+body.orient-land.land-compose .cell{
+  padding:9px 5px 2px 8px;
+}
+body.orient-land.land-compose .cell .chd{font-size:14px}
+body.orient-land.land-compose .cell .chd.long{font-size:12px}
 body.orient-land.land-compose #face-arr > .row{
   display:flex;flex-wrap:nowrap;margin-bottom:4px !important;gap:6px;min-width:0;flex:0 0 auto;
 }
