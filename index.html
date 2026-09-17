@@ -618,6 +618,7 @@ body.phone #dockmix, body.phone #dockmem{display:inline-flex}
    Work row is minmax(0,1fr); pat+arr fill it. Portrait untouched. */
 html:has(body.orient-land), body.orient-land{height:100%;overflow:hidden}
 body.orient-land{padding:4px}
+body.orient-land.land-compose{padding:2px}
 body.orient-land #unit{
   display:grid;
   grid-template-columns:minmax(0,65fr) minmax(0,35fr);
@@ -632,7 +633,12 @@ body.orient-land #unit{
           calc(4px + var(--sai-b)) calc(8px + var(--sai-l));
 }
 body.orient-land.land-beat #unit{grid-template-columns:minmax(0,65fr) minmax(0,35fr)}
-body.orient-land.land-compose #unit{grid-template-columns:minmax(0,35fr) minmax(0,65fr)}
+body.orient-land.land-compose #unit{
+  grid-template-columns:minmax(0,20fr) minmax(0,80fr);
+  gap:4px 6px;
+  padding:calc(2px + var(--sai-t)) calc(2px + var(--sai-r))
+          calc(2px + var(--sai-b)) calc(2px + var(--sai-l));
+}
 body.orient-land #hedit-chrome{
   grid-area:chrome;display:flex;flex-wrap:nowrap;align-items:center;gap:8px;
   min-height:52px;max-height:56px;min-width:0;overflow:hidden;
@@ -741,7 +747,8 @@ body.orient-land #face-arr{
 }
 body.orient-land .land-chords{display:none !important}
 body.orient-land #face-pat > .row{display:none}
-body.orient-land.land-beat #face-arr > .row{display:none}
+body.orient-land.land-beat #face-arr > .row,
+body.orient-land.land-beat #face-arr > .arr-tools{display:none}
 body.orient-land #face-pat .edit-only,
 body.orient-land #face-pat .gridwrap{flex:1;min-height:0;display:flex;flex-direction:column;overflow:hidden;padding:0}
 body.orient-land #grid{flex:1;min-height:0;height:auto;display:flex;flex-direction:column;gap:2px}
@@ -761,13 +768,22 @@ body.orient-land.land-compose .gr,
 body.orient-land.land-compose .ruler{grid-template-columns:repeat(var(--n),minmax(0,1fr))}
 body.orient-land.land-compose #face-pat::before{
   content:"MONITOR";display:block;font-size:9px;letter-spacing:.22em;color:var(--faint);
-  margin-bottom:4px;flex:0 0 auto;
+  margin-bottom:2px;flex:0 0 auto;
 }
 body.orient-land.land-compose #face-pat > .row{display:none}
 body.orient-land .arr{
   grid-template-columns:repeat(8,minmax(0,1fr));
   grid-template-rows:repeat(4,minmax(0,1fr));
   gap:3px;flex:1;min-height:0;min-width:0;align-content:stretch;
+}
+body.orient-land.land-compose .arr{
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  grid-template-rows:repeat(8,minmax(44px,1fr));
+  gap:2px;
+  overflow:auto;
+  -webkit-overflow-scrolling:touch;
+  align-content:stretch;
+  flex:1 1 auto;min-height:0;min-width:0;
 }
 body.orient-land #arr{flex:1;min-height:0;min-width:0}
 body.orient-land .cell{
@@ -783,15 +799,58 @@ body.orient-land .cell .chd{
   font-size:11px;line-height:1.1;
 }
 body.orient-land.land-beat .cell .chd{font-size:13px}
-body.orient-land.land-compose .cell .chd{font-size:16px}
-body.orient-land.land-compose .cell .chd.long{font-size:13px}
-body.orient-land.land-compose #face-arr > .row{
-  display:flex;flex-wrap:nowrap;margin-bottom:4px !important;gap:6px;min-width:0;flex:0 0 auto;
+/* COMPOSE only: size/arrangement. Wood/orange tokens unchanged. */
+body.orient-land.land-compose .arr-tools{
+  display:flex;flex-wrap:nowrap;align-items:stretch;gap:4px;
+  flex:0 0 auto;min-width:0;margin:0 0 2px;
 }
-body.orient-land.land-compose #face-arr > .row .lbl{display:none}
-body.orient-land.land-compose #face-arr .key.sm{min-height:28px;padding:4px 8px;font-size:11px}
-body.orient-land.land-compose #face-arr select{min-height:28px;padding:3px 6px;font-size:11px;flex:1 1 auto;max-width:none}
-body.orient-land.land-compose #chordin{min-height:28px !important;padding:4px 8px !important;font-size:12px !important}
+body.orient-land.land-compose .arr-tools > .row{
+  display:flex;flex-wrap:nowrap;margin:0 !important;gap:4px !important;min-width:0;
+}
+body.orient-land.land-compose .arr-tools > .row:nth-child(1){flex:0 0 auto}
+body.orient-land.land-compose .arr-tools > .row:nth-child(2){flex:0 1 9em}
+body.orient-land.land-compose .arr-tools > .row:nth-child(3){flex:1 1 12em}
+body.orient-land.land-compose .arr-tools .row .row{flex:0 0 auto;min-width:0}
+body.orient-land.land-compose #prog{display:none}
+body.orient-land.land-compose #arr{
+  flex:1 1 auto;min-height:0;min-width:0;overflow:auto;
+}
+body.orient-land.land-compose .cell{
+  min-height:44px;
+  padding:10px 8px 6px 12px;
+  border-radius:8px;
+  box-shadow:
+    inset 0 1px 0 var(--lift),
+    inset 0 0 0 1px var(--edge),
+    0 0 0 1px var(--hairline);
+}
+body.orient-land.land-compose .cell::before{
+  width:5px;border-radius:8px 0 0 8px;
+}
+body.orient-land.land-compose .cell .bn,
+body.orient-land.land-compose .cell .sec{font-size:10px;top:4px}
+body.orient-land.land-compose .cell .bn{left:10px}
+body.orient-land.land-compose .cell .sec{right:6px}
+body.orient-land.land-compose .cell .chd{font-size:20px;line-height:1.05}
+body.orient-land.land-compose .cell .chd.long{font-size:15px}
+body.orient-land.land-compose .cell.out{opacity:.7}
+body.orient-land.land-compose .cell.now{
+  outline:2px solid var(--amber);outline-offset:-2px;
+  box-shadow:
+    inset 0 1px 0 var(--lift),
+    inset 0 0 0 1px var(--amber-hi),
+    0 0 12px var(--amber-glow),
+    0 0 2px var(--amber);
+}
+body.orient-land.land-compose .cell.now .chd{
+  color:var(--amber-hi);
+  text-shadow:0 0 10px var(--amber-glow);
+}
+body.orient-land.land-compose #face-arr > .row .lbl,
+body.orient-land.land-compose .arr-tools .lbl{display:none}
+body.orient-land.land-compose #face-arr .key.sm{min-height:36px;padding:4px 9px;font-size:11px}
+body.orient-land.land-compose #face-arr select{min-height:36px;padding:3px 6px;font-size:11px;flex:1 1 auto;max-width:none;min-width:0}
+body.orient-land.land-compose #chordin{min-height:36px !important;padding:4px 8px !important;font-size:12px !important;min-width:0 !important}
 body.orient-land #face-pat .hint,
 body.orient-land #face-arr .hint{display:none}
 body.orient-land .modebar{display:none}
@@ -908,6 +967,7 @@ html.insets #insetdbg{display:block}
   </section>
 
   <section class="face edit-only" id="face-arr">
+    <div class="arr-tools">
     <div class="row" style="justify-content:space-between;margin-bottom:9px">
       <span class="lbl">32-bar arrangement</span>
       <div class="land-chords" id="landchords">
@@ -937,6 +997,7 @@ html.insets #insetdbg{display:block}
              style="flex:1;min-width:170px;background:var(--well);border:1px solid var(--edge);color:var(--bone);
                     font-family:var(--mono);font-size:13px;padding:10px;border-radius:2px;min-height:44px">
       <button class="key sm" id="chordset">Set</button>
+    </div>
     </div>
     <div class="arr" id="arr"></div>
   </section>
