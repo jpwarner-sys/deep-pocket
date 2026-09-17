@@ -230,6 +230,11 @@ body.orient-land .modebar{display:none}
 .readout .row2{display:flex;justify-content:space-between;gap:10px;margin-top:3px}
 .readout .row2 span{font-family:var(--mono);font-size:11px;color:var(--dim)}
 .bars{display:flex;gap:10px}
+@keyframes bbeat {
+  0% { transform: scale(1.3); color: #fff; text-shadow: 0 0 24px rgba(255,200,120,1); }
+  100% { transform: scale(1); color: var(--amber); text-shadow: 0 0 14px var(--amber-glow); }
+}
+.pulse-beat { animation: bbeat 0.18s ease-out; display:inline-block; }
 .barbox{
   background:linear-gradient(180deg,#0a0705,#120b06);
   box-shadow:inset 0 2px 7px rgba(0,0,0,.88), inset 0 0 0 1px rgba(0,0,0,.6);
@@ -303,8 +308,9 @@ button.key.ico.lamp.on{color:var(--amber);background:transparent;
 .meter i{position:absolute;left:0;right:0;bottom:0;
   background:linear-gradient(0deg,var(--amber-lo),var(--amber) 70%,var(--amber-hi));height:0%}
 
-.kitbar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;
-  margin-top:10px;padding-top:10px;border-top:1px solid var(--hairline)}
+.kitbar{display:flex;align-items:center;gap:8px;flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;
+  margin-top:10px;padding-top:10px;border-top:1px solid var(--hairline);-webkit-overflow-scrolling:touch;}
+.kitbar::-webkit-scrollbar{display:none;}
 .kitbar .lbl{flex:0 0 auto}
 .kitbar .hint{flex:1 1 100%;margin-left:0}
 
@@ -818,7 +824,6 @@ html.insets #insetdbg{display:block}
       <span class="bpmn num" id="pbpm">116</span>
       <button class="key sm" id="pplus">+</button>
       <button class="key sm" id="kitcycle">Synth</button>
-      <button class="key sm clef on" id="bassbtn" aria-label="Bass">&#119074;</button>
     </div>
     <div class="pmeta"><span>BAR <b class="num" id="pbar">1</b></span><span>BEAT <b class="num" id="pbeat">1</b></span></div>
   </section>
@@ -830,29 +835,29 @@ html.insets #insetdbg{display:block}
 
   <section class="face" id="face-grooves">
     <div class="kitbar" id="kitstrip">
-      <span class="lbl">Kit</span>
-      <button class="key sm on" id="kitsynth">Synth</button>
-      <button class="key sm" id="kitbp">Black Pearl</button>
-      <button class="key sm" id="kitrz">Red Zeppelin</button>
-      <button class="key sm" id="kit808">TR-808</button>
-      <span class="hint" id="kithint"></span>
+      <span class="lbl" style="position:sticky;left:0;background:var(--bg);padding-right:6px;z-index:2">Kit</span>
+      <button class="key sm on" id="kitsynth" style="flex:0 0 auto">Synth</button>
+      <button class="key sm" id="kitbp" style="flex:0 0 auto">Black Pearl</button>
+      <button class="key sm" id="kitrz" style="flex:0 0 auto">Red Zeppelin</button>
+      <button class="key sm" id="kit808" style="flex:0 0 auto">TR-808</button>
+      <span class="hint" id="kithint" style="flex:0 0 auto"></span>
     </div>
     <div class="rail" id="rail"></div>
   </section>
 
   <section class="face" id="face-pat">
-    <div class="row" style="justify-content:space-between;margin-bottom:9px">
-      <div class="row">
+    <div style="margin-bottom:12px">
+      <div style="display:flex; justify-content:space-between; align-items:flex-end; margin-bottom:6px">
         <span class="lbl">Pattern</span>
-        <button class="key sm slot on" data-slot="0">A</button>
-        <button class="key sm slot" data-slot="1">B</button>
-        <button class="key sm slot" data-slot="2">C</button>
-        <button class="key sm slot" data-slot="3">D</button>
-      </div>
-      <div class="row">
-        <button class="key sm" id="clr">Clear</button>
-        <button class="key sm" id="cpy">Copy&nbsp;to&nbsp;B</button>
         <span class="hint" id="gridinfo"></span>
+      </div>
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+        <button class="key slot on" data-slot="0">A</button>
+        <button class="key slot" data-slot="1">B</button>
+        <button class="key slot" data-slot="2">C</button>
+        <button class="key slot" data-slot="3">D</button>
+        <button class="key" id="clr" style="background:#4a2c2a;color:#ffbf5e;border-color:#ffbf5e">Clear</button>
+        <button class="key" id="cpy">Copy to B</button>
       </div>
     </div>
     <div class="edit-only">
@@ -2819,17 +2824,7 @@ $("master").oninput=function(){ S.master=$("master").value/100; $("masterv").tex
 $("bassg").oninput=function(){ S.bassg=$("bassg").value/100; $("bassgv").textContent=$("bassg").value; eng.setBassGain(S.bassg); };
 $("clickg").oninput=function(){ S.clickg=$("clickg").value/100; $("clickgv").textContent=$("clickg").value; eng.setClickGain(S.clickg); };
 var lastRootMode="1";
-function bassLabel(){
-  var on = S.rootmode!=="off";
-  $("bassbtn").classList.toggle("on", on);
-  $("bassbtn").classList.toggle("clef", true);
-}
-$("bassbtn").onclick=function(){
-  if(S.rootmode==="off"){ S.rootmode=lastRootMode||"1"; }
-  else { lastRootMode=S.rootmode; S.rootmode="off"; }
-  $("rootmode").value=S.rootmode; bassLabel();
-  toast(S.rootmode==="off" ? "Bass reference off" : "Bass reference on");
-};
+function bassLabel(){}
 $("rootmode").onchange=function(){ S.rootmode=$("rootmode").value;
   if(S.rootmode!=="off") lastRootMode=S.rootmode; bassLabel(); };
 $("clickmode").onchange=function(){ S.clickmode=$("clickmode").value; };
@@ -2837,11 +2832,24 @@ $("gap").onchange=function(){ S.gap=+$("gap").value; };
 $("ramp").onchange=function(){ S.ramp=+$("ramp").value; $("rampv").textContent = S.ramp? "ramp +"+S.ramp : "ramp off"; };
 $("countin").onchange=function(){ S.countin=+$("countin").value; };
 $("clr").onclick=function(){ var c=cur(); VOICES.forEach(function(v){ c.p[v]=c.p[v].map(function(){return 0;}); }); drawGrid(); };
-$("cpy").onclick=function(){ var nxt=(S.slot+1)%4; S.slots[nxt]=JSON.parse(JSON.stringify(cur()));
-  toast("Pattern "+"ABCD"[S.slot]+" → "+"ABCD"[nxt]); };
+var cpyTgt=null;
+function updateCpyBtn(){
+  if(cpyTgt===null || cpyTgt===S.slot) cpyTgt=(S.slot+1)%4;
+  $("cpy").innerHTML="Copy to "+"ABCD"[cpyTgt];
+}
+$("cpy").onclick=function(){
+  if(cpyTgt===null || cpyTgt===S.slot) cpyTgt=(S.slot+1)%4;
+  S.slots[cpyTgt]=JSON.parse(JSON.stringify(cur()));
+  toast("Pattern "+"ABCD"[S.slot]+" → "+"ABCD"[cpyTgt]);
+  var tgts = [0,1,2,3].filter(function(x){return x!==S.slot;});
+  var idx = tgts.indexOf(cpyTgt);
+  cpyTgt = tgts[(idx+1)%3];
+  updateCpyBtn();
+};
 document.querySelectorAll(".slot").forEach(function(b){
   b.onclick=function(){ S.slot=+b.dataset.slot;
     document.querySelectorAll(".slot").forEach(function(x){ x.classList.toggle("on", x===b); });
+    cpyTgt=(S.slot+1)%4; updateCpyBtn();
     drawGrid(); info(); };
 });
 
@@ -2981,9 +2989,16 @@ function frame(){
       var c=cur(), per=c.steps/beatsPerBar(c.steps);
       var barShow = live.count ? "–" : String((live.bar%loopLen())+1);
       $("barv").textContent = barShow;
-      $("beatv").textContent = String(Math.floor(live.step/per)+1);
+      var newBeat = String(Math.floor(live.step/per)+1);
+      if($("beatv").textContent !== newBeat) {
+        $("beatv").textContent = newBeat;
+        $("beatv").classList.remove("pulse-beat"); void $("beatv").offsetWidth; $("beatv").classList.add("pulse-beat");
+        if($("pbeat")) {
+          $("pbeat").textContent = newBeat;
+          $("pbeat").classList.remove("pulse-beat"); void $("pbeat").offsetWidth; $("pbeat").classList.add("pulse-beat");
+        }
+      }
       if($("pbar")) $("pbar").textContent = barShow;
-      if($("pbeat")) $("pbeat").textContent = String(Math.floor(live.step/per)+1);
       if(!live.count) paintChords(live.bar);
       var n=c.steps*c.bars;
       var ps = S.arrange[live.bar%loopLen()];
