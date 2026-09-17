@@ -851,10 +851,11 @@ html.insets #insetdbg{display:block}
       </div>
       <div class="row">
         <button class="key sm" id="clr">Clear</button>
-        <span class="hint" id="gridinfo"></span>
-      </div>
-      <div class="row" id="cpy-targets">
-        <!-- populated by info() -->
+        <span class="hint" style="margin-right:4px">Copy to</span>
+        <span id="cpy-targets" style="display:flex; gap:4px">
+          <!-- populated by info() -->
+        </span>
+        <span class="hint" id="gridinfo" style="margin-left:auto"></span>
       </div>
     </div>
     <div class="edit-only">
@@ -2675,7 +2676,7 @@ function info(){
   if($("gridinfo")) $("gridinfo").textContent = c.steps+" steps × "+c.bars+" bar"+(c.bars>1?"s":"")+" · "+
     (c.steps===12?"12/8":c.steps===14?"7/8":c.steps===20?"5/4":"4/4");
   if($("cpy-targets")) {
-    var html = '<span class="hint" style="margin-right:4px">Copy to</span>';
+    var html = '';
     for(var i=0; i<4; i++) {
       if(i !== S.slot) {
         html += '<button class="key sm" onclick="copyPat('+i+')">'+'ABCD'[i]+'</button>';
