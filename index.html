@@ -509,6 +509,11 @@ body.mode-play:not(.orient-land) .cpy-targets .key:active{
 .cell.gap .chd{color:var(--faint)}
 
 .cols{display:grid;grid-template-columns:1fr 1fr;gap:12px;min-width:0;width:100%}
+.cols .rig-h{margin-bottom:6px}
+.cols .mix-h{margin-bottom:10px}
+.pat-copy{margin-bottom:9px}
+.pat-copy-lbl{margin-left:auto;margin-right:4px}
+#cpy-targets{display:flex;gap:4px}
 .ctl{display:flex;align-items:center;gap:9px;padding:6px 0;border-bottom:1px solid var(--hairline);min-width:0;flex-wrap:wrap}
 .ctl:last-child{border-bottom:0}
 .ctl > .lbl{flex:0 0 92px}
@@ -521,10 +526,8 @@ input[type=range]::-moz-range-track{height:5px;background:#0a0705;border:1px sol
 input[type=range]::-moz-range-thumb{width:17px;height:17px;border-radius:50%;background:#6d635a;border:1px solid #14120f}
 select{font-family:var(--mono);font-size:12px;background:#0a0705;color:var(--bone);border:1px solid var(--edge);
   border-radius:2px;padding:7px 8px;min-height:36px;flex:1;min-width:0;max-width:100%}
-.mix{display:grid;grid-template-columns:repeat(9,1fr);gap:6px}
+.mix{display:flex;flex-direction:column;gap:2px}
 .ch{text-align:center}
-.ch .cn{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);font-weight:600}
-.ch input[type=range]{width:100%}
 .note{font-family:var(--mono);font-size:11.5px;line-height:1.5;color:var(--dim);margin-top:8px}
 .note b{color:var(--bone);font-weight:500}
 #gnote{
@@ -581,7 +584,7 @@ body.mode-play:not(.orient-land) #toast{
   .transport .row{grid-column:1 / -1}
   .readout{min-width:0}
   .arr{grid-template-columns:repeat(4,1fr)}
-  .mix{grid-template-columns:repeat(5,1fr);row-gap:10px}
+  .mix{grid-template-columns:none}
   .brand h1{font-size:20px}
   .readout .big{font-size:32px}
   .st{max-width:none}
@@ -593,6 +596,133 @@ body.mode-play:not(.orient-land) #toast{
   #bpm{max-width:none !important;flex:1}
   select{flex:1 1 100%}
   .face,.cols,.ctl,.mix{max-width:100%}
+}
+
+/* Practice rig + Mixer: densify, and make STATIC vs INTERACTIVE obvious.
+   Labels are quiet faint type. Selects are wood keys with an amber bezel
+   (not flat black wells). Values are live amber. Mixer volumes are five
+   pattern-style lamps — brightness only, no level words. */
+body:not(.orient-land) #face-pat .pat-copy{
+  margin-bottom:4px;gap:8px;flex-wrap:nowrap;align-items:center;
+}
+body:not(.orient-land) .pat-copy-lbl{
+  margin-left:auto;margin-right:2px;font-size:10px;color:var(--faint);letter-spacing:.18em;
+}
+body:not(.orient-land) #cpy-targets{display:flex;gap:8px;flex:0 0 auto}
+body:not(.orient-land) #cpy-targets .key{
+  border-radius:16px;min-width:56px;min-height:56px;padding:12px 14px;
+  font-size:18px;letter-spacing:.12em;
+}
+body.mode-play:not(.orient-land) #face-pat{padding-bottom:4px}
+
+.cols{gap:4px}
+.cols .face{padding:4px 0 6px}
+.cols .rig-h, .cols .mix-h{
+  margin-bottom:2px;font-size:9px;letter-spacing:.24em;color:var(--faint);opacity:.55;
+}
+
+/* One grid row per control — iOS cannot wrap a 100%-flex select onto a
+   dead label lane. */
+.cols .ctl{
+  display:grid;
+  grid-template-columns:5.1em minmax(0,1fr) minmax(0,1.2fr) 2.3em;
+  column-gap:8px;row-gap:0;align-items:center;
+  padding:1px 0;min-height:52px;flex-wrap:unset;gap:unset;
+}
+.cols .ctl > .lbl{
+  grid-column:1;flex:none;width:auto;max-width:none;
+  font-size:10px;letter-spacing:.16em;line-height:1.15;white-space:normal;
+  color:var(--faint);opacity:.8;
+}
+.cols .ctl select{
+  grid-column:2;flex:none;width:100%;min-width:0;max-width:none;
+  min-height:52px;padding:8px 28px 10px 12px;
+  -webkit-appearance:none;appearance:none;
+  font-family:var(--sil);font-weight:600;font-size:13px;letter-spacing:.08em;
+  text-transform:uppercase;color:var(--amber-hi);
+  border:0;border-radius:10px;
+  background:
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'><path fill='%23ffbf5e' d='M1 1l5 5 5-5'/></svg>") right 12px center / 10px 7px no-repeat,
+    linear-gradient(180deg,#2a1c10,#170e07);
+  box-shadow:inset 0 0 0 1px rgba(255,160,44,.40),
+             inset 0 1px 0 rgba(214,170,120,.18), 0 2px 0 #0a0705;
+  text-overflow:ellipsis;
+}
+.cols .ctl select:focus-visible{
+  outline:2px solid var(--amber);outline-offset:2px;
+}
+.cols .ctl:not(:has(input[type=range])) select{grid-column:2 / -1}
+.cols .ctl input[type=range]{
+  grid-column:3;flex:none;width:100%;min-width:0;height:52px;
+}
+.cols .ctl:not(:has(select)) input[type=range]{grid-column:2 / 4}
+.cols .ctl .val{
+  grid-column:4;min-width:0;font-size:13px;color:var(--amber);
+  text-shadow:0 0 8px var(--amber-glow);font-weight:600;
+}
+.cols .ctl input[type=range]::-webkit-slider-runnable-track{
+  height:10px;border-radius:5px;background:#0a0705;border:1px solid var(--edge);
+  box-shadow:inset 0 1px 3px rgba(0,0,0,.8);
+}
+.cols .ctl input[type=range]::-webkit-slider-thumb{
+  width:32px;height:32px;margin-top:-11px;border-radius:50%;
+  background:linear-gradient(180deg,#ffc978,#e08a12);border:1px solid #7a4a08;
+  box-shadow:0 2px 0 #4a2a06, 0 0 8px var(--amber-glow), inset 0 1px 0 rgba(255,220,160,.45);
+}
+.cols .ctl input[type=range]::-moz-range-track{
+  height:10px;border-radius:5px;background:#0a0705;border:1px solid var(--edge);
+}
+.cols .ctl input[type=range]::-moz-range-thumb{
+  width:32px;height:32px;border-radius:50%;
+  background:linear-gradient(180deg,#ffc978,#e08a12);border:1px solid #7a4a08;
+}
+
+/* Mixer / Master: five round lamps like pattern steps. Tap a lamp to set
+   Off → Low → Med → High → Boosted. No level text — brightness only. */
+.mix{display:flex;flex-direction:column;gap:2px}
+.vol{
+  display:flex;align-items:center;gap:8px;min-height:56px;padding:1px 0;
+  border-bottom:1px solid var(--hairline);
+}
+.vol:last-child{border-bottom:0}
+.vol .cn{
+  flex:0 0 4.4em;width:4.4em;font-size:10px;letter-spacing:.16em;
+  text-transform:uppercase;color:var(--faint);font-weight:600;line-height:1.1;opacity:.8;
+}
+.vol.vol-master .cn{color:var(--dim);opacity:1}
+.lamps{
+  display:flex;flex:1 1 auto;gap:4px;min-width:0;align-items:center;
+  padding:4px 6px;border-radius:12px;
+  background:linear-gradient(180deg,#0a0705,#120b06);
+  box-shadow:inset 0 2px 7px rgba(0,0,0,.88), inset 0 0 0 1px rgba(0,0,0,.65),
+             inset 0 1px 0 rgba(214,170,120,.10);
+}
+.st.vol-lamp{
+  flex:1 1 0;min-width:44px;min-height:52px;width:auto;max-width:64px;
+  aspect-ratio:1;height:auto;padding:0;border:0;cursor:pointer;
+}
+.st.lv1{background:radial-gradient(circle at 38% 32%,#a06a28,#6a3e0c 58%,#3a2208);
+  box-shadow:0 0 5px rgba(255,160,44,.28);opacity:.72}
+.st.lv2{background:radial-gradient(circle at 38% 32%,#c98940,#8a520b 58%,#5a3510);
+  box-shadow:0 0 6px rgba(255,160,44,.35)}
+.st.lv3{background:radial-gradient(circle at 38% 32%,#ffc978,var(--amber) 58%,#a85f06);
+  box-shadow:0 0 8px var(--amber-glow)}
+.st.lv4{background:radial-gradient(circle at 38% 32%,#ffd79a,var(--amber) 50%,#c2700a);
+  box-shadow:0 0 12px var(--amber-glow),0 0 2px rgba(255,200,120,.9)}
+/* Landscape mix overlay reuses .st, which is capped at 22px for the grid.
+   Mixer lamps must stay fat thumbs and keep receiving taps. */
+body.orient-land.show-mix .st.vol-lamp{
+  max-width:64px;max-height:none;min-width:44px;min-height:44px;pointer-events:auto;
+}
+.cols .note, #pnote{
+  margin-top:4px;font-size:10px;line-height:1.35;color:var(--faint);opacity:.45;
+}
+.foot-note{
+  text-align:center;margin-top:8px;font-size:9px;letter-spacing:.02em;
+  color:var(--faint);opacity:.4;max-width:36em;margin-left:auto;margin-right:auto;
+}
+@media (max-width:760px){
+  .mix{grid-template-columns:none}
 }
 
 body.mode-play .edit-only{display:none !important}
@@ -678,19 +808,47 @@ body.phone.mode-edit:not(.orient-land) #kitstrip,
 body.phone.mode-edit:not(.orient-land) .cols,
 body.phone.mode-edit:not(.orient-land) #face-mem,
 body.phone.mode-edit:not(.orient-land) #unit > .hint{display:none}
+/* Mix + Memory sheets: same height law. Cover ALL content except the
+   header and lock-button zone. Scroll lives inside the sheet.
+   Landscape must span BOTH #unit columns so COMPOSE chord bars cannot
+   peek out the right edge — the sheet is a grid item, so a short
+   bottom-right panel is constrained to one column's grid area. */
 body.phone.mode-edit.show-mix .cols,
-body.orient-land.show-mix .cols{
-  display:grid !important;position:fixed;inset:auto 8px calc(8px + var(--sai-b)) 8px;
-  z-index:20;max-height:46%;overflow:auto;padding:10px;
-  background:linear-gradient(165deg,#1b110c,#0e0805 60%,#150c06);
-  box-shadow:0 -8px 24px rgba(0,0,0,.6);border-radius:8px;
-}
+body.orient-land.show-mix .cols,
 body.phone.mode-edit.show-mem #face-mem,
 body.orient-land.show-mem #face-mem{
-  display:block !important;position:fixed;inset:auto 8px calc(8px + var(--sai-b)) 8px;
-  z-index:20;max-height:46%;overflow:auto;padding:10px;
+  z-index:45;overflow:auto;-webkit-overflow-scrolling:touch;padding:10px;
+  max-height:none;max-width:none;margin:0;
   background:linear-gradient(165deg,#1b110c,#0e0805 60%,#150c06);
-  box-shadow:0 -8px 24px rgba(0,0,0,.6);border-radius:8px;
+  box-shadow:0 -8px 24px rgba(0,0,0,.6);
+}
+body.phone.mode-edit.show-mix .cols,
+body.orient-land.show-mix .cols{display:grid !important}
+body.phone.mode-edit.show-mem #face-mem,
+body.orient-land.show-mem #face-mem{display:block !important}
+
+/* Portrait EDIT: viewport-fixed, top edge just under the lock row. */
+body.phone.mode-edit:not(.orient-land).show-mix .cols,
+body.phone.mode-edit:not(.orient-land).show-mem #face-mem{
+  position:fixed;
+  top:var(--edit-sheet-top, 148px);
+  right:0;bottom:0;left:0;
+  width:auto;height:auto;border-radius:8px 8px 0 0;
+}
+
+/* Landscape: span every #unit column (pat + arr) AND pin to the
+   viewport under chrome. A grid item's containing block is its grid
+   area — without column-span the sheet stops at the monitor column
+   and COMPOSE chords peek out the right. */
+body.orient-land.show-mix .cols,
+body.orient-land.show-mem #face-mem{
+  grid-column:1 / -1 !important;grid-row:2 / -1 !important;
+  justify-self:stretch;align-self:stretch;
+  position:fixed !important;
+  top:var(--edit-sheet-top, 56px);
+  right:0;bottom:0;left:0;
+  width:auto !important;height:auto;min-width:0;min-height:0;
+  border-radius:0;z-index:45;
 }
 body.orient-land.show-grooves #face-grooves{
   display:block !important;position:fixed;inset:auto 8px calc(8px + var(--sai-b)) 8px;
@@ -1200,8 +1358,8 @@ body.orient-land.mode-play .prow button.key#play2{
   </section>
 
   <div class="cols land-hide">
-    <section class="face">
-      <div class="lbl" style="margin-bottom:6px">Practice rig</div>
+    <section class="face rig">
+      <div class="lbl rig-h">Practice rig</div>
       <div class="ctl"><span class="lbl">Root lane</span>
         <select id="rootmode"><option value="off">off</option><option value="1" selected>beat 1</option><option value="13">beats 1 &amp; 3</option></select>
         <input type="range" id="bassg" min="0" max="100" value="55" aria-label="Root level"><span class="val num" id="bassgv">55</span></div>
@@ -1222,12 +1380,9 @@ body.orient-land.mode-play .prow button.key#play2{
         <input type="range" id="verb" min="0" max="10" step="1" value="3" aria-label="Room"><span class="val num" id="verbv">3</span></div>
     </section>
 
-    <section class="face">
-      <div class="lbl" style="margin-bottom:10px">Mixer</div>
+    <section class="face mixface">
+      <div class="lbl mix-h">Mixer</div>
       <div class="mix" id="mix"></div>
-      <div class="sep"></div>
-      <div class="ctl"><span class="lbl">Master</span>
-        <input type="range" id="master" min="0" max="100" value="80" aria-label="Master"><span class="val num" id="masterv">80</span></div>
       <div class="note" id="pnote"></div>
     </section>
   </div>
@@ -1250,7 +1405,7 @@ body.orient-land.mode-play .prow button.key#play2{
     </div>
   </section>
 
-  <div class="hint" style="text-align:center;margin-top:16px;opacity:.8">Synth is generated live. Black Pearl, Red Zeppelin and TR-808 are sampled. Nothing is recorded or sent anywhere.</div>
+  <div class="hint foot-note">Synth is generated live. Black Pearl, Red Zeppelin and TR-808 are sampled. Nothing is recorded or sent anywhere.</div>
 </main>
 
 <div id="splash"><div class="splash-card walnut"><div class="splash-inner bw">
@@ -3119,13 +3274,78 @@ $("fillA").onclick=function(){ for(var i=0;i<32;i++) S.arrange[i]=0; drawArr(); 
 $("abab").onclick=function(){ for(var i=0;i<32;i++) S.arrange[i]=(Math.floor(i/4)%2); drawArr(); };
 $("aaba").onclick=function(){ for(var i=0;i<32;i++){ var sec=Math.floor(i/8); S.arrange[i]= sec===2?1:0; } drawArr(); };
 
-// mixer
+// mixer — five-step lamps (Off / Low / Med / High / Boosted). No level text.
+// Previous mixer faders ran 0–1.6 (thumb 0–160). Master ran 0–1.0.
+// Steps map onto those ranges: 0, 25%, 50%, 75%, 100% of each control's max.
+var MIX_MAX = 1.6, MASTER_MAX = 1;
+var VOL_ARIA = ["Off","Low","Med","High","Boosted"];
+var mixRows = {};
+
+function volStep(g, max){
+  max = max || MIX_MAX;
+  if(!(g>0)) return 0;
+  return Math.max(0, Math.min(4, Math.round(g / max * 4)));
+}
+function volGain(step, max){
+  return (Math.max(0, Math.min(4, +step)) / 4) * (max || MIX_MAX);
+}
+function paintVolRow(row, step){
+  if(!row) return;
+  var lamps = row.querySelectorAll(".vol-lamp");
+  for(var i=0;i<lamps.length;i++){
+    var on = step>0 && i>0 && i<=step;
+    lamps[i].className = "st vol-lamp" + (on ? (" lv"+i) : "");
+    lamps[i].setAttribute("aria-checked", i===step ? "true" : "false");
+  }
+}
+function makeVolRow(label, aria, step, onPick){
+  var d=document.createElement("div"); d.className="vol";
+  var cn=document.createElement("span"); cn.className="cn"; cn.textContent=label;
+  var lamps=document.createElement("div"); lamps.className="lamps";
+  lamps.setAttribute("role","radiogroup"); lamps.setAttribute("aria-label", aria);
+  for(var i=0;i<5;i++){
+    (function(i){
+      var b=document.createElement("button");
+      b.type="button";
+      b.className="st vol-lamp";
+      b.setAttribute("role","radio");
+      b.setAttribute("aria-label", VOL_ARIA[i]);
+      b.onclick=function(){ onPick(i); };
+      lamps.appendChild(b);
+    })(i);
+  }
+  d.appendChild(cn); d.appendChild(lamps);
+  paintVolRow(d, step);
+  return d;
+}
+function refreshMixLamps(){
+  if(mixRows.master) paintVolRow(mixRows.master, volStep(S.master, MASTER_MAX));
+  ROWS.forEach(function(v){
+    if(mixRows[v]) paintVolRow(mixRows[v], volStep(S.gains[v]||0, MIX_MAX));
+  });
+}
+function snapMixGains(){
+  S.master = volGain(volStep(S.master, MASTER_MAX), MASTER_MAX);
+  ROWS.forEach(function(v){ S.gains[v] = volGain(volStep(S.gains[v]||0, MIX_MAX), MIX_MAX); });
+}
+
+snapMixGains();
+mixRows.master = makeVolRow("Master", "Master level", volStep(S.master, MASTER_MAX), function(i){
+  S.master = volGain(i, MASTER_MAX);
+  paintVolRow(mixRows.master, i);
+  if(eng && eng.setMaster) eng.setMaster(S.master);
+});
+mixRows.master.className = "vol vol-master";
+mixRows.master.setAttribute("data-voice", "master");
+$("mix").appendChild(mixRows.master);
 ROWS.forEach(function(v){
-  var d=document.createElement("div"); d.className="ch";
-  d.innerHTML='<div class="cn">'+voiceName(v)+'</div>';
-  var r=document.createElement("input"); r.type="range"; r.min=0; r.max=160; r.value=80; r.setAttribute("aria-label",voiceName(v)+" level");
-  r.oninput=function(){ S.gains[v]=r.value/100; eng.setVoiceGain(v,S.gains[v]); };
-  d.appendChild(r); $("mix").appendChild(d);
+  mixRows[v] = makeVolRow(voiceName(v), voiceName(v)+" level", volStep(S.gains[v], MIX_MAX), function(i){
+    S.gains[v] = volGain(i, MIX_MAX);
+    paintVolRow(mixRows[v], i);
+    if(eng && eng.setVoiceGain) eng.setVoiceGain(v, S.gains[v]);
+  });
+  mixRows[v].setAttribute("data-voice", v);
+  $("mix").appendChild(mixRows[v]);
 });
 
 // controls
@@ -3140,7 +3360,6 @@ $("bplus").onclick=function(){ setBpm(S.bpm+1); S.baseBpm=S.bpm; };
 $("swing").oninput=function(){ setSwing(+$("swing").value); };
 $("feel").oninput=function(){ setFeel(+$("feel").value); };
 $("verb").oninput=function(){ setRoom(+$("verb").value); };
-$("master").oninput=function(){ S.master=$("master").value/100; $("masterv").textContent=$("master").value; eng.setMaster(S.master); };
 $("bassg").oninput=function(){ S.bassg=$("bassg").value/100; $("bassgv").textContent=$("bassg").value; eng.setBassGain(S.bassg); };
 $("clickg").oninput=function(){ S.clickg=$("clickg").value/100; $("clickgv").textContent=$("clickg").value; eng.setClickGain(S.clickg); };
 var lastRootMode="1";
@@ -3402,6 +3621,16 @@ function applyLayout(){
     $("landcompose").classList.toggle("on", LAY.land==="compose");
   }
   paintChords(S.absBar||0);
+  pinEditSheet();
+}
+function pinEditSheet(){
+  var land = document.body.classList.contains("orient-land");
+  var el = land ? $("hedit-chrome") : document.querySelector("#unit > .kitbar.land-hide");
+  if(!el) return;
+  document.documentElement.style.setProperty(
+    "--edit-sheet-top",
+    Math.round(el.getBoundingClientRect().bottom) + "px"
+  );
 }
 function setUiMode(m){
   LAY.mode = m;
@@ -3421,6 +3650,7 @@ if($("dockmix")) $("dockmix").onclick=function(){
   document.body.classList.remove("show-grooves");
   $("dockmix").classList.toggle("on", document.body.classList.contains("show-mix"));
   if($("dockmem")) $("dockmem").classList.remove("on");
+  pinEditSheet();
 };
 if($("dockmem")) $("dockmem").onclick=function(){
   document.body.classList.toggle("show-mem");
@@ -3428,7 +3658,11 @@ if($("dockmem")) $("dockmem").onclick=function(){
   document.body.classList.remove("show-grooves");
   $("dockmem").classList.toggle("on", document.body.classList.contains("show-mem"));
   if($("dockmix")) $("dockmix").classList.remove("on");
+  pinEditSheet();
 };
+window.addEventListener("resize", pinEditSheet);
+window.addEventListener("orientationchange", function(){ setTimeout(pinEditSheet, 400); });
+if(window.visualViewport) visualViewport.addEventListener("resize", pinEditSheet);
 if($("dockgroove")) $("dockgroove").onclick=function(){
   document.body.classList.toggle("show-grooves");
   document.body.classList.remove("show-mix");
@@ -4134,7 +4368,10 @@ function kitLabel(){
   if (kitLabel._names !== namesId) {
     kitLabel._names = namesId;
     document.querySelectorAll(".vn b").forEach(function(b,i){ if(ROWS[i]) b.textContent=voiceName(ROWS[i]); });
-    document.querySelectorAll("#mix .cn").forEach(function(n,i){ if(ROWS[i]) n.textContent=voiceName(ROWS[i]); });
+    ROWS.forEach(function(v){
+      var n = document.querySelector('#mix .vol[data-voice="'+v+'"] .cn');
+      if(n) n.textContent = voiceName(v);
+    });
   }
 }
 $("kitcycle").onclick=function(){
@@ -4218,7 +4455,7 @@ function applySnapshot(d){
             : roomDialFromAmount(d.verb);
       setRoom(Math.round(n * ROOM_STEPS));
     }
-    S.master=d.master!=null?d.master:S.master; $("master").value=Math.round(S.master*100); $("masterv").textContent=$("master").value;
+    S.master=d.master!=null?d.master:S.master;
     S.bassg=d.bassg!=null?d.bassg:S.bassg; $("bassg").value=Math.round(S.bassg*100); $("bassgv").textContent=$("bassg").value;
     S.clickg=d.clickg!=null?d.clickg:S.clickg; $("clickg").value=Math.round(S.clickg*100); $("clickgv").textContent=$("clickg").value;
     S.rootmode=d.rootmode||S.rootmode; $("rootmode").value=S.rootmode; bassLabel();
@@ -4230,8 +4467,9 @@ function applySnapshot(d){
     if(d.chords) S.chords=d.chords;
     if(d.prog!=null) $("prog").value=d.prog;
     document.querySelectorAll(".slot").forEach(function(x,i){ x.classList.toggle("on", i===S.slot); });
-    document.querySelectorAll("#mix input").forEach(function(r,i){ var v=ROWS[i]; r.value=Math.round((S.gains[v]||0.8)*100); });
+    snapMixGains(); refreshMixLamps();
     if(MEM.audio) VOICES.forEach(function(v){ eng.setVoiceGain(v,S.gains[v]); eng.setVoiceMute(v,!!S.mutes[v]); });
+    if(MEM.audio && eng && eng.setMaster) eng.setMaster(S.master);
     drawGrid(); drawArr(); info();
     if(d.kit && d.kit !== "synth" && KIT.man !== undefined){
       if(d.kit === "blackpearl" || d.kit === "redzeppelin" || d.kit === "tr808") loadKit(d.kit);

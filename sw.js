@@ -4,7 +4,7 @@
  * Bump CACHE on every release. The old cache is deleted on activate, so a
  * stale build can never outlive one launch.
  */
-var CACHE = "deep-pocket-v43";
+var CACHE = "deep-pocket-v44";
 
 /* The shell — everything needed to open and show a UI with no network. */
 var SHELL = [
