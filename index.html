@@ -376,18 +376,16 @@ body.mode-play:not(.orient-land) #unit > .hint{display:none !important}
 body.mode-play:not(.orient-land) .player{padding:2px 0 4px}
 body.mode-play:not(.orient-land) .film{padding:2px 0 4px}
 body.mode-play:not(.orient-land) .prow{
-  margin-top:6px;gap:6px;width:100%;
+  margin-top:6px;gap:6px;width:100%;flex-wrap:nowrap;justify-content:center;
 }
 body.mode-play:not(.orient-land) .prow .key.sm{
   min-width:44px;min-height:44px;
 }
-body.mode-play:not(.orient-land) .prow-kit{
-  display:flex;width:100%;gap:6px;align-items:center;justify-content:stretch;
-}
-body.mode-play:not(.orient-land) .prow-kit #kitcycle{
-  flex:1 1 auto;min-height:44px;min-width:44px;
-}
-body.mode-play:not(.orient-land) .prow-kit #bassbtn{
+/* Kit strip already names the kit — don't spend a second full-width SYNTH row.
+   Bass-clef lamp stays on the PLAY/tempo line so those side gutters disappear. */
+body.mode-play:not(.orient-land) .prow-kit{display:contents}
+body.mode-play:not(.orient-land) #kitcycle{display:none}
+body.mode-play:not(.orient-land) #bassbtn{
   flex:0 0 48px;min-width:48px;min-height:44px;
 }
 body.mode-play:not(.orient-land) #kithint{display:none}
@@ -541,6 +539,10 @@ select{font-family:var(--mono);font-size:12px;background:#0a0705;color:var(--bon
 #toast.on{opacity:1}
 /* Landscape play: toast sits in the band under chrome / above transport, never on the kit row. */
 body.orient-land.mode-play #toast{
+  bottom:auto;top:calc(8px + var(--sai-t) + 52px);
+}
+/* Portrait play: CPY/CLEAR sit on the bottom edge — keep toast off that toolbar. */
+body.mode-play:not(.orient-land) #toast{
   bottom:auto;top:calc(8px + var(--sai-t) + 52px);
 }
 
