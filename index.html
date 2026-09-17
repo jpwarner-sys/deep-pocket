@@ -818,7 +818,6 @@ html.insets #insetdbg{display:block}
       <span class="bpmn num" id="pbpm">116</span>
       <button class="key sm" id="pplus">+</button>
       <button class="key sm" id="kitcycle">Synth</button>
-      <button class="key sm clef on" id="bass2" aria-label="Bass">&#119074;</button>
     </div>
     <div class="pmeta"><span>BAR <b class="num" id="pbar">1</b></span><span>BEAT <b class="num" id="pbeat">1</b></span></div>
   </section>
@@ -835,7 +834,6 @@ html.insets #insetdbg{display:block}
       <button class="key sm" id="kitbp">Black Pearl</button>
       <button class="key sm" id="kitrz">Red Zeppelin</button>
       <button class="key sm" id="kit808">TR-808</button>
-      <button class="key sm clef on" id="bassbtn" aria-label="Bass">&#119074;</button>
       <span class="hint" id="kithint"></span>
     </div>
     <div class="rail" id="rail"></div>
@@ -2819,20 +2817,7 @@ $("verb").oninput=function(){ setRoom(+$("verb").value); };
 $("master").oninput=function(){ S.master=$("master").value/100; $("masterv").textContent=$("master").value; eng.setMaster(S.master); };
 $("bassg").oninput=function(){ S.bassg=$("bassg").value/100; $("bassgv").textContent=$("bassg").value; eng.setBassGain(S.bassg); };
 $("clickg").oninput=function(){ S.clickg=$("clickg").value/100; $("clickgv").textContent=$("clickg").value; eng.setClickGain(S.clickg); };
-var lastRootMode="1";
-function bassLabel(){
-  var on = S.rootmode!=="off";
-  $("bassbtn").classList.toggle("on", on);
-  $("bassbtn").classList.toggle("clef", true);
-}
-$("bassbtn").onclick=function(){
-  if(S.rootmode==="off"){ S.rootmode=lastRootMode||"1"; }
-  else { lastRootMode=S.rootmode; S.rootmode="off"; }
-  $("rootmode").value=S.rootmode; bassLabel();
-  toast(S.rootmode==="off" ? "Bass reference off" : "Bass reference on");
-};
-$("rootmode").onchange=function(){ S.rootmode=$("rootmode").value;
-  if(S.rootmode!=="off") lastRootMode=S.rootmode; bassLabel(); };
+$("rootmode").onchange=function(){ S.rootmode=$("rootmode").value; };
 $("clickmode").onchange=function(){ S.clickmode=$("clickmode").value; };
 $("gap").onchange=function(){ S.gap=+$("gap").value; };
 $("ramp").onchange=function(){ S.ramp=+$("ramp").value; $("rampv").textContent = S.ramp? "ramp +"+S.ramp : "ramp off"; };
@@ -3121,8 +3106,6 @@ if($("dockgroove")) $("dockgroove").onclick=function(){
   window.addEventListener("resize", paint);
   window.addEventListener("orientationchange", function(){ setTimeout(paint, 400); });
 })();
-if($("bass2")) $("bass2").onclick=function(){ $("bassbtn").click(); bass2(); };
-function bass2(){ if($("bass2")){ var on=S.rootmode!=="off"; $("bass2").classList.toggle("on", on); } }
 function tickClock(){
   var el=$("pclock"); if(!el) return;
   var d=new Date(); el.textContent = ((d.getHours()%12)||12)+":"+("0"+d.getMinutes()).slice(-2);
@@ -3745,7 +3728,6 @@ function kitLabel(){
   if($("kitcycle")) $("kitcycle").textContent = nick[kitId()]||"Synth";
   document.querySelectorAll(".vn b").forEach(function(b,i){ if(ROWS[i]) b.textContent=voiceName(ROWS[i]); });
   document.querySelectorAll("#mix .cn").forEach(function(n,i){ if(ROWS[i]) n.textContent=voiceName(ROWS[i]); });
-  bass2();
 }
 $("kitcycle").onclick=function(){
   var order=["synth","blackpearl","redzeppelin","tr808"];
@@ -3778,7 +3760,7 @@ var _retired = function(){
   });
 };
 
-loadGroove(0); drawArr(); applyProg(); info(); frame(); kitLabel(); loopHint(); bassLabel();
+loadGroove(0); drawArr(); applyProg(); info(); frame(); kitLabel(); loopHint();
 
 // ---------- memory: db when the viewer grants it, this browser otherwise ----------
 // Nothing here is load-bearing for playing. If the store never resolves, the machine
@@ -3819,7 +3801,7 @@ function applySnapshot(d){
     S.master=d.master!=null?d.master:S.master; $("master").value=Math.round(S.master*100); $("masterv").textContent=$("master").value;
     S.bassg=d.bassg!=null?d.bassg:S.bassg; $("bassg").value=Math.round(S.bassg*100); $("bassgv").textContent=$("bassg").value;
     S.clickg=d.clickg!=null?d.clickg:S.clickg; $("clickg").value=Math.round(S.clickg*100); $("clickgv").textContent=$("clickg").value;
-    S.rootmode=d.rootmode||S.rootmode; $("rootmode").value=S.rootmode; bassLabel();
+    S.rootmode=d.rootmode||S.rootmode; $("rootmode").value=S.rootmode;
     S.clickmode=d.clickmode||S.clickmode; $("clickmode").value=S.clickmode;
     S.gap=d.gap||0; $("gap").value=String(S.gap);
     S.ramp=d.ramp||0; $("ramp").value=String(S.ramp); $("rampv").textContent=S.ramp?"ramp +"+S.ramp:"ramp off";
