@@ -764,8 +764,11 @@ body.orient-land .arr{
 }
 body.orient-land.land-compose .arr{
   grid-template-columns:repeat(4,minmax(0,1fr));
-  grid-template-rows:repeat(8,minmax(0,1fr));
-  gap:2px;
+  grid-template-rows:repeat(8,minmax(44px,1fr));
+  gap:3px;
+  overflow:auto;
+  -webkit-overflow-scrolling:touch;
+  align-content:stretch;
 }
 body.orient-land #arr{flex:1;min-height:0;min-width:0}
 body.orient-land .cell{
@@ -791,19 +794,21 @@ body.orient-land.land-compose .arr-tools .row{
   display:flex;flex-wrap:nowrap;margin:0 !important;gap:4px;min-width:0;flex:1 1 0;
 }
 body.orient-land.land-compose #arr{
-  flex:1 1 auto;min-height:0;min-width:0;
+  flex:1 1 auto;min-height:0;min-width:0;overflow:auto;
 }
 body.orient-land.land-compose .cell{
-  padding:8px 6px 4px 10px;
+  min-height:44px;
+  padding:10px 8px 6px 12px;
 }
 body.orient-land.land-compose .cell .bn,
-body.orient-land.land-compose .cell .sec{font-size:9px;top:3px}
+body.orient-land.land-compose .cell .sec{font-size:10px;top:4px}
 body.orient-land.land-compose .cell .bn{left:10px}
 body.orient-land.land-compose .cell .sec{right:6px}
-body.orient-land.land-compose .cell .chd{font-size:18px;line-height:1.05}
-body.orient-land.land-compose .cell .chd.long{font-size:14px}
+body.orient-land.land-compose .cell .chd{font-size:20px;line-height:1.05}
+body.orient-land.land-compose .cell .chd.long{font-size:15px}
 body.orient-land.land-compose .cell.now{
   outline:2px solid var(--amber);outline-offset:-2px;
+  box-shadow:inset 0 0 0 1px var(--amber-hi),0 0 10px var(--amber-glow);
 }
 body.orient-land.land-compose #face-arr > .row .lbl,
 body.orient-land.land-compose .arr-tools .lbl{display:none}
