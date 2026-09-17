@@ -230,6 +230,11 @@ body.orient-land .modebar{display:none}
 .readout .row2{display:flex;justify-content:space-between;gap:10px;margin-top:3px}
 .readout .row2 span{font-family:var(--mono);font-size:11px;color:var(--dim)}
 .bars{display:flex;gap:10px}
+@keyframes bbeat {
+  0% { transform: scale(1.3); color: #fff; text-shadow: 0 0 24px rgba(255,200,120,1); }
+  100% { transform: scale(1); color: var(--amber); text-shadow: 0 0 14px var(--amber-glow); }
+}
+.pulse-beat { animation: bbeat 0.18s ease-out; display:inline-block; }
 .barbox{
   background:linear-gradient(180deg,#0a0705,#120b06);
   box-shadow:inset 0 2px 7px rgba(0,0,0,.88), inset 0 0 0 1px rgba(0,0,0,.6);
@@ -2998,9 +3003,16 @@ function frame(){
       var c=cur(), per=c.steps/beatsPerBar(c.steps);
       var barShow = live.count ? "–" : String((live.bar%loopLen())+1);
       $("barv").textContent = barShow;
-      $("beatv").textContent = String(Math.floor(live.step/per)+1);
+      var newBeat = String(Math.floor(live.step/per)+1);
+      if($("beatv").textContent !== newBeat) {
+        $("beatv").textContent = newBeat;
+        $("beatv").classList.remove("pulse-beat"); void $("beatv").offsetWidth; $("beatv").classList.add("pulse-beat");
+        if($("pbeat")) {
+          $("pbeat").textContent = newBeat;
+          $("pbeat").classList.remove("pulse-beat"); void $("pbeat").offsetWidth; $("pbeat").classList.add("pulse-beat");
+        }
+      }
       if($("pbar")) $("pbar").textContent = barShow;
-      if($("pbeat")) $("pbeat").textContent = String(Math.floor(live.step/per)+1);
       if(!live.count) paintChords(live.bar);
       var n=c.steps*c.bars;
       var ps = S.arrange[live.bar%loopLen()];
