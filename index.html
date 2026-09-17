@@ -341,7 +341,7 @@ body.mode-play:not(.orient-land) .kitbar.land-hide #bgbtn.on{
 }
 
 /* Portrait PLAY densify — reclaim header / clock / CLEAR–CPY gap / rig peek.
-   Pattern A–D stays 2×2 here so a later single-column Beat PR can rebase. */
+   Pattern A–D is a slim right rail beside the step lamps (see .pat-col). */
 html:has(body.mode-play:not(.orient-land)){height:100%;overflow:hidden}
 body.mode-play:not(.orient-land){
   padding:4px;height:100%;overflow:hidden;
@@ -856,10 +856,16 @@ body.orient-land.show-grooves #face-grooves{
   background:linear-gradient(165deg,#1b110c,#0e0805 60%,#150c06);
   box-shadow:0 -8px 24px rgba(0,0,0,.6);border-radius:8px;
 }
-body.phone.mode-edit:not(.orient-land) #face-pat,
-body.phone.mode-edit:not(.orient-land) #face-arr{
-  flex:1 1 0;min-height:0;overflow:auto;margin:0;padding:6px 0;border-bottom:0;
+body.phone.mode-edit:not(.orient-land) #face-pat{
+  display:flex;flex-direction:column;flex:1.35 1 0;min-height:0;
+  overflow:hidden;margin:0;padding:4px 0;border-bottom:0;
 }
+body.phone.mode-edit:not(.orient-land) #face-arr{
+  flex:0.9 1 0;min-height:0;overflow:auto;margin:0;padding:4px 0;border-bottom:0;
+}
+body.phone.mode-edit:not(.orient-land) #face-pat .pat-head{margin-bottom:4px !important;flex:0 0 auto}
+body.phone.mode-edit:not(.orient-land) #face-pat .pat-work{flex:1 1 auto;min-height:0}
+body.phone.mode-edit:not(.orient-land) #face-pat .pat-tools .hint{display:none}
 body.phone #dockmix, body.phone #dockmem{display:inline-flex}
 #dockmix, #dockmem, #dockgroove{display:none}
 #hedit-chrome{display:contents}
@@ -1002,9 +1008,14 @@ body.orient-land #face-arr{
   display:flex;flex-direction:column;
 }
 body.orient-land .land-chords{display:none !important}
-body.orient-land #face-pat > .row{display:none}
+body.orient-land #face-pat > .pat-head,
+body.orient-land #face-pat > .row.pat-head{display:none}
 body.orient-land.land-beat #face-arr > .row,
 body.orient-land.land-beat #face-arr > .arr-tools{display:none}
+body.orient-land #face-pat .pat-work{
+  flex:1;min-height:0;min-width:0;display:flex;flex-direction:column;gap:4px;
+}
+body.orient-land.land-beat #face-pat .pat-lamps{flex:1;min-height:0;min-width:0}
 body.orient-land #face-pat .edit-only,
 body.orient-land #face-pat .gridwrap{flex:1;min-height:0;display:flex;flex-direction:column;overflow:hidden;padding:0}
 body.orient-land #grid{flex:1;min-height:0;height:auto;display:flex;flex-direction:column;gap:2px}
@@ -1174,17 +1185,46 @@ button.key.slot[data-slot="3"]{background-image:url("assets/buttons/btn-D.png") 
 button.key#bgbtn{background-image:url("assets/buttons/btn-lock.png") !important}
 button.key#clr{background-image:url("assets/buttons/btn-clear.png") !important}
 
-/* Fat thumbs: Play/Stop scale (64px) is the size language. */
-button.key.slot[data-slot]{
-  min-width:64px;min-height:64px;height:80px;padding:0;
-  border-radius:18px;
+/* Slim A–D rail on the RIGHT of the step lamps. Thumb-wide, not a fat panel. */
+:root{ --pat-rail:56px; }
+.pat-work{
+  display:flex;flex-direction:column;min-width:0;min-height:0;gap:6px;
 }
-.pat-grid{
-  display:grid;
-  grid-template-columns:repeat(2,minmax(64px,80px));
-  gap:8px;
-  justify-content:start;
-  flex:0 0 auto;
+.pat-lamps{
+  display:flex;flex-direction:row;align-items:stretch;gap:6px;
+  min-width:0;min-height:0;flex:1 1 auto;
+}
+.pat-lamps .edit-only,
+.pat-lamps .gridwrap{
+  flex:1 1 auto;min-width:0;min-height:0;
+}
+.pat-col{
+  display:flex;flex-direction:column;gap:4px;
+  flex:0 0 var(--pat-rail);width:var(--pat-rail);min-width:48px;max-width:64px;
+  min-height:0;
+}
+.pat-tools,
+.pat-work .row.pat-tools{
+  display:flex;flex-wrap:nowrap;align-items:center;gap:4px;
+  flex:0 0 auto;width:100%;margin:0;
+}
+.pat-tools .hint{margin-left:auto;margin-right:2px;flex:0 0 auto}
+.pat-tools #cpy-targets,
+.pat-tools .cpy-targets{display:flex;gap:4px;flex-wrap:nowrap;flex:0 0 auto}
+
+button.key.slot[data-slot]{
+  min-width:48px;width:100%;max-width:64px;
+  min-height:48px;height:auto;padding:0;
+  border-radius:14px;
+  flex:1 1 0;
+}
+/* Play has no lamp grid — keep A–D one compact vertical column, Play-sized thumbs. */
+body.mode-play:not(.orient-land) .pat-lamps{flex:0 0 auto}
+body.mode-play:not(.orient-land) .pat-col{
+  flex:0 0 auto;width:80px;max-width:80px;min-width:64px;
+}
+body.mode-play:not(.orient-land) button.key.slot[data-slot]{
+  width:80px;max-width:80px;min-width:64px;min-height:64px;height:64px;flex:0 0 auto;
 }
 button.key#bgbtn{
   min-width:64px;min-height:64px;width:64px;height:64px;padding:0;
@@ -1320,29 +1360,31 @@ body.orient-land.mode-play .prow button.key#play2{
   </section>
 
   <section class="face" id="face-pat">
-    <div class="row" style="justify-content:space-between;margin-bottom:9px">
+    <div class="row pat-head" style="justify-content:space-between;margin-bottom:9px">
       <span class="lbl">Pattern</span>
       <span class="hint" id="gridinfo"></span>
     </div>
-    <div class="row" style="margin-bottom:9px; gap:8px">
-      <div class="pat-grid">
-        <button class="key play slot on" data-slot="0" aria-label="Pattern A">A</button>
-        <button class="key play slot" data-slot="1" aria-label="Pattern B">B</button>
-        <button class="key play slot" data-slot="2" aria-label="Pattern C">C</button>
-        <button class="key play slot" data-slot="3" aria-label="Pattern D">D</button>
+    <div class="pat-work">
+      <div class="pat-lamps">
+        <div class="edit-only">
+        <div class="gridwrap">
+          <div class="grid" id="grid"></div>
+        </div>
+        </div>
+        <div class="pat-col">
+          <button class="key play slot on" data-slot="0" aria-label="Pattern A">A</button>
+          <button class="key play slot" data-slot="1" aria-label="Pattern B">B</button>
+          <button class="key play slot" data-slot="2" aria-label="Pattern C">C</button>
+          <button class="key play slot" data-slot="3" aria-label="Pattern D">D</button>
+        </div>
       </div>
-    </div>
-    <div class="row pat-tools" style="margin-bottom:9px">
-      <button class="key sm" id="clr" aria-label="Clear">Clear</button>
-      <span class="hint">CPY:</span>
-      <span id="cpy-targets" class="cpy-targets">
-        <!-- populated by info() -->
-      </span>
-    </div>
-    <div class="edit-only">
-    <div class="gridwrap">
-      <div class="grid" id="grid"></div>
-    </div>
+      <div class="row pat-tools" style="margin-bottom:9px">
+        <button class="key sm" id="clr" aria-label="Clear">Clear</button>
+        <span class="hint">CPY:</span>
+        <span id="cpy-targets" class="cpy-targets">
+          <!-- populated by info() -->
+        </span>
+      </div>
     </div>
   </section>
 
