@@ -946,6 +946,19 @@ button.key#bgbtn.on:active{
 body.orient-land.mode-play #bgbtn{
   width:48px;height:48px;min-width:48px;min-height:48px;
 }
+/* Portrait play (#10): keep the full-row thumb hit; paint the wood lock on it. */
+body.mode-play:not(.orient-land) .kitbar.land-hide #bgbtn{
+  width:100% !important;min-width:0 !important;
+  min-height:64px !important;height:64px;padding:0 !important;
+  border-radius:16px;
+  background-color:#0a0705 !important;
+  background-image:url("assets/buttons/btn-lock.png") !important;
+  background-size:contain !important;
+  background-position:center !important;
+  color:transparent !important;
+}
+body.mode-play:not(.orient-land) .kitbar.land-hide #bgbtn svg{display:none}
+body.mode-play:not(.orient-land) .kitbar.land-hide #bgbtn::after{content:none}
 /* H-EDIT chrome row is ~56px — keep transport Play a compact square, not 80. */
 body.orient-land:not(.mode-play) .transport button.key#play{
   width:44px;height:36px;min-width:44px !important;min-height:36px !important;
