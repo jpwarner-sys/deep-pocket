@@ -339,6 +339,13 @@ body.mode-play:not(.orient-land) .kitbar.land-hide #bgbtn.on{
   box-shadow:inset 0 0 0 1px var(--amber), 0 2px 0 #7a4a08,
              0 0 8px var(--amber-glow), 0 0 2px rgba(255,200,120,.9);
 }
+/* Kit strip: buttons stay a stable row; hint is one reserved line so
+   loading/credit cannot reflow the groove rail or the step grid. */
+#kitstrip{align-content:flex-start}
+#kitstrip .key.sm{flex:0 0 auto}
+#kithint{
+  flex:1 1 100%;min-height:1.3em;max-width:100%;line-height:1.3em;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 
 .rail{display:flex;gap:7px;overflow-x:auto;padding-bottom:6px;scrollbar-width:thin}
 .gv{flex:0 0 auto;padding:8px 12px 10px;text-align:left;min-width:116px;border-radius:4px;
@@ -356,7 +363,8 @@ body.mode-play:not(.orient-land) .kitbar.land-hide #bgbtn.on{
 .grid{display:grid;gap:3px;width:100%;min-width:0}
 .gr{display:grid;grid-template-columns:52px repeat(var(--n),minmax(0,1fr));gap:3px;align-items:center}
 .vn{display:flex;align-items:center;justify-content:space-between;gap:6px;padding-right:6px}
-.vn b{font-weight:600;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--dim)}
+.vn b{font-weight:600;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--dim);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
 .vn button{font-family:var(--mono);font-size:9px;color:var(--faint);padding:3px 4px;border:1px solid var(--hairline);border-radius:2px}
 .vn button.on{color:var(--amber);border-color:var(--amber-lo)}
 
@@ -2600,8 +2608,16 @@ var KIT_NAMES = {
   redzeppelin: {kick:"Kick",snare:"Snare",hh:"Hats",oh:"Open",rim:"Rim",ride:"Ride",clap:"Clap",tom:"Tom",perc:"Perc"},
   tr808:       {kick:"Kick",snare:"Snare",hh:"Hats",oh:"Open",rim:"Rim",ride:"Ride",clap:"Clap",tom:"Tom",perc:"Cowbell"}
 };
-function kitId(){ return (typeof KIT!=="undefined" && KIT && KIT.on && KIT.ready && KIT.id) ? KIT.id : "synth"; }
-function voiceName(v){ var t=KIT_NAMES[kitId()]||KIT_NAMES.synth; return t[v]||NAMES[v]; }
+function kitId(){
+  if (typeof KIT==="undefined" || !KIT) return "synth";
+  if (KIT.want) return KIT.want;
+  if (KIT.on && KIT.ready && KIT.id) return KIT.id;
+  return "synth";
+}
+function soundingKit(){
+  return (typeof KIT!=="undefined" && KIT && KIT.on && KIT.ready && KIT.id) ? KIT.id : "synth";
+}
+function voiceName(v){ var t=KIT_NAMES[soundingKit()]||KIT_NAMES.synth; return t[v]||NAMES[v]; }
 var eng = new window.PocketAudio.Engine();
 
 // ---------- state ----------
@@ -3664,14 +3680,15 @@ window.DeepPocket = { eng: eng, revive: revive, audioLive: audioLive,
   state: function(){ return { ctx: eng.state ? eng.state() : "none", now: eng.now,
     bg: BG.on, bgSrc: !!AUD.src, bgSecs: BG.secs, bgBusy: BG.busy,
     playing: !!S.playing, booted: !!MEM.audio, mem: MEM.kind, ver: $("ver").textContent,
-    kit: (typeof KIT!=="undefined" && KIT) ? { id:KIT.id, on:!!KIT.on, ready:!!KIT.ready,
-      loading:!!KIT.loading, hh: !!(KIT.buf && KIT.buf.hh && KIT.buf.hh[4]) } : null }; } };
+    kit: (typeof KIT!=="undefined" && KIT) ? { id:KIT.id, want:KIT.want, on:!!KIT.on, ready:!!KIT.ready,
+      loading:!!KIT.loading, seq:KIT.seq, hh: !!(KIT.buf && KIT.buf.hh && KIT.buf.hh[4]) } : null }; } };
 
 // ---------- sampled kit ----------
 // The rendered kit plays through the SAME per-voice gains, sends and master chain as the
 // synth (eng.vgain[name]), so the mixer, mutes, room and meter keep working untouched.
 // Velocity picks a layer (timbre, not just level); round-robins alternate so repeats differ.
-var KIT = { id:null, on:false, ready:false, loading:false, buf:{}, man:null, oh:[], seed:1 };
+var KIT = { id:null, want:"synth", on:false, ready:false, loading:false, buf:{}, store:{},
+            man:null, oh:[], seed:1, seq:0, ac:null, pending:null };
 
 /* AVL's five layers come straight from the SFZ velocity split. */
 function pickLayer(vel){
@@ -3701,13 +3718,63 @@ function kitGain(name, vel, li){
 /** Cheap deterministic scatter — AVL has no round-robins, so repeats would machine-gun. */
 function jitter(){ KIT.seed = (KIT.seed * 1103515245 + 12345) & 0x7fffffff; return KIT.seed / 0x7fffffff; }
 
+/** Drop any in-flight kit fetch. decodeAudioData cannot be aborted; the
+ *  generation token makes its result a no-op if a newer pick won. */
+function kitAbort(){
+  KIT.seq++;
+  if (KIT.ac) { try { KIT.ac.abort(); } catch(e) {} KIT.ac = null; }
+  KIT.pending = null;
+}
+
+function decodeSample(ab){
+  return new Promise(function(res){
+    var settled = false;
+    var done = function(b){ if (settled) return; settled = true; res(b || null); };
+    try {
+      var p = eng.ctx.decodeAudioData(ab, done, function(){ done(null); });
+      if (p && p.then) p.then(done, function(){ done(null); });
+    } catch(e) { done(null); }
+  });
+}
+
+function commitKit(id, map, gen){
+  if (gen !== KIT.seq || KIT.want !== id) return false;
+  if (eng.ctx) chokeOpenHat(eng.now);
+  KIT.store[id] = map;
+  KIT.buf = map;
+  KIT.id = id;
+  KIT.ready = true;
+  KIT.on = true;
+  KIT.loading = false;
+  KIT.ac = null;
+  kitLabel();
+  return true;
+}
+
 function loadKit(id){
   if (!eng.ctx) return Promise.resolve(false);
-  if (KIT.ready && KIT.id === id) return Promise.resolve(true);
-  KIT.loading = true; kitLabel();
+  if (KIT.want === id && KIT.loading && KIT.pending) return KIT.pending;
+  if (KIT.on && KIT.ready && KIT.id === id) {
+    KIT.want = id; KIT.loading = false; kitLabel();
+    return Promise.resolve(true);
+  }
+  kitAbort();
+  var gen = KIT.seq;
+  KIT.want = id;
+  KIT.loading = true;
+  kitLabel();
+  if (KIT.store[id]) return Promise.resolve(commitKit(id, KIT.store[id], gen));
+
   var base = "kits/";
-  return fetch(base + "kits.json").then(function(r){ return r.json(); }).then(function(man){
-    KIT.man = man;
+  var ac = (typeof AbortController !== "undefined") ? new AbortController() : null;
+  KIT.ac = ac;
+  var sig = ac ? ac.signal : undefined;
+  var job = (KIT.man ? Promise.resolve(KIT.man)
+      : fetch(base + "kits.json", { signal: sig }).then(function(r){ return r.json(); }).then(function(man){
+          KIT.man = man; return man;
+        })
+    ).then(function(man){
+    if (gen !== KIT.seq) return false;
     var spec = man.kits[id];
     if (!spec) throw new Error("no kit " + id);
     var map = {}, jobs = [];
@@ -3715,25 +3782,30 @@ function loadKit(id){
       var files = spec.voices[v] || [];
       map[v] = files.map(function(){ return null; });
       files.forEach(function(f, li){
-        jobs.push(fetch(base + f).then(function(r){ return r.arrayBuffer(); }).then(function(ab){
-          return new Promise(function(res){
-            var p = eng.ctx.decodeAudioData(ab, function(b){ map[v][li] = b; res(); }, function(){ res(); });
-            if (p && p.then) p.then(function(b){ map[v][li] = b; res(); }, function(){ res(); });
-          });
+        jobs.push(fetch(base + f, { signal: sig }).then(function(r){ return r.arrayBuffer(); }).then(function(ab){
+          if (gen !== KIT.seq) return;
+          return decodeSample(ab).then(function(b){ if (gen === KIT.seq && b) map[v][li] = b; });
         }, function(){}));
       });
     });
     return Promise.all(jobs).then(function(){
+      if (gen !== KIT.seq) return false;
       var got = 0; VOICES.forEach(function(v){ (map[v]||[]).forEach(function(b){ if(b) got++; }); });
       if (!got) throw new Error("nothing decoded");
-      KIT.buf = map; KIT.id = id; KIT.ready = true; KIT.on = true; KIT.loading = false; kitLabel();
-      return true;
+      return commitKit(id, map, gen);
     });
-  }).catch(function(e){
-    KIT.loading = false; KIT.ready = false; KIT.on = false; kitLabel();
+  }).then(function(ok){ return !!ok; }, function(e){
+    if (gen !== KIT.seq) return false;
+    if (e && e.name === "AbortError") return false;
+    KIT.loading = false;
+    KIT.want = (KIT.on && KIT.ready && KIT.id) ? KIT.id : "synth";
+    if (!(KIT.on && KIT.ready)) { KIT.ready = false; KIT.on = false; }
+    kitLabel();
     toast("Kit didn't load — staying on the synth.");
     return false;
   });
+  KIT.pending = job;
+  return job;
 }
 
 function chokeOpenHat(time){
@@ -3781,23 +3853,32 @@ function hit(name, time, vel){
 }
 
 function kitLabel(){
-  var on = KIT.on && KIT.ready;
+  var sel = kitId();
+  var on = sel !== "synth";
   $("kitsynth").classList.toggle("on", !on);
-  $("kitbp").classList.toggle("on", on && KIT.id === "blackpearl");
-  $("kitrz").classList.toggle("on", on && KIT.id === "redzeppelin");
-  $("kit808").classList.toggle("on", on && KIT.id === "tr808");
+  $("kitbp").classList.toggle("on", sel === "blackpearl");
+  $("kitrz").classList.toggle("on", sel === "redzeppelin");
+  $("kit808").classList.toggle("on", sel === "tr808");
   var kith=$("kithint");
   if(kith){
-    var k = (KIT.man && KIT.man.kits && KIT.man.kits[KIT.id]) || {};
+    var committed = (KIT.on && KIT.ready && KIT.id) ? KIT.id : null;
+    var k = (KIT.man && KIT.man.kits && KIT.man.kits[committed || sel]) || {};
     var cred = k.credit || (KIT.man && KIT.man.credit) || "";
-    kith.textContent = KIT.loading ? "loading…"
+    var nextHint = KIT.loading ? "loading…"
       : on ? cred
       : "";
+    if (kith.textContent !== nextHint) kith.textContent = nextHint;
   }
   var nick={synth:"Synth",blackpearl:"Pearl",redzeppelin:"Zepp",tr808:"808"};
-  if($("kitcycle")) $("kitcycle").textContent = nick[kitId()]||"Synth";
-  document.querySelectorAll(".vn b").forEach(function(b,i){ if(ROWS[i]) b.textContent=voiceName(ROWS[i]); });
-  document.querySelectorAll("#mix .cn").forEach(function(n,i){ if(ROWS[i]) n.textContent=voiceName(ROWS[i]); });
+  if($("kitcycle")) $("kitcycle").textContent = nick[sel]||"Synth";
+  /* Names follow the committed kit only — never the in-flight want —
+     so the step grid does not relabel (and reflow) through Synth. */
+  var namesId = (KIT.on && KIT.ready && KIT.id) ? KIT.id : "synth";
+  if (kitLabel._names !== namesId) {
+    kitLabel._names = namesId;
+    document.querySelectorAll(".vn b").forEach(function(b,i){ if(ROWS[i]) b.textContent=voiceName(ROWS[i]); });
+    document.querySelectorAll("#mix .cn").forEach(function(n,i){ if(ROWS[i]) n.textContent=voiceName(ROWS[i]); });
+  }
 }
 $("kitcycle").onclick=function(){
   var order=["synth","blackpearl","redzeppelin","tr808"];
@@ -3808,12 +3889,24 @@ $("kitcycle").onclick=function(){
   else if(nx==="redzeppelin") $("kitrz").click();
   else $("kit808").click();
 };
-$("kitsynth").onclick = function(){ KIT.on = false; kitLabel(); bgTouch(); toast("Synth"); };
+$("kitsynth").onclick = function(){
+  kitAbort();
+  KIT.want = "synth";
+  KIT.loading = false;
+  KIT.on = false;
+  if (eng.ctx) chokeOpenHat(eng.now);
+  KIT.buf = {};
+  kitLabel();
+  bgTouch();
+  toast("Synth");
+};
 function pickKit(id, label){
   return function(){
     if (!eng.ctx) { revive(true); return; }
-    if (KIT.ready && KIT.id === id) { KIT.on = true; kitLabel(); bgTouch(); toast(label); return; }
-    KIT.ready = false;
+    if (KIT.want === id && KIT.on && KIT.ready && KIT.id === id) {
+      kitLabel(); bgTouch(); toast(label); return;
+    }
+    if (KIT.want === id && KIT.loading) return;
     loadKit(id).then(function(ok){ if (ok) { bgTouch(); toast(label); } });
   };
 }
