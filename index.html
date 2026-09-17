@@ -1072,8 +1072,7 @@ body.orient-land .land-chords{display:none !important}
 body.orient-land #face-pat > .pat-head,
 body.orient-land #face-pat > .row.pat-head{display:none}
 body.orient-land.land-beat #face-pat .pat-tools{display:flex}
-body.orient-land.land-beat #face-arr > .row,
-body.orient-land.land-beat #face-arr > .arr-tools{display:none}
+body.orient-land.land-beat #face-arr > .row{display:none}
 body.orient-land #face-pat .pat-work{
   flex:1;min-height:0;min-width:0;display:flex;flex-direction:column;gap:4px;
 }
@@ -1323,6 +1322,8 @@ button.key#clr{
   margin:0 0 8px;min-width:0;
 }
 .pat-tools .hint{display:none}
+.pat-tools #cpy-targets,
+.pat-tools .cpy-targets,
 #cpy-targets{
   display:flex;flex-wrap:nowrap;align-items:stretch;gap:6px;
   flex:1 1 auto;min-width:0;
@@ -1345,10 +1346,14 @@ button.key#clr{
 body.orient-land.land-beat .pat-tools{
   flex:0 0 auto;margin:0 0 4px;gap:4px;
 }
+body.orient-land.land-beat .pat-tools #cpy-targets,
+body.orient-land.land-beat .pat-tools .cpy-targets{
+  flex:1 1 auto;min-width:0;
+}
 body.orient-land.land-beat button.key#clr,
 body.orient-land.land-beat #cpy-targets .key{
-  width:auto;height:56px;min-width:56px;min-height:56px;max-width:none;
-  flex:1 1 0;
+  width:auto;height:56px;min-width:56px;min-height:56px;max-width:80px;
+  flex:1 1 56px;
 }
 
 button.key#play:active,
