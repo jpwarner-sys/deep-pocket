@@ -449,23 +449,45 @@ body.mode-play:not(.orient-land) .cpy-targets .key:active{
              0 0 8px var(--amber-glow), 0 0 2px rgba(255,200,120,.9)}
 .gv.on b{color:#1a1008}.gv.on span{color:#7a4a08}
 
-.gridwrap{overflow-x:auto;padding-bottom:4px}
-.grid{display:grid;gap:3px;width:100%;min-width:0}
-.gr{display:grid;grid-template-columns:52px repeat(var(--n),minmax(0,1fr));gap:3px;align-items:center}
-.vn{display:flex;align-items:center;justify-content:space-between;gap:6px;padding-right:6px}
+.gridwrap{
+  overflow-x:auto;overflow-y:hidden;padding-bottom:4px;max-width:100%;
+  -webkit-overflow-scrolling:touch;overscroll-behavior-x:contain;
+  scroll-snap-type:x mandatory;scroll-padding-left:var(--grid-label,52px);
+  touch-action:pan-x;
+}
+.grid{
+  --grid-label:52px;--n:16;--vp:16;
+  display:flex;flex-direction:column;gap:3px;
+  width:calc(var(--grid-label) + (100% - var(--grid-label)) * var(--n) / var(--vp));
+  min-width:100%;
+}
+.gr{display:grid;grid-template-columns:var(--grid-label) repeat(var(--n),minmax(0,1fr));gap:3px;align-items:center}
+.vn{
+  display:flex;align-items:center;justify-content:space-between;gap:6px;padding-right:6px;
+  position:sticky;left:0;z-index:3;
+  background:linear-gradient(90deg,#140c08 70%,rgba(20,12,8,.92));
+}
 .vn b{font-weight:600;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--dim);
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
-.vn button{font-family:var(--mono);font-size:9px;color:var(--faint);padding:3px 4px;border:1px solid var(--hairline);border-radius:2px}
-.vn button.on{color:var(--amber);border-color:var(--amber-lo)}
+.vn button{
+  font-family:var(--mono);font-size:9px;color:var(--amber);padding:4px 6px;min-width:28px;min-height:28px;
+  border:0;border-radius:4px;flex:0 0 auto;
+  background:linear-gradient(180deg,#2a1c10,#170e07);
+  box-shadow:inset 0 0 0 1px rgba(255,160,44,.35), inset 0 1px 0 rgba(214,170,120,.14), 0 2px 0 #0a0705;
+}
+.vn button.on{color:#1a1008;background:linear-gradient(180deg,#ffc978,#e08a12);
+  box-shadow:inset 0 0 0 1px var(--amber), 0 2px 0 #7a4a08, 0 0 8px var(--amber-glow)}
 
 /* ROUND lamps. Unlit is a dark lamp, never a hole. */
 .st{
-  width:100%;max-width:23px;min-width:11px;aspect-ratio:1;height:auto;
+  width:100%;max-width:none;min-width:0;aspect-ratio:1;height:auto;
   border-radius:50%;justify-self:center;border:0;padding:0;
   background:radial-gradient(circle at 38% 32%,#4a3320,#2a1a0d 46%,#160d06 78%);
   box-shadow:inset 0 0 0 1px rgba(0,0,0,.9),inset 0 1px 1px rgba(220,175,120,.22),
              inset 0 -2px 3px rgba(0,0,0,.6),0 1px 1px rgba(0,0,0,.5);
 }
+.st.bar-start{scroll-snap-align:start}
+.gridwrap .st,.gridwrap .vn button{touch-action:pan-x}
 .st.beat{background:radial-gradient(circle at 38% 32%,#5a4030,#2a1a0d 46%,#160d06 78%)}
 .st.v1{background:radial-gradient(circle at 38% 32%,#c98940,#8a520b 58%,#5a3510);
   box-shadow:0 0 6px rgba(255,160,44,.35)}
@@ -475,8 +497,12 @@ body.mode-play:not(.orient-land) .cpy-targets .key:active{
   box-shadow:0 0 10px var(--amber-glow),0 0 2px rgba(255,200,120,.9)}
 .st.pl{outline:2px solid var(--amber-hi);outline-offset:1px}
 .st.mut{opacity:.28}
-.ruler{display:grid;grid-template-columns:52px repeat(var(--n),minmax(0,1fr));gap:3px;margin-bottom:4px}
+.ruler{display:grid;grid-template-columns:var(--grid-label,52px) repeat(var(--n),minmax(0,1fr));gap:3px;margin-bottom:4px}
 .ruler span{font-family:var(--mono);font-size:9px;color:var(--faint);text-align:center;letter-spacing:0}
+.ruler span:first-child{
+  position:sticky;left:0;z-index:3;
+  background:linear-gradient(90deg,#140c08 70%,rgba(20,12,8,.92));
+}
 .ruler span.b{color:var(--dim)}
 
 .arr{display:grid;grid-template-columns:repeat(8,1fr);gap:4px}
@@ -507,6 +533,27 @@ body.mode-play:not(.orient-land) .cpy-targets .key:active{
 .cell.gap{background:#0a0705;--sec:#3a342e}
 .cell.out{opacity:.3}
 .cell.gap .chd{color:var(--faint)}
+
+/* Arrangement chrome: interactive = wood/amber. Static labels stay out. */
+.arr-tools{display:flex;flex-direction:column;gap:8px;margin:0 0 10px}
+.arr-tools > .row{gap:6px;align-items:stretch}
+.arr-tools .key{
+  color:var(--amber);min-height:44px;padding:10px 12px;flex:1 1 auto;
+}
+#chordset{
+  flex:0 0 auto;min-width:72px;min-height:48px;padding:10px 16px;
+  font-size:16px;letter-spacing:.16em;color:var(--amber);
+}
+.arr-tools select,
+#chordin{
+  font-family:var(--mono);font-size:13px;flex:1 1 auto;min-width:0;min-height:44px;
+  padding:8px 10px;border:0;border-radius:4px;color:var(--amber);
+  background:linear-gradient(180deg,#2a1c10,#170e07);
+  box-shadow:inset 0 0 0 1px rgba(255,160,44,.35), inset 0 1px 0 rgba(214,170,120,.14), 0 2px 0 #0a0705;
+}
+#chordin{min-height:48px}
+#face-pat > .row .lbl,
+#face-pat > .row .hint{color:var(--faint);opacity:.7;font-size:10px;letter-spacing:.14em}
 
 .cols{display:grid;grid-template-columns:1fr 1fr;gap:12px;min-width:0;width:100%}
 .cols .rig-h{margin-bottom:6px}
@@ -588,7 +635,8 @@ body.mode-play:not(.orient-land) #toast{
   .brand h1{font-size:20px}
   .readout .big{font-size:32px}
   .st{max-width:none}
-  .gr,.ruler{grid-template-columns:42px repeat(var(--n),minmax(0,1fr))}
+  .grid{--grid-label:42px}
+  .gr,.ruler{grid-template-columns:var(--grid-label) repeat(var(--n),minmax(0,1fr))}
   .vn{padding-right:2px;gap:2px}
   .vn b{font-size:11px;letter-spacing:.04em}
   .key.sm{padding:8px 8px 10px}
@@ -870,10 +918,11 @@ body.phone #dockmix, body.phone #dockmem{display:inline-flex}
 #dockmix, #dockmem, #dockgroove{display:none}
 #hedit-chrome{display:contents}
 
-/* H-EDIT — one chrome line (~56). Grooves behind a control.
-   Work row is minmax(0,1fr); pat+arr fill it. Portrait untouched. */
+/* H-EDIT — dense chrome. Grooves behind a control.
+   Work row is minmax(0,1fr); pat+arr fill it. Portrait untouched.
+   Keep iOS safe-area; do not fight the status bar. */
 html:has(body.orient-land), body.orient-land{height:100%;overflow:hidden}
-body.orient-land{padding:4px}
+body.orient-land{padding:2px}
 body.orient-land.land-compose{padding:2px}
 body.orient-land #unit{
   display:grid;
@@ -884,9 +933,9 @@ body.orient-land #unit{
     "pat    arr";
   grid-auto-rows:0px;
   grid-auto-columns:0px;
-  gap:6px 8px;height:100%;min-height:0;max-width:none;overflow:hidden;
-  padding:calc(4px + var(--sai-t)) calc(8px + var(--sai-r))
-          calc(4px + var(--sai-b)) calc(8px + var(--sai-l));
+  gap:4px 6px;height:100%;min-height:0;max-width:none;overflow:hidden;
+  padding:calc(2px + var(--sai-t)) calc(6px + var(--sai-r))
+          calc(2px + var(--sai-b)) calc(6px + var(--sai-l));
 }
 body.orient-land.land-beat #unit{grid-template-columns:minmax(0,65fr) minmax(0,35fr)}
 /* COMPOSE: 32-bar grid pops out and eats the work row. MONITOR is gone.
@@ -902,19 +951,31 @@ body.orient-land.land-compose:not(.mode-play) #unit{
           calc(2px + var(--sai-b)) calc(2px + var(--sai-l));
 }
 body.orient-land #hedit-chrome{
-  grid-area:chrome;display:flex;flex-wrap:nowrap;align-items:center;gap:8px;
-  min-height:52px;max-height:56px;min-width:0;overflow:hidden;
+  grid-area:chrome;display:flex;flex-wrap:nowrap;align-items:center;gap:6px;
+  min-height:40px;max-height:44px;min-width:0;overflow:hidden;
 }
 body.orient-land .brand{
-  margin:0;flex-wrap:nowrap;gap:6px;min-width:0;flex:0 0 auto;
+  margin:0;flex-wrap:nowrap;gap:4px;min-width:0;flex:0 0 auto;
 }
 body.orient-land .brand h1, body.orient-land .brand .mk, body.orient-land .brand .sub, body.orient-land .brand .ver{display:none}
-body.orient-land .landbar{margin-left:auto;flex:0 0 auto}
+body.orient-land .landbar{margin-left:0;flex:0 0 auto}
 body.orient-land #dockmix, body.orient-land #dockmem, body.orient-land #dockgroove{flex:0 0 auto}
-body.orient-land .brand .key.sm, body.orient-land #dockgroove{min-height:32px;padding:5px 9px}
+body.orient-land .brand .key.sm, body.orient-land #dockgroove{min-height:36px;padding:6px 10px}
 body.orient-land .key.ico{min-width:36px;padding:5px 8px}
 body.orient-land .key.ico svg{width:16px;height:16px}
 body.orient-land #dockgroove{display:inline-flex}
+body.orient-land.mode-edit #face-top{flex:0 1 auto;width:auto}
+body.orient-land.mode-edit .transport{width:auto}
+body.orient-land.mode-edit #hedit-chrome #bgbtn{
+  flex:1 1 120px;min-width:72px !important;width:auto !important;max-width:none;
+  min-height:40px !important;height:40px !important;padding:0 !important;border-radius:12px;
+  background-color:transparent !important;
+  background-image:url("assets/buttons/btn-lock.png"), linear-gradient(180deg,#2a1c10,#170e07) !important;
+  background-size:auto 100%, 100% 100% !important;
+  background-position:center, center !important;
+  background-repeat:no-repeat, no-repeat !important;
+  box-shadow:inset 0 0 0 1px rgba(255,160,44,.45), inset 0 1px 0 rgba(214,170,120,.18), 0 2px 0 #0a0705;
+}
 body.orient-land #face-top{
   display:flex !important;flex:1 1 auto;min-width:0;margin:0;padding:0;border:0;
 }
@@ -1010,25 +1071,32 @@ body.orient-land #face-arr{
 body.orient-land .land-chords{display:none !important}
 body.orient-land #face-pat > .pat-head,
 body.orient-land #face-pat > .row.pat-head{display:none}
-body.orient-land.land-beat #face-arr > .row,
-body.orient-land.land-beat #face-arr > .arr-tools{display:none}
+body.orient-land.land-beat #face-pat .pat-tools{display:flex}
+body.orient-land.land-beat #face-arr > .row{display:none}
 body.orient-land #face-pat .pat-work{
   flex:1;min-height:0;min-width:0;display:flex;flex-direction:column;gap:4px;
 }
 body.orient-land.land-beat #face-pat .pat-lamps{flex:1;min-height:0;min-width:0}
-body.orient-land #face-pat .edit-only,
-body.orient-land #face-pat .gridwrap{flex:1;min-height:0;display:flex;flex-direction:column;overflow:hidden;padding:0}
-body.orient-land #grid{flex:1;min-height:0;height:auto;display:flex;flex-direction:column;gap:2px}
+body.orient-land #face-pat .edit-only{flex:1;min-height:0;min-width:0;display:flex;flex-direction:column;overflow:hidden;padding:0}
+body.orient-land #face-pat .gridwrap{
+  flex:1;min-height:0;min-width:0;display:block;overflow-x:auto;overflow-y:hidden;padding:0;
+  -webkit-overflow-scrolling:touch;scroll-snap-type:x mandatory;scroll-padding-left:var(--grid-label,58px);
+}
+body.orient-land #grid{min-height:100%;height:100%;display:flex;flex-direction:column;gap:2px}
 body.orient-land #grid .ruler{flex:0 0 auto;margin-bottom:0}
 body.orient-land #grid .gr{flex:1 1 0;min-height:0}
+body.orient-land .grid{--grid-label:68px}
 body.orient-land .gr,
-body.orient-land .ruler{grid-template-columns:46px repeat(var(--n),minmax(0,1fr))}
-body.orient-land .vn{padding-right:2px;gap:0}
+body.orient-land .ruler{grid-template-columns:var(--grid-label) repeat(var(--n),minmax(0,1fr))}
+body.orient-land .vn{padding-right:4px;gap:4px}
 body.orient-land .vn b{
-  font-size:9px;letter-spacing:.04em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;
+  font-size:10px;letter-spacing:.04em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;
 }
-body.orient-land .vn button{display:none}
-body.orient-land .st{max-width:22px;max-height:100%}
+body.orient-land.land-beat .vn button{display:inline-flex;align-items:center;justify-content:center}
+body.orient-land.land-beat .st{
+  max-width:none;max-height:100%;width:100%;height:100%;min-width:0;min-height:0;
+  aspect-ratio:auto;border-radius:30%;
+}
 body.orient-land.land-compose:not(.mode-play) #face-pat{display:none !important}
 body.orient-land .arr{
   grid-template-columns:repeat(8,minmax(0,1fr));
@@ -1070,22 +1138,34 @@ body.orient-land.land-compose:not(.mode-play) #face-arr{
     0 0 0 1px var(--hairline),
     0 10px 28px rgba(0,0,0,.55);
 }
+/* Arrangement tools: fat keys, no prose. 32-bar ceiling is the arr cells, not extra UI. */
+body.orient-land .arr-tools{
+  display:flex;flex-direction:column;flex-wrap:nowrap;align-items:stretch;gap:4px;
+  flex:0 0 auto;min-width:0;margin:0 0 4px;
+}
 body.orient-land.land-compose .arr-tools{
-  display:flex;flex-wrap:nowrap;align-items:stretch;gap:4px;
+  display:flex;flex-direction:row;flex-wrap:nowrap;align-items:stretch;gap:4px;
   flex:0 0 auto;min-width:0;margin:0 0 6px;overflow:hidden;
 }
-body.orient-land.land-compose .arr-tools > .row{
-  display:flex;flex-wrap:nowrap;margin:0 !important;gap:4px !important;min-width:0;
+body.orient-land .arr-tools > .row{
+  display:flex;flex-wrap:nowrap;margin:0 !important;gap:4px !important;min-width:0;align-items:stretch;
 }
 body.orient-land.land-compose .arr-tools > .row:nth-child(1){flex:0 0 auto}
 body.orient-land.land-compose .arr-tools > .row:nth-child(2){flex:0 1 9em}
 body.orient-land.land-compose .arr-tools > .row:nth-child(3){flex:1 1 14em}
 body.orient-land.land-compose .arr-tools .row .row{flex:0 0 auto;min-width:0}
-body.orient-land.land-compose #prog,
-body.orient-land.land-compose #loophint{display:none}
+body.orient-land.land-beat .arr-tools > .row{flex-wrap:wrap !important}
+body.orient-land .arr-tools .lbl,
+body.orient-land #loophint,
+body.orient-land #prog{display:none}
+body.orient-land #arr{
+  flex:1 1 auto;min-height:0;min-width:0;overflow:auto;
+}
 body.orient-land.land-compose #arr{
   flex:1 1 auto;min-height:0;min-width:0;overflow:hidden;
 }
+body.orient-land.land-compose .arr-tools > .row.arr-presets{flex:0 0 auto}
+body.orient-land.land-compose .arr-tools > .row.arr-changes{flex:0 0 auto}
 body.orient-land.land-compose .cell{
   min-height:0;
   padding:10px 8px 6px 12px;
@@ -1120,23 +1200,23 @@ body.orient-land.land-compose .cell.now .chd{
 }
 body.orient-land.land-compose #face-arr > .row .lbl,
 body.orient-land.land-compose .arr-tools .lbl{display:none}
-body.orient-land.land-compose #face-arr .key.sm{min-height:36px;padding:4px 9px;font-size:11px}
-body.orient-land.land-compose #face-arr select{
-  min-height:36px;padding:3px 8px;font-size:11px;flex:1 1 auto;max-width:none;min-width:0;
-  color:var(--amber-hi);
-  background:linear-gradient(180deg,#1a120c,#0e0906);
-  border:1px solid rgba(255,160,44,.40);
-  border-radius:6px;
-  box-shadow:inset 0 1px 0 var(--lift), 0 2px 0 #0a0705;
+body.orient-land #face-arr .key{
+  min-height:44px;padding:8px 10px;font-size:13px;letter-spacing:.12em;color:var(--amber);
 }
-body.orient-land.land-compose #chordin{
-  min-height:36px !important;padding:4px 10px !important;font-size:12px !important;min-width:0 !important;
-  color:var(--amber-hi) !important;
-  background:linear-gradient(180deg,#1a120c,#0e0906) !important;
-  border:1px solid rgba(255,160,44,.40) !important;
-  border-radius:6px !important;
-  box-shadow:inset 0 1px 0 var(--lift), 0 2px 0 #0a0705;
+body.orient-land #chordset{
+  min-width:64px;min-height:48px;padding:8px 14px;font-size:16px;letter-spacing:.16em;
+  color:var(--amber);
 }
+body.orient-land #face-arr select,
+body.orient-land #chordin{
+  min-height:44px;padding:6px 10px;font-size:13px;flex:1 1 auto;max-width:none;min-width:0;
+  background:linear-gradient(180deg,#2a1c10,#170e07);
+  color:var(--amber);
+  border:0;
+  border-radius:4px;
+  box-shadow:inset 0 0 0 1px rgba(255,160,44,.35), inset 0 1px 0 rgba(214,170,120,.14), 0 2px 0 #0a0705;
+}
+body.orient-land #chordin{min-height:48px !important;padding:8px 10px !important;font-size:14px !important}
 body.orient-land #face-pat .hint,
 body.orient-land #face-arr .hint{display:none}
 body.orient-land .modebar{display:none}
@@ -1232,8 +1312,48 @@ button.key#bgbtn{
 }
 button.key#bgbtn svg{display:none}
 button.key#clr{
-  min-width:64px;min-height:64px;width:64px;height:64px;padding:0;
-  border-radius:16px;letter-spacing:0;
+  min-width:64px;min-height:64px;width:72px;height:72px;padding:0;
+  border-radius:16px;letter-spacing:0;flex:0 0 auto;
+}
+
+/* CLEAR + copy-to A–D: fat thumb lamps, tight gutter, no CPY prose. */
+.pat-tools{
+  display:flex;flex-wrap:nowrap;align-items:stretch;gap:6px;
+  margin:0 0 8px;min-width:0;
+}
+.pat-tools .hint{display:none}
+.pat-tools #cpy-targets,
+.pat-tools .cpy-targets,
+#cpy-targets{
+  display:flex;flex-wrap:nowrap;align-items:stretch;gap:6px;
+  flex:1 1 auto;min-width:0;
+}
+#cpy-targets .key{
+  flex:1 1 56px;
+  min-width:56px;min-height:64px;height:72px;max-width:80px;
+  padding:0;border-radius:16px;
+  font-size:22px;letter-spacing:.12em;color:var(--amber);
+  background:
+    repeating-linear-gradient(88deg, rgba(0,0,0,.22) 0 1px, transparent 1px 3px),
+    linear-gradient(165deg,#4a301c,#24150c 55%,#1a1008);
+  box-shadow:
+    inset 0 0 0 1px rgba(255,160,44,.45),
+    inset 0 1px 0 rgba(214,170,120,.22),
+    0 2px 0 #0a0705;
+}
+#cpy-targets .key:active{filter:brightness(.7) saturate(1.12)}
+
+body.orient-land.land-beat .pat-tools{
+  flex:0 0 auto;margin:0 0 4px;gap:4px;
+}
+body.orient-land.land-beat .pat-tools #cpy-targets,
+body.orient-land.land-beat .pat-tools .cpy-targets{
+  flex:1 1 auto;min-width:0;
+}
+body.orient-land.land-beat button.key#clr,
+body.orient-land.land-beat #cpy-targets .key{
+  width:auto;height:56px;min-width:56px;min-height:56px;max-width:80px;
+  flex:1 1 56px;
 }
 
 button.key#play:active,
@@ -1274,7 +1394,7 @@ body.mode-play:not(.orient-land) .kitbar.land-hide #bgbtn{
 }
 body.mode-play:not(.orient-land) .kitbar.land-hide #bgbtn svg{display:none}
 body.mode-play:not(.orient-land) .kitbar.land-hide #bgbtn::after{content:none}
-/* H-EDIT chrome row is ~56px — keep transport Play a compact square, not 80. */
+/* H-EDIT chrome row is ~44px — keep transport Play a compact square, not 80. */
 body.orient-land:not(.mode-play) .transport button.key#play{
   width:44px;height:36px;min-width:44px !important;min-height:36px !important;
   border-radius:10px;
@@ -1378,9 +1498,8 @@ body.orient-land.mode-play .prow button.key#play2{
           <button class="key play slot" data-slot="3" aria-label="Pattern D">D</button>
         </div>
       </div>
-      <div class="row pat-tools" style="margin-bottom:9px">
-        <button class="key sm" id="clr" aria-label="Clear">Clear</button>
-        <span class="hint">CPY:</span>
+      <div class="row pat-tools">
+        <button class="key" id="clr" aria-label="Clear">Clear</button>
         <span id="cpy-targets" class="cpy-targets">
           <!-- populated by info() -->
         </span>
@@ -1390,35 +1509,23 @@ body.orient-land.mode-play .prow button.key#play2{
 
   <section class="face edit-only" id="face-arr">
     <div class="arr-tools">
-    <div class="row" style="justify-content:space-between;margin-bottom:9px">
-      <span class="lbl">32-bar arrangement</span>
-      <div class="land-chords" id="landchords">
-        <div><span class="nl">NOW</span><b id="lnow">·</b></div>
-        <div class="dim"><span class="nl">NEXT</span><b id="lnext">·</b></div>
-        <div class="dim"><span class="nl">AFTER</span><b id="lafter">·</b></div>
+    <div class="row arr-presets">
+      <div class="row" style="gap:4px;flex:1 1 auto;min-width:0">
+        <button class="key" id="fillA">All&nbsp;A</button>
+        <button class="key" id="abab">ABAB</button>
+        <button class="key" id="aaba">AABA</button>
       </div>
-      <div class="row">
-        <select id="prog" style="max-width:240px"></select>
-        <button class="key sm" id="fillA">All&nbsp;A</button>
-        <button class="key sm" id="abab">ABAB</button>
-        <button class="key sm" id="aaba">AABA</button>
-      </div>
-    </div>
-    <div class="row" style="gap:8px;margin-bottom:9px">
-      <span class="lbl">Loop</span>
-      <select id="loop" style="max-width:150px">
-        <option value="0" selected>follow the changes</option>
+      <select id="loop" aria-label="Loop">
+        <option value="0" selected>follow</option>
         <option value="4">4 bars</option><option value="8">8 bars</option>
         <option value="12">12 bars</option><option value="16">16 bars</option>
         <option value="24">24 bars</option><option value="32">32 bars</option>
       </select>
-      <span class="hint" id="loophint"></span>
+      <select id="prog" aria-label="Changes"></select>
     </div>
-    <div class="row" style="gap:7px;margin-bottom:11px">
-      <input type="text" id="chordin" placeholder="Am7 D7 Gmaj7 Cmaj7" aria-label="Changes"
-             style="flex:1;min-width:170px;background:var(--well);border:1px solid var(--edge);color:var(--bone);
-                    font-family:var(--mono);font-size:13px;padding:10px;border-radius:2px;min-height:44px">
-      <button class="key sm" id="chordset">Set</button>
+    <div class="row arr-changes">
+      <input type="text" id="chordin" placeholder="Am7 D7 Gmaj7 Cmaj7" aria-label="Changes">
+      <button class="key" id="chordset">Set</button>
     </div>
     </div>
     <div class="arr" id="arr" aria-label="32-bar sequence"></div>
@@ -3203,16 +3310,21 @@ function loadGroove(i){
 
 function info(){
   var c=cur();
-  if($("gridinfo")) $("gridinfo").textContent = c.steps+" steps × "+c.bars+" bar"+(c.bars>1?"s":"")+" · "+
-    (c.steps===12?"12/8":c.steps===14?"7/8":c.steps===20?"5/4":"4/4");
+  if($("gridinfo")) $("gridinfo").textContent = c.steps+" × "+c.bars;
   if($("cpy-targets")) {
-    var html = '';
+    var host=$("cpy-targets"); host.innerHTML="";
     for(var i=0; i<4; i++) {
-      if(i !== S.slot) {
-        html += '<button class="key cpy-slot" data-copy="'+i+'" onclick="copyPat('+i+')" aria-label="Copy to '+'ABCD'[i]+'">'+'ABCD'[i]+'</button>';
-      }
+      if(i === S.slot) continue;
+      (function(i){
+        var b=document.createElement("button");
+        b.className="key cpy-slot";
+        b.dataset.copy=String(i);
+        b.textContent="ABCD"[i];
+        b.setAttribute("aria-label","Copy to "+"ABCD"[i]);
+        b.onclick=function(){ copyPat(i); };
+        host.appendChild(b);
+      })(i);
     }
-    $("cpy-targets").innerHTML = html;
   }
 }
 
@@ -3221,19 +3333,28 @@ function copyPat(nxt){
   toast("Pattern "+"ABCD"[S.slot]+" → "+"ABCD"[nxt]);
 }
 
-// step grid
+// step grid — viewport is 1 pattern bar (half of a 2-bar groove).
+// Horizontal swipe reveals the rest of THIS pattern only. Never the 32-bar arranger.
 function drawGrid(){
   var c=cur(), n=c.steps*c.bars, g=$("grid"); g.innerHTML="";
-  var ruler=document.createElement("div"); ruler.className="ruler"; ruler.style.setProperty("--n",n);
+  var vp=Math.max(1, c.steps|0);
+  if(vp>n) vp=n;
+  g.style.setProperty("--n", n);
+  g.style.setProperty("--vp", vp);
+  var wrap=g.parentElement;
+  if(wrap){ wrap.scrollLeft=0; wrap._visBar=0; }
+  var ruler=document.createElement("div"); ruler.className="ruler";
   ruler.appendChild(document.createElement("span"));
   var per = c.steps/beatsPerBar(c.steps);
   for(var s=0;s<n;s++){ var sp=document.createElement("span");
     var inBar=s%c.steps; var isBeat=(inBar % per)===0;
     sp.textContent = isBeat ? String(Math.floor(inBar/per)+1) : "·";
-    if(isBeat) sp.className="b"; ruler.appendChild(sp); }
+    if(isBeat) sp.className="b";
+    if(inBar===0) sp.classList.add("bar-start");
+    ruler.appendChild(sp); }
   g.appendChild(ruler);
   ROWS.forEach(function(v){
-    var row=document.createElement("div"); row.className="gr"; row.style.setProperty("--n",n);
+    var row=document.createElement("div"); row.className="gr";
     var nm=document.createElement("div"); nm.className="vn";
     nm.innerHTML="<b>"+voiceName(v)+"</b>";
     var mb=document.createElement("button"); mb.textContent="M"; mb.className=S.mutes[v]?"on":"";
@@ -3244,6 +3365,7 @@ function drawGrid(){
       (function(s){
         var b=document.createElement("button"); b.className="st"; b.dataset.v=v; b.dataset.s=s;
         var inBar=s%c.steps; if((inBar % per)===0) b.classList.add("beat");
+        if(inBar===0) b.classList.add("bar-start");
         paint(b, c.p[v][s]);
         b.onclick=function(e){
           if(e.shiftKey){ for(var k=0;k<n;k++) c.p[v][k]=0; drawGrid(); return; }
@@ -3612,6 +3734,15 @@ function frame(){
         e.classList.toggle("mut", !live.count && (S.arrange[live.bar%loopLen()]===null || gapMuted(live.bar)));
       });
       document.querySelectorAll(".cell").forEach(function(e,i){ e.classList.toggle("now", !live.count && i===(live.bar%loopLen())); });
+      var gridEl=$("grid"), wrap=gridEl && gridEl.parentElement;
+      if(wrap && col>=0){
+        var vis=Math.floor(col / Math.max(1,c.steps));
+        if(wrap._visBar !== vis){
+          wrap._visBar = vis;
+          var lab=parseFloat(getComputedStyle(gridEl).getPropertyValue("--grid-label"))||0;
+          wrap.scrollLeft = vis * Math.max(1, wrap.clientWidth - lab);
+        }
+      }
     }
   }
   requestAnimationFrame(frame);
@@ -3671,6 +3802,19 @@ var LAY = { mode: (function(){
   try{ var s=localStorage.getItem("deeppocket.ui.land"); if(s==="beat"||s==="compose") return s; }catch(e){}
   return "beat";
 })() };
+var lockBtn=$("bgbtn");
+var lockHome=lockBtn && lockBtn.parentElement;
+function parkLock(){
+  if(!lockBtn) return;
+  var chrome=$("hedit-chrome");
+  var land=document.body.classList.contains("orient-land");
+  var edit=document.body.classList.contains("mode-edit");
+  if(land && edit && chrome){
+    if(lockBtn.parentElement!==chrome) chrome.appendChild(lockBtn);
+  } else if(lockHome && lockBtn.parentElement!==lockHome){
+    lockHome.insertBefore(lockBtn, lockHome.firstChild);
+  }
+}
 function applyLayout(){
   var land = isLandPhone();
   var phone = phoneish();
@@ -3688,6 +3832,7 @@ function applyLayout(){
     $("landcompose").classList.toggle("on", LAY.land==="compose");
   }
   paintChords(S.absBar||0);
+  parkLock();
   pinEditSheet();
 }
 function pinEditSheet(){
