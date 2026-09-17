@@ -4,16 +4,15 @@ A rhythm trainer for bass practice. Nine voices, 18 grooves, a 32-bar arranger
 with chord changes, a bass voice that follows the changes, and a lock-screen mode
 that keeps the loop playing when the phone sleeps.
 
-Live (GitHub Pages, this repo only — not NOW, not BLOCKBALL):
+Live at: https://pocket.ontologyhome.ca/
 
-https://jpwarner-sys.github.io/deep-pocket/
+(Formerly hosted at `https://jpwarner-sys.github.io/deep-pocket/`. The PWA manifest and service worker are now scoped to the root `/` for the custom domain.)
 
 Everything runs in the browser — Web Audio synthesis, a lookahead scheduler with
 swing and per-groove micro-timing, and sampled kits (AVL Black Pearl / Red Zeppelin, Fischer TR-808).
 
 Saved setups live in this browser under `deeppocket.*` keys. Nothing is sent anywhere.
-No service worker. Manifest `id` / `scope` / `start_url` are `/deep-pocket/` so iOS
-cannot key this install to another app on `jpwarner-sys.github.io`.
+The service worker is scoped to the root `/` for the custom domain. It only manages caches prefixed with `deep-pocket-` to avoid collision with other apps if ever hosted on a shared origin.
 
 v21 freeze: branch `backup/v21-20260915`.
 
