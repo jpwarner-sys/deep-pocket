@@ -808,19 +808,47 @@ body.phone.mode-edit:not(.orient-land) #kitstrip,
 body.phone.mode-edit:not(.orient-land) .cols,
 body.phone.mode-edit:not(.orient-land) #face-mem,
 body.phone.mode-edit:not(.orient-land) #unit > .hint{display:none}
+/* Mix + Memory sheets: same height law. Cover ALL content except the
+   header and lock-button zone. Scroll lives inside the sheet.
+   Landscape must span BOTH #unit columns so COMPOSE chord bars cannot
+   peek out the right edge — the sheet is a grid item, so a short
+   bottom-right panel is constrained to one column's grid area. */
 body.phone.mode-edit.show-mix .cols,
-body.orient-land.show-mix .cols{
-  display:grid !important;position:fixed;inset:auto 8px calc(8px + var(--sai-b)) 8px;
-  z-index:20;max-height:46%;overflow:auto;padding:10px;
-  background:linear-gradient(165deg,#1b110c,#0e0805 60%,#150c06);
-  box-shadow:0 -8px 24px rgba(0,0,0,.6);border-radius:8px;
-}
+body.orient-land.show-mix .cols,
 body.phone.mode-edit.show-mem #face-mem,
 body.orient-land.show-mem #face-mem{
-  display:block !important;position:fixed;inset:auto 8px calc(8px + var(--sai-b)) 8px;
-  z-index:20;max-height:46%;overflow:auto;padding:10px;
+  z-index:45;overflow:auto;-webkit-overflow-scrolling:touch;padding:10px;
+  max-height:none;max-width:none;margin:0;
   background:linear-gradient(165deg,#1b110c,#0e0805 60%,#150c06);
-  box-shadow:0 -8px 24px rgba(0,0,0,.6);border-radius:8px;
+  box-shadow:0 -8px 24px rgba(0,0,0,.6);
+}
+body.phone.mode-edit.show-mix .cols,
+body.orient-land.show-mix .cols{display:grid !important}
+body.phone.mode-edit.show-mem #face-mem,
+body.orient-land.show-mem #face-mem{display:block !important}
+
+/* Portrait EDIT: viewport-fixed, top edge just under the lock row. */
+body.phone.mode-edit:not(.orient-land).show-mix .cols,
+body.phone.mode-edit:not(.orient-land).show-mem #face-mem{
+  position:fixed;
+  top:var(--edit-sheet-top, 148px);
+  right:0;bottom:0;left:0;
+  width:auto;height:auto;border-radius:8px 8px 0 0;
+}
+
+/* Landscape: span every #unit column (pat + arr) AND pin to the
+   viewport under chrome. A grid item's containing block is its grid
+   area — without column-span the sheet stops at the monitor column
+   and COMPOSE chords peek out the right. */
+body.orient-land.show-mix .cols,
+body.orient-land.show-mem #face-mem{
+  grid-column:1 / -1 !important;grid-row:2 / -1 !important;
+  justify-self:stretch;align-self:stretch;
+  position:fixed !important;
+  top:var(--edit-sheet-top, 56px);
+  right:0;bottom:0;left:0;
+  width:auto !important;height:auto;min-width:0;min-height:0;
+  border-radius:0;z-index:45;
 }
 body.orient-land.show-grooves #face-grooves{
   display:block !important;position:fixed;inset:auto 8px calc(8px + var(--sai-b)) 8px;
@@ -3593,6 +3621,16 @@ function applyLayout(){
     $("landcompose").classList.toggle("on", LAY.land==="compose");
   }
   paintChords(S.absBar||0);
+  pinEditSheet();
+}
+function pinEditSheet(){
+  var land = document.body.classList.contains("orient-land");
+  var el = land ? $("hedit-chrome") : document.querySelector("#unit > .kitbar.land-hide");
+  if(!el) return;
+  document.documentElement.style.setProperty(
+    "--edit-sheet-top",
+    Math.round(el.getBoundingClientRect().bottom) + "px"
+  );
 }
 function setUiMode(m){
   LAY.mode = m;
@@ -3612,6 +3650,7 @@ if($("dockmix")) $("dockmix").onclick=function(){
   document.body.classList.remove("show-grooves");
   $("dockmix").classList.toggle("on", document.body.classList.contains("show-mix"));
   if($("dockmem")) $("dockmem").classList.remove("on");
+  pinEditSheet();
 };
 if($("dockmem")) $("dockmem").onclick=function(){
   document.body.classList.toggle("show-mem");
@@ -3619,7 +3658,11 @@ if($("dockmem")) $("dockmem").onclick=function(){
   document.body.classList.remove("show-grooves");
   $("dockmem").classList.toggle("on", document.body.classList.contains("show-mem"));
   if($("dockmix")) $("dockmix").classList.remove("on");
+  pinEditSheet();
 };
+window.addEventListener("resize", pinEditSheet);
+window.addEventListener("orientationchange", function(){ setTimeout(pinEditSheet, 400); });
+if(window.visualViewport) visualViewport.addEventListener("resize", pinEditSheet);
 if($("dockgroove")) $("dockgroove").onclick=function(){
   document.body.classList.toggle("show-grooves");
   document.body.classList.remove("show-mix");
