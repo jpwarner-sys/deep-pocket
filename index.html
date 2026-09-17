@@ -509,6 +509,11 @@ body.mode-play:not(.orient-land) .cpy-targets .key:active{
 .cell.gap .chd{color:var(--faint)}
 
 .cols{display:grid;grid-template-columns:1fr 1fr;gap:12px;min-width:0;width:100%}
+.cols .rig-h{margin-bottom:6px}
+.cols .mix-h{margin-bottom:10px}
+.pat-copy{margin-bottom:9px}
+.pat-copy-lbl{margin-left:auto;margin-right:4px}
+#cpy-targets{display:flex;gap:4px}
 .ctl{display:flex;align-items:center;gap:9px;padding:6px 0;border-bottom:1px solid var(--hairline);min-width:0;flex-wrap:wrap}
 .ctl:last-child{border-bottom:0}
 .ctl > .lbl{flex:0 0 92px}
@@ -521,10 +526,8 @@ input[type=range]::-moz-range-track{height:5px;background:#0a0705;border:1px sol
 input[type=range]::-moz-range-thumb{width:17px;height:17px;border-radius:50%;background:#6d635a;border:1px solid #14120f}
 select{font-family:var(--mono);font-size:12px;background:#0a0705;color:var(--bone);border:1px solid var(--edge);
   border-radius:2px;padding:7px 8px;min-height:36px;flex:1;min-width:0;max-width:100%}
-.mix{display:grid;grid-template-columns:repeat(9,1fr);gap:6px}
+.mix{display:flex;flex-direction:column;gap:2px}
 .ch{text-align:center}
-.ch .cn{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);font-weight:600}
-.ch input[type=range]{width:100%}
 .note{font-family:var(--mono);font-size:11.5px;line-height:1.5;color:var(--dim);margin-top:8px}
 .note b{color:var(--bone);font-weight:500}
 #gnote{
@@ -581,7 +584,7 @@ body.mode-play:not(.orient-land) #toast{
   .transport .row{grid-column:1 / -1}
   .readout{min-width:0}
   .arr{grid-template-columns:repeat(4,1fr)}
-  .mix{grid-template-columns:repeat(5,1fr);row-gap:10px}
+  .mix{grid-template-columns:none}
   .brand h1{font-size:20px}
   .readout .big{font-size:32px}
   .st{max-width:none}
@@ -593,6 +596,88 @@ body.mode-play:not(.orient-land) #toast{
   #bpm{max-width:none !important;flex:1}
   select{flex:1 1 100%}
   .face,.cols,.ctl,.mix{max-width:100%}
+}
+
+/* Portrait Practice rig + Mixer: densify. Fat thumbs, no empty walnut.
+   The 760px rule `select{flex:1 1 100%}` parked every dropdown on its own
+   row and left a dead label lane. Play/Stop (64–80) is the thumb reference.
+   CLEAR keeps the wood-squircle face from #12. CPY chips are fat letter keys.
+   Mixer + Master are five-step lamps, not sliders. Landscape mix overlay
+   keeps the same lamp rows (scrolls in the 46% sheet). */
+body:not(.orient-land) #face-pat .pat-copy{
+  margin-bottom:6px;gap:8px;flex-wrap:nowrap;align-items:center;
+}
+body:not(.orient-land) .pat-copy-lbl{margin-left:auto;margin-right:2px;font-size:12px}
+body:not(.orient-land) #cpy-targets{display:flex;gap:8px;flex:0 0 auto}
+body:not(.orient-land) #cpy-targets .key{
+  border-radius:16px;min-width:56px;min-height:56px;padding:12px 14px;
+  font-size:18px;letter-spacing:.12em;
+}
+body.mode-play:not(.orient-land) #face-pat{padding-bottom:6px}
+
+body:not(.orient-land) .cols{gap:6px}
+body:not(.orient-land) .cols .face{padding:6px 0 8px}
+body:not(.orient-land) .cols .rig-h,
+body:not(.orient-land) .cols .mix-h{margin-bottom:4px}
+body:not(.orient-land) .cols .ctl{
+  flex-wrap:nowrap;gap:8px;padding:2px 0;min-height:56px;align-items:center;
+}
+body:not(.orient-land) .cols .ctl > .lbl{
+  flex:0 0 5.4em;width:5.4em;max-width:5.4em;font-size:11px;letter-spacing:.12em;
+  line-height:1.15;white-space:normal;
+}
+body:not(.orient-land) .cols .ctl select{
+  flex:1.15 1 0;min-width:0;max-width:none;min-height:56px;padding:10px 12px;
+  font-size:14px;border-radius:10px;
+}
+body:not(.orient-land) .cols .ctl input[type=range]{
+  flex:1.35 1 0;min-width:56px;height:56px;
+}
+body:not(.orient-land) .cols .ctl .val{min-width:36px;font-size:13px}
+body:not(.orient-land) .cols .ctl input[type=range]::-webkit-slider-runnable-track{
+  height:10px;border-radius:5px;
+}
+body:not(.orient-land) .cols .ctl input[type=range]::-webkit-slider-thumb{
+  width:32px;height:32px;margin-top:-11px;border-radius:50%;
+  background:linear-gradient(180deg,#8a7d70,#4a4138);border:1px solid #14120f;
+  box-shadow:0 1px 4px rgba(0,0,0,.7), inset 0 1px 0 rgba(214,170,120,.25);
+}
+body:not(.orient-land) .cols .ctl input[type=range]::-moz-range-track{
+  height:10px;border-radius:5px;
+}
+body:not(.orient-land) .cols .ctl input[type=range]::-moz-range-thumb{
+  width:32px;height:32px;border-radius:50%;background:#6d635a;border:1px solid #14120f;
+}
+body:not(.orient-land) .cols .note{margin-top:4px}
+
+/* Mixer / Master: five round lamps like pattern steps. Tap a lamp to set
+   Off → Low → Med → High → Boosted. No level text — brightness only. */
+.mix{display:flex;flex-direction:column;gap:2px}
+.vol{
+  display:flex;align-items:center;gap:6px;min-height:56px;padding:2px 0;
+  border-bottom:1px solid var(--hairline);
+}
+.vol:last-child{border-bottom:0}
+.vol .cn{
+  flex:0 0 4.6em;width:4.6em;font-size:12px;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--dim);font-weight:600;line-height:1.1;
+}
+.vol.vol-master .cn{color:var(--bone)}
+.lamps{display:flex;flex:1 1 auto;gap:4px;min-width:0;align-items:center}
+.st.vol-lamp{
+  flex:1 1 0;min-width:44px;min-height:56px;width:auto;max-width:64px;
+  aspect-ratio:1;height:auto;padding:0;border:0;cursor:pointer;
+}
+.st.lv1{background:radial-gradient(circle at 38% 32%,#a06a28,#6a3e0c 58%,#3a2208);
+  box-shadow:0 0 5px rgba(255,160,44,.28);opacity:.72}
+.st.lv2{background:radial-gradient(circle at 38% 32%,#c98940,#8a520b 58%,#5a3510);
+  box-shadow:0 0 6px rgba(255,160,44,.35)}
+.st.lv3{background:radial-gradient(circle at 38% 32%,#ffc978,var(--amber) 58%,#a85f06);
+  box-shadow:0 0 8px var(--amber-glow)}
+.st.lv4{background:radial-gradient(circle at 38% 32%,#ffd79a,var(--amber) 50%,#c2700a);
+  box-shadow:0 0 12px var(--amber-glow),0 0 2px rgba(255,200,120,.9)}
+@media (max-width:760px){
+  .mix{grid-template-columns:none}
 }
 
 body.mode-play .edit-only{display:none !important}
@@ -1200,8 +1285,8 @@ body.orient-land.mode-play .prow button.key#play2{
   </section>
 
   <div class="cols land-hide">
-    <section class="face">
-      <div class="lbl" style="margin-bottom:6px">Practice rig</div>
+    <section class="face rig">
+      <div class="lbl rig-h">Practice rig</div>
       <div class="ctl"><span class="lbl">Root lane</span>
         <select id="rootmode"><option value="off">off</option><option value="1" selected>beat 1</option><option value="13">beats 1 &amp; 3</option></select>
         <input type="range" id="bassg" min="0" max="100" value="55" aria-label="Root level"><span class="val num" id="bassgv">55</span></div>
@@ -1222,12 +1307,9 @@ body.orient-land.mode-play .prow button.key#play2{
         <input type="range" id="verb" min="0" max="10" step="1" value="3" aria-label="Room"><span class="val num" id="verbv">3</span></div>
     </section>
 
-    <section class="face">
-      <div class="lbl" style="margin-bottom:10px">Mixer</div>
+    <section class="face mixface">
+      <div class="lbl mix-h">Mixer</div>
       <div class="mix" id="mix"></div>
-      <div class="sep"></div>
-      <div class="ctl"><span class="lbl">Master</span>
-        <input type="range" id="master" min="0" max="100" value="80" aria-label="Master"><span class="val num" id="masterv">80</span></div>
       <div class="note" id="pnote"></div>
     </section>
   </div>
@@ -3119,13 +3201,76 @@ $("fillA").onclick=function(){ for(var i=0;i<32;i++) S.arrange[i]=0; drawArr(); 
 $("abab").onclick=function(){ for(var i=0;i<32;i++) S.arrange[i]=(Math.floor(i/4)%2); drawArr(); };
 $("aaba").onclick=function(){ for(var i=0;i<32;i++){ var sec=Math.floor(i/8); S.arrange[i]= sec===2?1:0; } drawArr(); };
 
-// mixer
+// mixer — five-step lamps (Off / Low / Med / High / Boosted). No level text.
+// Previous mixer faders ran 0–1.6 (thumb 0–160). Master ran 0–1.0.
+// Steps map onto those ranges: 0, 25%, 50%, 75%, 100% of each control's max.
+var MIX_MAX = 1.6, MASTER_MAX = 1;
+var VOL_ARIA = ["Off","Low","Med","High","Boosted"];
+var mixRows = {};
+
+function volStep(g, max){
+  max = max || MIX_MAX;
+  if(!(g>0)) return 0;
+  return Math.max(0, Math.min(4, Math.round(g / max * 4)));
+}
+function volGain(step, max){
+  return (Math.max(0, Math.min(4, +step)) / 4) * (max || MIX_MAX);
+}
+function paintVolRow(row, step){
+  if(!row) return;
+  var lamps = row.querySelectorAll(".vol-lamp");
+  for(var i=0;i<lamps.length;i++){
+    var on = step>0 && i>0 && i<=step;
+    lamps[i].className = "st vol-lamp" + (on ? (" lv"+i) : "");
+    lamps[i].setAttribute("aria-checked", i===step ? "true" : "false");
+  }
+}
+function makeVolRow(label, aria, step, onPick){
+  var d=document.createElement("div"); d.className="vol";
+  var cn=document.createElement("span"); cn.className="cn"; cn.textContent=label;
+  var lamps=document.createElement("div"); lamps.className="lamps";
+  lamps.setAttribute("role","radiogroup"); lamps.setAttribute("aria-label", aria);
+  for(var i=0;i<5;i++){
+    (function(i){
+      var b=document.createElement("button");
+      b.type="button";
+      b.className="st vol-lamp";
+      b.setAttribute("role","radio");
+      b.setAttribute("aria-label", VOL_ARIA[i]);
+      b.onclick=function(){ onPick(i); };
+      lamps.appendChild(b);
+    })(i);
+  }
+  d.appendChild(cn); d.appendChild(lamps);
+  paintVolRow(d, step);
+  return d;
+}
+function refreshMixLamps(){
+  if(mixRows.master) paintVolRow(mixRows.master, volStep(S.master, MASTER_MAX));
+  ROWS.forEach(function(v){
+    if(mixRows[v]) paintVolRow(mixRows[v], volStep(S.gains[v]||0, MIX_MAX));
+  });
+}
+function snapMixGains(){
+  S.master = volGain(volStep(S.master, MASTER_MAX), MASTER_MAX);
+  ROWS.forEach(function(v){ S.gains[v] = volGain(volStep(S.gains[v]||0, MIX_MAX), MIX_MAX); });
+}
+
+snapMixGains();
+mixRows.master = makeVolRow("Master", "Master level", volStep(S.master, MASTER_MAX), function(i){
+  S.master = volGain(i, MASTER_MAX);
+  paintVolRow(mixRows.master, i);
+  if(eng && eng.setMaster) eng.setMaster(S.master);
+});
+mixRows.master.className = "vol vol-master";
+$("mix").appendChild(mixRows.master);
 ROWS.forEach(function(v){
-  var d=document.createElement("div"); d.className="ch";
-  d.innerHTML='<div class="cn">'+voiceName(v)+'</div>';
-  var r=document.createElement("input"); r.type="range"; r.min=0; r.max=160; r.value=80; r.setAttribute("aria-label",voiceName(v)+" level");
-  r.oninput=function(){ S.gains[v]=r.value/100; eng.setVoiceGain(v,S.gains[v]); };
-  d.appendChild(r); $("mix").appendChild(d);
+  mixRows[v] = makeVolRow(voiceName(v), voiceName(v)+" level", volStep(S.gains[v], MIX_MAX), function(i){
+    S.gains[v] = volGain(i, MIX_MAX);
+    paintVolRow(mixRows[v], i);
+    if(eng && eng.setVoiceGain) eng.setVoiceGain(v, S.gains[v]);
+  });
+  $("mix").appendChild(mixRows[v]);
 });
 
 // controls
@@ -3140,7 +3285,6 @@ $("bplus").onclick=function(){ setBpm(S.bpm+1); S.baseBpm=S.bpm; };
 $("swing").oninput=function(){ setSwing(+$("swing").value); };
 $("feel").oninput=function(){ setFeel(+$("feel").value); };
 $("verb").oninput=function(){ setRoom(+$("verb").value); };
-$("master").oninput=function(){ S.master=$("master").value/100; $("masterv").textContent=$("master").value; eng.setMaster(S.master); };
 $("bassg").oninput=function(){ S.bassg=$("bassg").value/100; $("bassgv").textContent=$("bassg").value; eng.setBassGain(S.bassg); };
 $("clickg").oninput=function(){ S.clickg=$("clickg").value/100; $("clickgv").textContent=$("clickg").value; eng.setClickGain(S.clickg); };
 var lastRootMode="1";
@@ -4218,7 +4362,7 @@ function applySnapshot(d){
             : roomDialFromAmount(d.verb);
       setRoom(Math.round(n * ROOM_STEPS));
     }
-    S.master=d.master!=null?d.master:S.master; $("master").value=Math.round(S.master*100); $("masterv").textContent=$("master").value;
+    S.master=d.master!=null?d.master:S.master;
     S.bassg=d.bassg!=null?d.bassg:S.bassg; $("bassg").value=Math.round(S.bassg*100); $("bassgv").textContent=$("bassg").value;
     S.clickg=d.clickg!=null?d.clickg:S.clickg; $("clickg").value=Math.round(S.clickg*100); $("clickgv").textContent=$("clickg").value;
     S.rootmode=d.rootmode||S.rootmode; $("rootmode").value=S.rootmode; bassLabel();
@@ -4230,8 +4374,9 @@ function applySnapshot(d){
     if(d.chords) S.chords=d.chords;
     if(d.prog!=null) $("prog").value=d.prog;
     document.querySelectorAll(".slot").forEach(function(x,i){ x.classList.toggle("on", i===S.slot); });
-    document.querySelectorAll("#mix input").forEach(function(r,i){ var v=ROWS[i]; r.value=Math.round((S.gains[v]||0.8)*100); });
+    snapMixGains(); refreshMixLamps();
     if(MEM.audio) VOICES.forEach(function(v){ eng.setVoiceGain(v,S.gains[v]); eng.setVoiceMute(v,!!S.mutes[v]); });
+    if(MEM.audio && eng && eng.setMaster) eng.setMaster(S.master);
     drawGrid(); drawArr(); info();
     if(d.kit && d.kit !== "synth" && KIT.man !== undefined){
       if(d.kit === "blackpearl" || d.kit === "redzeppelin" || d.kit === "tr808") loadKit(d.kit);
