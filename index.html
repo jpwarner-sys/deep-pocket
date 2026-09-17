@@ -964,10 +964,17 @@ body.orient-land .brand .key.sm, body.orient-land #dockgroove{min-height:36px;pa
 body.orient-land .key.ico{min-width:36px;padding:5px 8px}
 body.orient-land .key.ico svg{width:16px;height:16px}
 body.orient-land #dockgroove{display:inline-flex}
+body.orient-land.mode-edit #face-top{flex:0 1 auto;width:auto}
+body.orient-land.mode-edit .transport{width:auto}
 body.orient-land.mode-edit #hedit-chrome #bgbtn{
-  flex:1 1 auto;min-width:64px !important;width:auto !important;max-width:none;
+  flex:1 1 120px;min-width:72px !important;width:auto !important;max-width:none;
   min-height:40px !important;height:40px !important;padding:0 !important;border-radius:12px;
-  background-size:auto 100% !important;background-position:center;
+  background-color:transparent !important;
+  background-image:url("assets/buttons/btn-lock.png"), linear-gradient(180deg,#2a1c10,#170e07) !important;
+  background-size:auto 100%, 100% 100% !important;
+  background-position:center, center !important;
+  background-repeat:no-repeat, no-repeat !important;
+  box-shadow:inset 0 0 0 1px rgba(255,160,44,.45), inset 0 1px 0 rgba(214,170,120,.18), 0 2px 0 #0a0705;
 }
 body.orient-land #face-top{
   display:flex !important;flex:1 1 auto;min-width:0;margin:0;padding:0;border:0;
@@ -1079,7 +1086,7 @@ body.orient-land #face-pat .gridwrap{
 body.orient-land #grid{min-height:100%;height:100%;display:flex;flex-direction:column;gap:2px}
 body.orient-land #grid .ruler{flex:0 0 auto;margin-bottom:0}
 body.orient-land #grid .gr{flex:1 1 0;min-height:0}
-body.orient-land .grid{--grid-label:58px}
+body.orient-land .grid{--grid-label:68px}
 body.orient-land .gr,
 body.orient-land .ruler{grid-template-columns:var(--grid-label) repeat(var(--n),minmax(0,1fr))}
 body.orient-land .vn{padding-right:4px;gap:4px}
