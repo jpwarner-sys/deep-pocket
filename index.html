@@ -818,7 +818,7 @@ html.insets #insetdbg{display:block}
       <span class="bpmn num" id="pbpm">116</span>
       <button class="key sm" id="pplus">+</button>
       <button class="key sm" id="kitcycle">Synth</button>
-      <button class="key sm clef on" id="bass2" aria-label="Bass">&#119074;</button>
+      <button class="key sm clef on" id="bassbtn" aria-label="Bass">&#119074;</button>
     </div>
     <div class="pmeta"><span>BAR <b class="num" id="pbar">1</b></span><span>BEAT <b class="num" id="pbeat">1</b></span></div>
   </section>
@@ -835,7 +835,6 @@ html.insets #insetdbg{display:block}
       <button class="key sm" id="kitbp">Black Pearl</button>
       <button class="key sm" id="kitrz">Red Zeppelin</button>
       <button class="key sm" id="kit808">TR-808</button>
-      <button class="key sm clef on" id="bassbtn" aria-label="Bass">&#119074;</button>
       <span class="hint" id="kithint"></span>
     </div>
     <div class="rail" id="rail"></div>
@@ -3121,8 +3120,6 @@ if($("dockgroove")) $("dockgroove").onclick=function(){
   window.addEventListener("resize", paint);
   window.addEventListener("orientationchange", function(){ setTimeout(paint, 400); });
 })();
-if($("bass2")) $("bass2").onclick=function(){ $("bassbtn").click(); bass2(); };
-function bass2(){ if($("bass2")){ var on=S.rootmode!=="off"; $("bass2").classList.toggle("on", on); } }
 function tickClock(){
   var el=$("pclock"); if(!el) return;
   var d=new Date(); el.textContent = ((d.getHours()%12)||12)+":"+("0"+d.getMinutes()).slice(-2);
@@ -3745,7 +3742,6 @@ function kitLabel(){
   if($("kitcycle")) $("kitcycle").textContent = nick[kitId()]||"Synth";
   document.querySelectorAll(".vn b").forEach(function(b,i){ if(ROWS[i]) b.textContent=voiceName(ROWS[i]); });
   document.querySelectorAll("#mix .cn").forEach(function(n,i){ if(ROWS[i]) n.textContent=voiceName(ROWS[i]); });
-  bass2();
 }
 $("kitcycle").onclick=function(){
   var order=["synth","blackpearl","redzeppelin","tr808"];
