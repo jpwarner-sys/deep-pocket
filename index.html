@@ -598,74 +598,107 @@ body.mode-play:not(.orient-land) #toast{
   .face,.cols,.ctl,.mix{max-width:100%}
 }
 
-/* Portrait Practice rig + Mixer: densify. Fat thumbs, no empty walnut.
-   The 760px rule `select{flex:1 1 100%}` parked every dropdown on its own
-   row and left a dead label lane. Play/Stop (64–80) is the thumb reference.
-   CLEAR keeps the wood-squircle face from #12. CPY chips are fat letter keys.
-   Mixer + Master are five-step lamps, not sliders. Landscape mix overlay
-   keeps the same lamp rows (scrolls in the 46% sheet). */
+/* Practice rig + Mixer: densify, and make STATIC vs INTERACTIVE obvious.
+   Labels are quiet faint type. Selects are wood keys with an amber bezel
+   (not flat black wells). Values are live amber. Mixer volumes are five
+   pattern-style lamps — brightness only, no level words. */
 body:not(.orient-land) #face-pat .pat-copy{
-  margin-bottom:6px;gap:8px;flex-wrap:nowrap;align-items:center;
+  margin-bottom:4px;gap:8px;flex-wrap:nowrap;align-items:center;
 }
-body:not(.orient-land) .pat-copy-lbl{margin-left:auto;margin-right:2px;font-size:12px}
+body:not(.orient-land) .pat-copy-lbl{
+  margin-left:auto;margin-right:2px;font-size:10px;color:var(--faint);letter-spacing:.18em;
+}
 body:not(.orient-land) #cpy-targets{display:flex;gap:8px;flex:0 0 auto}
 body:not(.orient-land) #cpy-targets .key{
   border-radius:16px;min-width:56px;min-height:56px;padding:12px 14px;
   font-size:18px;letter-spacing:.12em;
 }
-body.mode-play:not(.orient-land) #face-pat{padding-bottom:6px}
+body.mode-play:not(.orient-land) #face-pat{padding-bottom:4px}
 
-body:not(.orient-land) .cols{gap:6px}
-body:not(.orient-land) .cols .face{padding:6px 0 8px}
-body:not(.orient-land) .cols .rig-h,
-body:not(.orient-land) .cols .mix-h{margin-bottom:4px}
-body:not(.orient-land) .cols .ctl{
-  flex-wrap:nowrap;gap:8px;padding:2px 0;min-height:56px;align-items:center;
+.cols{gap:4px}
+.cols .face{padding:4px 0 6px}
+.cols .rig-h, .cols .mix-h{
+  margin-bottom:2px;font-size:9px;letter-spacing:.24em;color:var(--faint);opacity:.55;
 }
-body:not(.orient-land) .cols .ctl > .lbl{
-  flex:0 0 5.4em;width:5.4em;max-width:5.4em;font-size:11px;letter-spacing:.12em;
-  line-height:1.15;white-space:normal;
+
+/* One grid row per control — iOS cannot wrap a 100%-flex select onto a
+   dead label lane. */
+.cols .ctl{
+  display:grid;
+  grid-template-columns:5.1em minmax(0,1fr) minmax(0,1.2fr) 2.3em;
+  column-gap:8px;row-gap:0;align-items:center;
+  padding:1px 0;min-height:52px;flex-wrap:unset;gap:unset;
 }
-body:not(.orient-land) .cols .ctl select{
-  flex:1.15 1 0;min-width:0;max-width:none;min-height:56px;padding:10px 12px;
-  font-size:14px;border-radius:10px;
+.cols .ctl > .lbl{
+  grid-column:1;flex:none;width:auto;max-width:none;
+  font-size:10px;letter-spacing:.16em;line-height:1.15;white-space:normal;
+  color:var(--faint);opacity:.8;
 }
-body:not(.orient-land) .cols .ctl input[type=range]{
-  flex:1.35 1 0;min-width:56px;height:56px;
+.cols .ctl select{
+  grid-column:2;flex:none;width:100%;min-width:0;max-width:none;
+  min-height:52px;padding:8px 28px 10px 12px;
+  -webkit-appearance:none;appearance:none;
+  font-family:var(--sil);font-weight:600;font-size:13px;letter-spacing:.08em;
+  text-transform:uppercase;color:var(--amber-hi);
+  border:0;border-radius:10px;
+  background:
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'><path fill='%23ffbf5e' d='M1 1l5 5 5-5'/></svg>") right 12px center / 10px 7px no-repeat,
+    linear-gradient(180deg,#2a1c10,#170e07);
+  box-shadow:inset 0 0 0 1px rgba(255,160,44,.40),
+             inset 0 1px 0 rgba(214,170,120,.18), 0 2px 0 #0a0705;
+  text-overflow:ellipsis;
 }
-body:not(.orient-land) .cols .ctl .val{min-width:36px;font-size:13px}
-body:not(.orient-land) .cols .ctl input[type=range]::-webkit-slider-runnable-track{
-  height:10px;border-radius:5px;
+.cols .ctl select:focus-visible{
+  outline:2px solid var(--amber);outline-offset:2px;
 }
-body:not(.orient-land) .cols .ctl input[type=range]::-webkit-slider-thumb{
+.cols .ctl:not(:has(input[type=range])) select{grid-column:2 / -1}
+.cols .ctl input[type=range]{
+  grid-column:3;flex:none;width:100%;min-width:0;height:52px;
+}
+.cols .ctl:not(:has(select)) input[type=range]{grid-column:2 / 4}
+.cols .ctl .val{
+  grid-column:4;min-width:0;font-size:13px;color:var(--amber);
+  text-shadow:0 0 8px var(--amber-glow);font-weight:600;
+}
+.cols .ctl input[type=range]::-webkit-slider-runnable-track{
+  height:10px;border-radius:5px;background:#0a0705;border:1px solid var(--edge);
+  box-shadow:inset 0 1px 3px rgba(0,0,0,.8);
+}
+.cols .ctl input[type=range]::-webkit-slider-thumb{
   width:32px;height:32px;margin-top:-11px;border-radius:50%;
-  background:linear-gradient(180deg,#8a7d70,#4a4138);border:1px solid #14120f;
-  box-shadow:0 1px 4px rgba(0,0,0,.7), inset 0 1px 0 rgba(214,170,120,.25);
+  background:linear-gradient(180deg,#ffc978,#e08a12);border:1px solid #7a4a08;
+  box-shadow:0 2px 0 #4a2a06, 0 0 8px var(--amber-glow), inset 0 1px 0 rgba(255,220,160,.45);
 }
-body:not(.orient-land) .cols .ctl input[type=range]::-moz-range-track{
-  height:10px;border-radius:5px;
+.cols .ctl input[type=range]::-moz-range-track{
+  height:10px;border-radius:5px;background:#0a0705;border:1px solid var(--edge);
 }
-body:not(.orient-land) .cols .ctl input[type=range]::-moz-range-thumb{
-  width:32px;height:32px;border-radius:50%;background:#6d635a;border:1px solid #14120f;
+.cols .ctl input[type=range]::-moz-range-thumb{
+  width:32px;height:32px;border-radius:50%;
+  background:linear-gradient(180deg,#ffc978,#e08a12);border:1px solid #7a4a08;
 }
-body:not(.orient-land) .cols .note{margin-top:4px}
 
 /* Mixer / Master: five round lamps like pattern steps. Tap a lamp to set
    Off → Low → Med → High → Boosted. No level text — brightness only. */
 .mix{display:flex;flex-direction:column;gap:2px}
 .vol{
-  display:flex;align-items:center;gap:6px;min-height:56px;padding:2px 0;
+  display:flex;align-items:center;gap:8px;min-height:56px;padding:1px 0;
   border-bottom:1px solid var(--hairline);
 }
 .vol:last-child{border-bottom:0}
 .vol .cn{
-  flex:0 0 4.6em;width:4.6em;font-size:12px;letter-spacing:.1em;
-  text-transform:uppercase;color:var(--dim);font-weight:600;line-height:1.1;
+  flex:0 0 4.4em;width:4.4em;font-size:10px;letter-spacing:.16em;
+  text-transform:uppercase;color:var(--faint);font-weight:600;line-height:1.1;opacity:.8;
 }
-.vol.vol-master .cn{color:var(--bone)}
-.lamps{display:flex;flex:1 1 auto;gap:4px;min-width:0;align-items:center}
+.vol.vol-master .cn{color:var(--dim);opacity:1}
+.lamps{
+  display:flex;flex:1 1 auto;gap:4px;min-width:0;align-items:center;
+  padding:4px 6px;border-radius:12px;
+  background:linear-gradient(180deg,#0a0705,#120b06);
+  box-shadow:inset 0 2px 7px rgba(0,0,0,.88), inset 0 0 0 1px rgba(0,0,0,.65),
+             inset 0 1px 0 rgba(214,170,120,.10);
+}
 .st.vol-lamp{
-  flex:1 1 0;min-width:44px;min-height:56px;width:auto;max-width:64px;
+  flex:1 1 0;min-width:44px;min-height:52px;width:auto;max-width:64px;
   aspect-ratio:1;height:auto;padding:0;border:0;cursor:pointer;
 }
 .st.lv1{background:radial-gradient(circle at 38% 32%,#a06a28,#6a3e0c 58%,#3a2208);
@@ -676,6 +709,18 @@ body:not(.orient-land) .cols .note{margin-top:4px}
   box-shadow:0 0 8px var(--amber-glow)}
 .st.lv4{background:radial-gradient(circle at 38% 32%,#ffd79a,var(--amber) 50%,#c2700a);
   box-shadow:0 0 12px var(--amber-glow),0 0 2px rgba(255,200,120,.9)}
+/* Landscape mix overlay reuses .st, which is capped at 22px for the grid.
+   Mixer lamps must stay fat thumbs and keep receiving taps. */
+body.orient-land.show-mix .st.vol-lamp{
+  max-width:64px;max-height:none;min-width:44px;min-height:44px;pointer-events:auto;
+}
+.cols .note, #pnote{
+  margin-top:4px;font-size:10px;line-height:1.35;color:var(--faint);opacity:.45;
+}
+.foot-note{
+  text-align:center;margin-top:8px;font-size:9px;letter-spacing:.02em;
+  color:var(--faint);opacity:.4;max-width:36em;margin-left:auto;margin-right:auto;
+}
 @media (max-width:760px){
   .mix{grid-template-columns:none}
 }
@@ -1332,7 +1377,7 @@ body.orient-land.mode-play .prow button.key#play2{
     </div>
   </section>
 
-  <div class="hint" style="text-align:center;margin-top:16px;opacity:.8">Synth is generated live. Black Pearl, Red Zeppelin and TR-808 are sampled. Nothing is recorded or sent anywhere.</div>
+  <div class="hint foot-note">Synth is generated live. Black Pearl, Red Zeppelin and TR-808 are sampled. Nothing is recorded or sent anywhere.</div>
 </main>
 
 <div id="splash"><div class="splash-card walnut"><div class="splash-inner bw">
@@ -3263,6 +3308,7 @@ mixRows.master = makeVolRow("Master", "Master level", volStep(S.master, MASTER_M
   if(eng && eng.setMaster) eng.setMaster(S.master);
 });
 mixRows.master.className = "vol vol-master";
+mixRows.master.setAttribute("data-voice", "master");
 $("mix").appendChild(mixRows.master);
 ROWS.forEach(function(v){
   mixRows[v] = makeVolRow(voiceName(v), voiceName(v)+" level", volStep(S.gains[v], MIX_MAX), function(i){
@@ -3270,6 +3316,7 @@ ROWS.forEach(function(v){
     paintVolRow(mixRows[v], i);
     if(eng && eng.setVoiceGain) eng.setVoiceGain(v, S.gains[v]);
   });
+  mixRows[v].setAttribute("data-voice", v);
   $("mix").appendChild(mixRows[v]);
 });
 
@@ -4278,7 +4325,10 @@ function kitLabel(){
   if (kitLabel._names !== namesId) {
     kitLabel._names = namesId;
     document.querySelectorAll(".vn b").forEach(function(b,i){ if(ROWS[i]) b.textContent=voiceName(ROWS[i]); });
-    document.querySelectorAll("#mix .cn").forEach(function(n,i){ if(ROWS[i]) n.textContent=voiceName(ROWS[i]); });
+    ROWS.forEach(function(v){
+      var n = document.querySelector('#mix .vol[data-voice="'+v+'"] .cn');
+      if(n) n.textContent = voiceName(v);
+    });
   }
 }
 $("kitcycle").onclick=function(){
