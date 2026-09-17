@@ -1,11 +1,10 @@
 /* Deep Pocket — service worker.
- * Scope is /deep-pocket/ by virtue of this file's location. It cannot touch
- * NOW, BLOCKBALL or anything else on jpwarner-sys.github.io.
+ * Scope is / by virtue of this file's location.
  *
  * Bump CACHE on every release. The old cache is deleted on activate, so a
  * stale build can never outlive one launch.
  */
-var CACHE = "deep-pocket-v31-5";
+var CACHE = "deep-pocket-v32";
 
 /* The shell — everything needed to open and show a UI with no network. */
 var SHELL = [
@@ -36,7 +35,8 @@ self.addEventListener("activate", function (e) {
   e.waitUntil(
     caches.keys().then(function (keys) {
       return Promise.all(keys.map(function (k) {
-        return k === CACHE ? null : caches.delete(k);
+        if (k.startsWith("deep-pocket-") && k !== CACHE) return caches.delete(k);
+        return null;
       }));
     }).then(function () { return self.clients.claim(); })
   );
@@ -48,7 +48,7 @@ self.addEventListener("fetch", function (e) {
 
   var url = new URL(req.url);
   if (url.origin !== location.origin) return;          /* never touch third parties */
-  if (!url.pathname.startsWith("/deep-pocket/")) return; /* belt and braces on scope */
+  if (!url.pathname.startsWith("/")) return; /* belt and braces on scope */
   /* Icons and the manifest go straight to the network, never through this
      worker. iOS builds the Home Screen tile from them in a separate loader;
      with this worker answering them, iOS showed a letter tile ("D") — suspected cause, 2026-09-16. */
