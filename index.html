@@ -610,6 +610,7 @@ body.phone #dockmix, body.phone #dockmem{display:inline-flex}
    Work row is minmax(0,1fr); pat+arr fill it. Portrait untouched. */
 html:has(body.orient-land), body.orient-land{height:100%;overflow:hidden}
 body.orient-land{padding:4px}
+body.orient-land.land-compose{padding:2px}
 body.orient-land #unit{
   display:grid;
   grid-template-columns:minmax(0,65fr) minmax(0,35fr);
@@ -624,7 +625,12 @@ body.orient-land #unit{
           calc(4px + var(--sai-b)) calc(8px + var(--sai-l));
 }
 body.orient-land.land-beat #unit{grid-template-columns:minmax(0,65fr) minmax(0,35fr)}
-body.orient-land.land-compose #unit{grid-template-columns:minmax(0,35fr) minmax(0,65fr)}
+body.orient-land.land-compose #unit{
+  grid-template-columns:minmax(0,20fr) minmax(0,80fr);
+  gap:4px 6px;
+  padding:calc(2px + var(--sai-t)) calc(2px + var(--sai-r))
+          calc(2px + var(--sai-b)) calc(2px + var(--sai-l));
+}
 body.orient-land #hedit-chrome{
   grid-area:chrome;display:flex;flex-wrap:nowrap;align-items:center;gap:8px;
   min-height:52px;max-height:56px;min-width:0;overflow:hidden;
@@ -754,7 +760,7 @@ body.orient-land.land-compose .gr,
 body.orient-land.land-compose .ruler{grid-template-columns:repeat(var(--n),minmax(0,1fr))}
 body.orient-land.land-compose #face-pat::before{
   content:"MONITOR";display:block;font-size:9px;letter-spacing:.22em;color:var(--faint);
-  margin-bottom:4px;flex:0 0 auto;
+  margin-bottom:2px;flex:0 0 auto;
 }
 body.orient-land.land-compose #face-pat > .row{display:none}
 body.orient-land .arr{
@@ -765,10 +771,11 @@ body.orient-land .arr{
 body.orient-land.land-compose .arr{
   grid-template-columns:repeat(4,minmax(0,1fr));
   grid-template-rows:repeat(8,minmax(44px,1fr));
-  gap:3px;
+  gap:2px;
   overflow:auto;
   -webkit-overflow-scrolling:touch;
   align-content:stretch;
+  flex:1 1 auto;min-height:0;min-width:0;
 }
 body.orient-land #arr{flex:1;min-height:0;min-width:0}
 body.orient-land .cell{
@@ -786,11 +793,11 @@ body.orient-land .cell .chd{
 body.orient-land.land-beat .cell .chd{font-size:13px}
 /* COMPOSE only: size/arrangement. Wood/orange tokens unchanged. */
 body.orient-land.land-compose .arr-tools{
-  display:flex;flex-wrap:nowrap;align-items:stretch;gap:5px;
-  flex:0 0 auto;min-width:0;margin:0 0 3px;
+  display:flex;flex-wrap:nowrap;align-items:stretch;gap:4px;
+  flex:0 0 auto;min-width:0;margin:0 0 2px;
 }
 body.orient-land.land-compose .arr-tools > .row{
-  display:flex;flex-wrap:nowrap;margin:0 !important;gap:4px;min-width:0;
+  display:flex;flex-wrap:nowrap;margin:0 !important;gap:4px !important;min-width:0;
 }
 body.orient-land.land-compose .arr-tools > .row:nth-child(1){flex:0 0 auto}
 body.orient-land.land-compose .arr-tools > .row:nth-child(2){flex:0 1 9em}

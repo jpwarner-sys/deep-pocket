@@ -5,6 +5,7 @@
  * stale build can never outlive one launch.
  */
 var CACHE = "deep-pocket-v40";
+
 /* The shell — everything needed to open and show a UI with no network. */
 var SHELL = [
   "./",
