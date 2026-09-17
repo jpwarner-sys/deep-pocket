@@ -842,21 +842,23 @@ html.insets #insetdbg{display:block}
 
   <section class="face" id="face-pat">
     <div class="row" style="justify-content:space-between;margin-bottom:9px">
-      <div class="row">
-        <span class="lbl">Pattern</span>
-        <button class="key sm slot on" data-slot="0">A</button>
-        <button class="key sm slot" data-slot="1">B</button>
-        <button class="key sm slot" data-slot="2">C</button>
-        <button class="key sm slot" data-slot="3">D</button>
+      <span class="lbl">Pattern</span>
+      <span class="hint" id="gridinfo"></span>
+    </div>
+    <div class="row" style="margin-bottom:9px; gap:8px">
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; flex:1">
+        <button class="key play slot on" data-slot="0">A</button>
+        <button class="key play slot" data-slot="1">B</button>
+        <button class="key play slot" data-slot="2">C</button>
+        <button class="key play slot" data-slot="3">D</button>
       </div>
-      <div class="row">
-        <button class="key sm" id="clr">Clear</button>
-        <span class="hint" style="margin-right:4px">Copy to</span>
-        <span id="cpy-targets" style="display:flex; gap:4px">
-          <!-- populated by info() -->
-        </span>
-        <span class="hint" id="gridinfo" style="margin-left:auto"></span>
-      </div>
+    </div>
+    <div class="row" style="margin-bottom:9px">
+      <button class="key sm" id="clr">Clear</button>
+      <span class="hint" style="margin-right:4px; margin-left:auto">CPY:</span>
+      <span id="cpy-targets" style="display:flex; gap:4px">
+        <!-- populated by info() -->
+      </span>
     </div>
     <div class="edit-only">
     <div class="gridwrap">
