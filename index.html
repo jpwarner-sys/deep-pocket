@@ -313,12 +313,28 @@ button.key.ico.lamp.on{color:var(--amber);background:transparent;
 .kitbar .lbl{flex:0 0 auto}
 .kitbar .hint{flex:1 1 100%;margin-left:0}
 /* V-PLAY portrait: lock-screen keep-alive is a full-width thumb hit, not a chip.
+   Same amber/wood lamp language as other primary keys. Play/Stop size is untouched.
    Landscape play keeps the existing top-right chip. */
+body.mode-play:not(.orient-land) #face-player{
+  padding-bottom:4px;border-bottom:0;
+}
 body.mode-play:not(.orient-land) .kitbar.land-hide{
   display:flex;flex-direction:column;align-items:stretch;width:100%;
+  margin-top:6px;padding-top:0;border-top:0;gap:4px;
 }
+body.mode-play:not(.orient-land) .kitbar.land-hide .hint:empty{display:none}
 body.mode-play:not(.orient-land) .kitbar.land-hide #bgbtn{
-  width:100%;flex:0 0 auto;min-width:0;min-height:48px;
+  width:100%;flex:0 0 auto;min-width:0;min-height:48px;gap:10px;
+  color:var(--amber);background:transparent;filter:none;
+}
+body.mode-play:not(.orient-land) .kitbar.land-hide #bgbtn svg{width:22px;height:22px}
+body.mode-play:not(.orient-land) .kitbar.land-hide #bgbtn::after{
+  content:"Lock";font-size:16px;letter-spacing:.16em;text-transform:uppercase;
+}
+body.mode-play:not(.orient-land) .kitbar.land-hide #bgbtn.on{
+  color:#1a1008;background:linear-gradient(180deg,#ffc978,#e08a12);filter:none;
+  box-shadow:inset 0 0 0 1px var(--amber), 0 2px 0 #7a4a08,
+             0 0 8px var(--amber-glow), 0 0 2px rgba(255,200,120,.9);
 }
 
 .rail{display:flex;gap:7px;overflow-x:auto;padding-bottom:6px;scrollbar-width:thin}
