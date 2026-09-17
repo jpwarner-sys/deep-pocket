@@ -864,6 +864,110 @@ html.insets #insetdbg{display:block}
 
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 
+/* Wood-squircle faces — same carved-amber family as the PWA icon.
+   Background-image on existing keys; BEAT/COMPOSE chrome stays. */
+button.key#play,
+button.key#play2,
+button.key.slot[data-slot],
+button.key#bgbtn,
+button.key#clr{
+  background-color:#0a0705 !important;
+  background-repeat:no-repeat !important;
+  background-position:center !important;
+  background-size:contain !important;
+  background-origin:border-box !important;
+  color:transparent !important;
+  -webkit-text-fill-color:transparent;
+  text-shadow:none !important;
+  overflow:hidden;
+}
+button.key#play,
+button.key#play2{
+  background-image:url("assets/buttons/btn-play.png") !important;
+  /* Square at Play/Stop thumb height so the squircle fills the key — no side voids. */
+  min-width:80px !important;min-height:80px !important;width:80px;height:80px;padding:0 !important;
+  border-radius:20px;
+}
+button.key#play.on,
+button.key#play2.on{
+  background-image:url("assets/buttons/btn-stop.png") !important;
+}
+button.key.slot[data-slot="0"]{background-image:url("assets/buttons/btn-A.png") !important}
+button.key.slot[data-slot="1"]{background-image:url("assets/buttons/btn-B.png") !important}
+button.key.slot[data-slot="2"]{background-image:url("assets/buttons/btn-C.png") !important}
+button.key.slot[data-slot="3"]{background-image:url("assets/buttons/btn-D.png") !important}
+button.key#bgbtn{background-image:url("assets/buttons/btn-lock.png") !important}
+button.key#clr{background-image:url("assets/buttons/btn-clear.png") !important}
+
+/* Fat thumbs: Play/Stop scale (64px) is the size language. */
+button.key.slot[data-slot]{
+  min-width:64px;min-height:64px;height:80px;padding:0;
+  border-radius:18px;
+}
+.pat-grid{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(64px,80px));
+  gap:8px;
+  justify-content:start;
+  flex:0 0 auto;
+}
+button.key#bgbtn{
+  min-width:64px;min-height:64px;width:64px;height:64px;padding:0;
+  border-radius:16px;
+}
+button.key#bgbtn svg{display:none}
+button.key#clr{
+  min-width:64px;min-height:64px;width:64px;height:64px;padding:0;
+  border-radius:16px;letter-spacing:0;
+}
+
+button.key#play:active,
+button.key#play2:active,
+button.key.slot[data-slot]:active,
+button.key#bgbtn:active,
+button.key#clr:active{
+  filter:brightness(.7) saturate(1.12);
+}
+button.key#play.on,
+button.key#play2.on,
+button.key.slot[data-slot].on,
+button.key#bgbtn.on{
+  filter:brightness(1.12) saturate(1.2) drop-shadow(0 0 12px var(--amber-glow));
+  box-shadow:inset 0 0 0 1px var(--amber), 0 0 10px var(--amber-glow);
+}
+button.key#play.on:active,
+button.key#play2.on:active,
+button.key.slot[data-slot].on:active,
+button.key#bgbtn.on:active{
+  filter:brightness(.74) saturate(1.18);
+}
+
+/* Landscape play: lock stays a chip, still a fat hit. */
+body.orient-land.mode-play #bgbtn{
+  width:48px;height:48px;min-width:48px;min-height:48px;
+}
+/* Portrait play (#10): keep the full-row thumb hit; paint the wood lock on it. */
+body.mode-play:not(.orient-land) .kitbar.land-hide #bgbtn{
+  width:100% !important;min-width:0 !important;
+  min-height:64px !important;height:64px;padding:0 !important;
+  border-radius:16px;
+  background-color:#0a0705 !important;
+  background-image:url("assets/buttons/btn-lock.png") !important;
+  background-size:contain !important;
+  background-position:center !important;
+  color:transparent !important;
+}
+body.mode-play:not(.orient-land) .kitbar.land-hide #bgbtn svg{display:none}
+body.mode-play:not(.orient-land) .kitbar.land-hide #bgbtn::after{content:none}
+/* H-EDIT chrome row is ~56px — keep transport Play a compact square, not 80. */
+body.orient-land:not(.mode-play) .transport button.key#play{
+  width:44px;height:36px;min-width:44px !important;min-height:36px !important;
+  border-radius:10px;
+}
+body.orient-land.mode-play .prow button.key#play2{
+  width:72px;height:72px;min-width:72px !important;min-height:72px !important;
+}
+
 </style>
 
 </head>
@@ -897,7 +1001,7 @@ html.insets #insetdbg{display:block}
       </div>
       <div class="row" style="justify-content:flex-start">
         <i class="pip" id="playpip" aria-hidden="true"></i>
-        <button class="key play" id="play">Play</button>
+        <button class="key play" id="play" aria-label="Play">Play</button>
         <button class="key sm" id="tap">Tap</button>
         <button class="key sm" id="bmin">−</button><button class="key sm" id="bplus">+</button>
         <input type="range" id="bpm" min="40" max="200" step="1" value="116" style="max-width:190px" aria-label="Tempo">
@@ -912,7 +1016,7 @@ html.insets #insetdbg{display:block}
     <div class="film" id="film" aria-label="Changes"></div>
     <div class="prow">
       <i class="pip" id="playpip2" aria-hidden="true"></i>
-      <button class="key play" id="play2">Play</button>
+      <button class="key play" id="play2" aria-label="Play">Play</button>
       <button class="key sm" id="pmin">−</button>
       <span class="bpmn num" id="pbpm">116</span>
       <button class="key sm" id="pplus">+</button>
@@ -945,15 +1049,15 @@ html.insets #insetdbg{display:block}
       <span class="hint" id="gridinfo"></span>
     </div>
     <div class="row" style="margin-bottom:9px; gap:8px">
-      <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; flex:1">
-        <button class="key play slot on" data-slot="0">A</button>
-        <button class="key play slot" data-slot="1">B</button>
-        <button class="key play slot" data-slot="2">C</button>
-        <button class="key play slot" data-slot="3">D</button>
+      <div class="pat-grid">
+        <button class="key play slot on" data-slot="0" aria-label="Pattern A">A</button>
+        <button class="key play slot" data-slot="1" aria-label="Pattern B">B</button>
+        <button class="key play slot" data-slot="2" aria-label="Pattern C">C</button>
+        <button class="key play slot" data-slot="3" aria-label="Pattern D">D</button>
       </div>
     </div>
     <div class="row" style="margin-bottom:9px">
-      <button class="key sm" id="clr">Clear</button>
+      <button class="key sm" id="clr" aria-label="Clear">Clear</button>
       <span class="hint" style="margin-right:4px; margin-left:auto">CPY:</span>
       <span id="cpy-targets" style="display:flex; gap:4px">
         <!-- populated by info() -->
@@ -3067,7 +3171,8 @@ function start(){
   S.bpm=S.baseBpm; setBpm(S.bpm);
   nextTime = eng.now + 0.08; sched.length=0;
   $("play").textContent="Stop"; $("play").classList.add("on");
-  if($("play2")){ $("play2").textContent="Stop"; $("play2").classList.add("on"); }
+  $("play").setAttribute("aria-label","Stop");
+  if($("play2")){ $("play2").textContent="Stop"; $("play2").classList.add("on"); $("play2").setAttribute("aria-label","Stop"); }
   setPips(true);
   timer=setInterval(tick, TICK); tick();
 }
@@ -3075,7 +3180,8 @@ function stop(){
   if(BG.on){ bgStop(); return; }
   S.playing=false; clearInterval(timer); timer=null; eng.panic();
   $("play").textContent="Play"; $("play").classList.remove("on");
-  if($("play2")){ $("play2").textContent="Play"; $("play2").classList.remove("on"); }
+  $("play").setAttribute("aria-label","Play");
+  if($("play2")){ $("play2").textContent="Play"; $("play2").classList.remove("on"); $("play2").setAttribute("aria-label","Play"); }
   setPips(false);
   document.querySelectorAll(".st.pl").forEach(function(e){e.classList.remove("pl");});
   document.querySelectorAll(".cell.now").forEach(function(e){e.classList.remove("now");});
@@ -3546,7 +3652,8 @@ function bgStart(){
   try { eng.panic(); if(eng.ctx && eng.ctx.state === "running") eng.ctx.suspend(); } catch(e){}
   S.playing = true;
   $("play").textContent="Stop"; $("play").classList.add("on");
-  if($("play2")){ $("play2").textContent="Stop"; $("play2").classList.add("on"); }
+  $("play").setAttribute("aria-label","Stop");
+  if($("play2")){ $("play2").textContent="Stop"; $("play2").classList.add("on"); $("play2").setAttribute("aria-label","Stop"); }
   setPips(true);
   bgMeta();
   if("mediaSession" in navigator) try { navigator.mediaSession.playbackState = "playing"; } catch(e){}
@@ -3555,7 +3662,8 @@ function bgStop(){
   try { AUD.pause(); } catch(e){}
   S.playing = false;
   $("play").textContent="Play"; $("play").classList.remove("on");
-  if($("play2")){ $("play2").textContent="Play"; $("play2").classList.remove("on"); }
+  $("play").setAttribute("aria-label","Play");
+  if($("play2")){ $("play2").textContent="Play"; $("play2").classList.remove("on"); $("play2").setAttribute("aria-label","Play"); }
   setPips(false);
   document.querySelectorAll(".st.pl").forEach(function(e){e.classList.remove("pl");});
   document.querySelectorAll(".cell.now").forEach(function(e){e.classList.remove("now");});
