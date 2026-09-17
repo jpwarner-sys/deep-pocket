@@ -188,7 +188,7 @@ body{
   border-radius:14px;
   box-shadow:inset 0 1px 0 var(--lift), inset 0 0 0 1px rgba(0,0,0,.78);
 }
-@media (display-mode:standalone){
+
   #unit{ padding-top:calc(12px + var(--sai-t)); }
 }
 .rail,.gridwrap{max-width:100%}
@@ -352,7 +352,7 @@ body.mode-play:not(.orient-land) #unit{
           calc(6px + var(--sai-b)) calc(6px + var(--sai-l));
   min-height:0;
 }
-@media (display-mode:standalone){
+
   body.mode-play:not(.orient-land) #unit{ padding-top:calc(8px + var(--sai-t)); }
 }
 body.mode-play:not(.orient-land) .brand{
@@ -846,7 +846,14 @@ body.phone.mode-edit:not(.orient-land) #unit{
   padding:calc(6px + var(--sai-t)) calc(8px + var(--sai-r))
           calc(6px + var(--sai-b)) calc(8px + var(--sai-l));
 }
-@media (display-mode:standalone){
+
+   
+   
+   
+   
+        
+
+   
   body.phone.mode-edit:not(.orient-land) #unit{ padding-top:calc(10px + var(--sai-t)); }
 }
 body.phone.mode-edit:not(.orient-land) .brand{margin:0 0 4px;flex:0 0 auto}
@@ -856,7 +863,7 @@ body.phone.mode-edit:not(.orient-land) #kitstrip,
 body.phone.mode-edit:not(.orient-land) .cols,
 body.phone.mode-edit:not(.orient-land) #face-mem,
 body.phone.mode-edit:not(.orient-land) #unit > .hint{display:none}
-/* Mix + Memory sheets: same height law. Cover ALL content except the
+/* P0: hide under-chrome when Mix/Memory sheets open */ body.show-mix #bgbtn, body.show-mem #bgbtn, body.show-mix .kitbar.land-hide, body.show-mem .kitbar.land-hide {   display: none !important; } /* Mix + Memory sheets: same height law. Cover ALL content except the
    header and lock-button zone. Scroll lives inside the sheet.
    Landscape must span BOTH #unit columns so COMPOSE chord bars cannot
    peek out the right edge — the sheet is a grid item, so a short
@@ -865,7 +872,7 @@ body.phone.mode-edit.show-mix .cols,
 body.orient-land.show-mix .cols,
 body.phone.mode-edit.show-mem #face-mem,
 body.orient-land.show-mem #face-mem{
-  z-index:45;overflow:auto;-webkit-overflow-scrolling:touch;padding:10px;
+  z-index:80;overflow:auto;-webkit-overflow-scrolling:touch;padding:10px;
   max-height:none;max-width:none;margin:0;
   background:linear-gradient(165deg,#1b110c,#0e0805 60%,#150c06);
   box-shadow:0 -8px 24px rgba(0,0,0,.6);
@@ -896,7 +903,7 @@ body.orient-land.show-mem #face-mem{
   top:var(--edit-sheet-top, 56px);
   right:0;bottom:0;left:0;
   width:auto !important;height:auto;min-width:0;min-height:0;
-  border-radius:0;z-index:45;
+  border-radius:0;z-index:80;
 }
 body.orient-land.show-grooves #face-grooves{
   display:block !important;position:fixed;inset:auto 8px calc(8px + var(--sai-b)) 8px;
