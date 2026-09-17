@@ -316,15 +316,15 @@ button.key.ico.lamp.on{color:var(--amber);background:transparent;
    Same amber/wood lamp language as other primary keys. Play/Stop size is untouched.
    Landscape play keeps the existing top-right chip. */
 body.mode-play:not(.orient-land) #face-player{
-  padding-bottom:0;border-bottom:0;
+  padding:2px 0 4px;border-bottom:0;flex:0 0 auto;
 }
-body.mode-play:not(.orient-land) .pmeta{margin-top:6px}
+body.mode-play:not(.orient-land) .pmeta{margin-top:4px}
 body.mode-play:not(.orient-land) .kitbar.land-hide{
   display:flex;flex-direction:column;align-items:stretch;width:100%;
-  margin-top:4px;padding-top:0;border-top:0;gap:2px;
+  margin-top:4px;padding-top:0;border-top:0;gap:2px;flex:0 0 auto;
 }
-body.mode-play:not(.orient-land) #face-grooves{padding-top:0}
-body.mode-play:not(.orient-land) #kitstrip{margin-top:0;padding-top:6px}
+body.mode-play:not(.orient-land) #face-grooves{padding:4px 0 6px;flex:1 1 0;min-height:0;overflow:hidden;display:flex;flex-direction:column;border-bottom:1px solid var(--hairline)}
+body.mode-play:not(.orient-land) #kitstrip{margin-top:0;padding-top:2px;width:100%;gap:4px}
 body.mode-play:not(.orient-land) .kitbar.land-hide .hint:empty{display:none}
 body.mode-play:not(.orient-land) .kitbar.land-hide #bgbtn{
   width:100%;flex:0 0 auto;min-width:0;min-height:48px;gap:10px;
@@ -338,6 +338,96 @@ body.mode-play:not(.orient-land) .kitbar.land-hide #bgbtn.on{
   color:#1a1008;background:linear-gradient(180deg,#ffc978,#e08a12);filter:none;
   box-shadow:inset 0 0 0 1px var(--amber), 0 2px 0 #7a4a08,
              0 0 8px var(--amber-glow), 0 0 2px rgba(255,200,120,.9);
+}
+
+/* Portrait PLAY densify — reclaim header / clock / CLEAR–CPY gap / rig peek.
+   Pattern A–D stays 2×2 here so a later single-column Beat PR can rebase. */
+html:has(body.mode-play:not(.orient-land)){height:100%;overflow:hidden}
+body.mode-play:not(.orient-land){
+  padding:4px;height:100%;overflow:hidden;
+}
+body.mode-play:not(.orient-land) #unit{
+  display:flex;flex-direction:column;height:calc(100dvh - 8px);max-width:none;overflow:hidden;
+  padding:calc(4px + var(--sai-t)) calc(6px + var(--sai-r))
+          calc(6px + var(--sai-b)) calc(6px + var(--sai-l));
+  min-height:0;
+}
+@media (display-mode:standalone){
+  body.mode-play:not(.orient-land) #unit{ padding-top:calc(8px + var(--sai-t)); }
+}
+body.mode-play:not(.orient-land) .brand{
+  margin:0 0 4px;gap:6px;flex:0 0 auto;flex-wrap:nowrap;
+}
+body.mode-play:not(.orient-land) .brand h1,
+body.mode-play:not(.orient-land) .brand .ver{display:none}
+body.mode-play:not(.orient-land) #dockmix,
+body.mode-play:not(.orient-land) #dockmem,
+body.mode-play:not(.orient-land) #dockgroove{display:none !important}
+body.mode-play:not(.orient-land) .modebar{
+  display:flex;flex:1 1 auto;width:100%;gap:6px;
+}
+body.mode-play:not(.orient-land) .modebar .key.sm{
+  flex:1 1 0;min-height:44px;padding:8px 12px;
+}
+body.mode-play:not(.orient-land) #face-top,
+body.mode-play:not(.orient-land) .cols,
+body.mode-play:not(.orient-land) #face-mem,
+body.mode-play:not(.orient-land) #unit > .hint{display:none !important}
+body.mode-play:not(.orient-land) .player{padding:2px 0 4px}
+body.mode-play:not(.orient-land) .film{padding:2px 0 4px}
+body.mode-play:not(.orient-land) .prow{
+  margin-top:6px;gap:6px;width:100%;flex-wrap:nowrap;justify-content:center;
+}
+body.mode-play:not(.orient-land) .prow .key.sm{
+  min-width:44px;min-height:44px;
+}
+/* Kit strip already names the kit — don't spend a second full-width SYNTH row.
+   Bass-clef lamp stays on the PLAY/tempo line so those side gutters disappear. */
+body.mode-play:not(.orient-land) .prow-kit{display:contents}
+body.mode-play:not(.orient-land) #kitcycle{display:none}
+body.mode-play:not(.orient-land) #bassbtn{
+  flex:0 0 48px;min-width:48px;min-height:44px;
+}
+body.mode-play:not(.orient-land) #kithint{display:none}
+body.mode-play:not(.orient-land) #kitstrip .key.sm{
+  min-height:44px;
+}
+body.mode-play:not(.orient-land) #rail{
+  flex:1 1 auto;min-height:0;min-width:0;width:100%;padding-bottom:2px;
+}
+body.mode-play:not(.orient-land) .gv{min-height:44px}
+body.mode-play:not(.orient-land) #face-pat{
+  flex:0 0 auto;padding:6px 0 0;margin:0;border-bottom:0;
+}
+body.mode-play:not(.orient-land) #face-pat > .row{margin-bottom:6px}
+body.mode-play:not(.orient-land) #gridinfo{display:none}
+body.mode-play:not(.orient-land) .pat-tools{
+  justify-content:flex-start;align-items:center;gap:4px;margin-bottom:0;width:100%;
+}
+body.mode-play:not(.orient-land) .pat-tools .hint{display:none}
+body.mode-play:not(.orient-land) .cpy-targets{display:flex;gap:4px;flex:1 1 auto;min-width:0}
+body.mode-play:not(.orient-land) #clr{
+  width:72px !important;height:72px !important;
+  min-width:72px !important;min-height:72px !important;
+  flex:0 0 72px;border-radius:18px;
+}
+body.mode-play:not(.orient-land) .cpy-targets .key{
+  flex:1 1 0;min-width:56px;max-width:80px;
+  min-height:72px;height:72px;padding:0;border-radius:18px;
+  background-color:#0a0705 !important;
+  background-repeat:no-repeat !important;
+  background-position:center !important;
+  background-size:contain !important;
+  background-origin:border-box !important;
+  color:transparent !important;-webkit-text-fill-color:transparent;
+  text-shadow:none !important;overflow:hidden;
+}
+body.mode-play:not(.orient-land) .cpy-targets .key[data-copy="0"]{background-image:url("assets/buttons/btn-A.png") !important}
+body.mode-play:not(.orient-land) .cpy-targets .key[data-copy="1"]{background-image:url("assets/buttons/btn-B.png") !important}
+body.mode-play:not(.orient-land) .cpy-targets .key[data-copy="2"]{background-image:url("assets/buttons/btn-C.png") !important}
+body.mode-play:not(.orient-land) .cpy-targets .key[data-copy="3"]{background-image:url("assets/buttons/btn-D.png") !important}
+body.mode-play:not(.orient-land) .cpy-targets .key:active{
+  filter:brightness(.7) saturate(1.12);
 }
 /* Kit strip: buttons stay a stable row; hint is one reserved line so
    loading/credit cannot reflow the groove rail or the step grid. */
@@ -468,6 +558,10 @@ select{font-family:var(--mono);font-size:12px;background:#0a0705;color:var(--bon
 body.orient-land.mode-play #toast{
   bottom:auto;top:calc(8px + var(--sai-t) + 52px);
 }
+/* Portrait play: CPY/CLEAR sit on the bottom edge — keep toast off that toolbar. */
+body.mode-play:not(.orient-land) #toast{
+  bottom:auto;top:calc(8px + var(--sai-t) + 52px);
+}
 
 .memlamp{width:9px;height:9px;border-radius:50%;background:var(--faint);display:inline-block}
 .memlamp.ok{background:var(--amber);box-shadow:0 0 8px var(--amber-glow)}
@@ -505,12 +599,10 @@ body.mode-play .edit-only{display:none !important}
 body.mode-edit .play-only{display:none !important}
 body.mode-play .transport{display:none}
 .player{padding:8px 4px 10px}
-/* NEXT PASS DEFECT: V-PLAY / V-LOCK at 430x932. #unit is ~1699px
-   (practice rig + mixer + memory + attribution below the fold) and the
-   surface scrolls. Play essentials sit above 932 so it ships; do not
-   leave this as a glance-while-playing face that scrolls. */
-.pclock{font-family:var(--mono);font-size:12px;letter-spacing:.18em;color:var(--faint);text-align:center;margin-bottom:6px}
 .prow{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;align-items:center;margin-top:14px}
+.prow-kit{display:contents}
+.pat-tools{display:flex;flex-wrap:wrap;align-items:center;gap:6px}
+.cpy-targets{display:flex;gap:4px}
 .prow .bpmn{font-family:var(--mono);font-size:28px;font-weight:600;color:var(--amber);min-width:72px;text-align:center}
 .prow .key.play{
   font-size:36px;letter-spacing:.16em;min-width:168px;min-height:64px;padding:12px 28px 14px;
@@ -698,7 +790,7 @@ body.orient-land.mode-play #face-arr{display:none !important}
 body.orient-land.mode-play .landbar{display:none}
 body.orient-land.mode-play .modebar{display:flex}
 body.orient-land.mode-play .transport .row{display:none}
-body.orient-land.mode-play .pclock{display:none}
+body.orient-land.mode-play .prow-kit{display:contents}
 body.orient-land.mode-play .film{
   flex:1 1 auto;padding:0;align-items:center;min-height:0;
 }
@@ -1012,7 +1104,6 @@ body.orient-land.mode-play .prow button.key#play2{
   </div>
 
   <section class="face play-only player" id="face-player">
-    <div class="pclock" id="pclock"></div>
     <div class="film" id="film" aria-label="Changes"></div>
     <div class="prow">
       <i class="pip" id="playpip2" aria-hidden="true"></i>
@@ -1020,8 +1111,10 @@ body.orient-land.mode-play .prow button.key#play2{
       <button class="key sm" id="pmin">−</button>
       <span class="bpmn num" id="pbpm">116</span>
       <button class="key sm" id="pplus">+</button>
-      <button class="key sm" id="kitcycle">Synth</button>
-      <button class="key sm clef on" id="bassbtn" aria-label="Bass">&#119074;</button>
+      <span class="prow-kit">
+        <button class="key sm" id="kitcycle">Synth</button>
+        <button class="key sm clef on" id="bassbtn" aria-label="Bass">&#119074;</button>
+      </span>
     </div>
     <div class="pmeta"><span>BAR <b class="num" id="pbar">1</b></span><span>BEAT <b class="num" id="pbeat">1</b></span></div>
   </section>
@@ -1056,10 +1149,10 @@ body.orient-land.mode-play .prow button.key#play2{
         <button class="key play slot" data-slot="3" aria-label="Pattern D">D</button>
       </div>
     </div>
-    <div class="row" style="margin-bottom:9px">
+    <div class="row pat-tools" style="margin-bottom:9px">
       <button class="key sm" id="clr" aria-label="Clear">Clear</button>
-      <span class="hint" style="margin-right:4px; margin-left:auto">CPY:</span>
-      <span id="cpy-targets" style="display:flex; gap:4px">
+      <span class="hint">CPY:</span>
+      <span id="cpy-targets" class="cpy-targets">
         <!-- populated by info() -->
       </span>
     </div>
@@ -2894,7 +2987,7 @@ function info(){
     var html = '';
     for(var i=0; i<4; i++) {
       if(i !== S.slot) {
-        html += '<button class="key sm" onclick="copyPat('+i+')">'+'ABCD'[i]+'</button>';
+        html += '<button class="key cpy-slot" data-copy="'+i+'" onclick="copyPat('+i+')" aria-label="Copy to '+'ABCD'[i]+'">'+'ABCD'[i]+'</button>';
       }
     }
     $("cpy-targets").innerHTML = html;
@@ -3359,11 +3452,6 @@ if($("dockgroove")) $("dockgroove").onclick=function(){
   window.addEventListener("resize", paint);
   window.addEventListener("orientationchange", function(){ setTimeout(paint, 400); });
 })();
-function tickClock(){
-  var el=$("pclock"); if(!el) return;
-  var d=new Date(); el.textContent = ((d.getHours()%12)||12)+":"+("0"+d.getMinutes()).slice(-2);
-}
-tickClock(); setInterval(tickClock, 10000);
 function chordAt(bar){
   var i=((bar%loopLen())+loopLen())%loopLen();
   return S.chords[i] || (S.roots[i]==null ? "·" : noteName(S.roots[i]));
