@@ -851,8 +851,10 @@ html.insets #insetdbg{display:block}
       </div>
       <div class="row">
         <button class="key sm" id="clr">Clear</button>
-        <button class="key sm" id="cpy">Copy&nbsp;to&nbsp;B</button>
         <span class="hint" id="gridinfo"></span>
+      </div>
+      <div class="row" id="cpy-targets">
+        <!-- populated by info() -->
       </div>
     </div>
     <div class="edit-only">
@@ -2672,6 +2674,20 @@ function info(){
   var c=cur();
   if($("gridinfo")) $("gridinfo").textContent = c.steps+" steps × "+c.bars+" bar"+(c.bars>1?"s":"")+" · "+
     (c.steps===12?"12/8":c.steps===14?"7/8":c.steps===20?"5/4":"4/4");
+  if($("cpy-targets")) {
+    var html = '<span class="hint" style="margin-right:4px">Copy to</span>';
+    for(var i=0; i<4; i++) {
+      if(i !== S.slot) {
+        html += '<button class="key sm" onclick="copyPat('+i+')">'+'ABCD'[i]+'</button>';
+      }
+    }
+    $("cpy-targets").innerHTML = html;
+  }
+}
+
+function copyPat(nxt){
+  S.slots[nxt]=JSON.parse(JSON.stringify(cur()));
+  toast("Pattern "+"ABCD"[S.slot]+" → "+"ABCD"[nxt]);
 }
 
 // step grid
@@ -2837,8 +2853,6 @@ $("gap").onchange=function(){ S.gap=+$("gap").value; };
 $("ramp").onchange=function(){ S.ramp=+$("ramp").value; $("rampv").textContent = S.ramp? "ramp +"+S.ramp : "ramp off"; };
 $("countin").onchange=function(){ S.countin=+$("countin").value; };
 $("clr").onclick=function(){ var c=cur(); VOICES.forEach(function(v){ c.p[v]=c.p[v].map(function(){return 0;}); }); drawGrid(); };
-$("cpy").onclick=function(){ var nxt=(S.slot+1)%4; S.slots[nxt]=JSON.parse(JSON.stringify(cur()));
-  toast("Pattern "+"ABCD"[S.slot]+" → "+"ABCD"[nxt]); };
 document.querySelectorAll(".slot").forEach(function(b){
   b.onclick=function(){ S.slot=+b.dataset.slot;
     document.querySelectorAll(".slot").forEach(function(x){ x.classList.toggle("on", x===b); });
