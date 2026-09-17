@@ -316,14 +316,15 @@ button.key.ico.lamp.on{color:var(--amber);background:transparent;
    Same amber/wood lamp language as other primary keys. Play/Stop size is untouched.
    Landscape play keeps the existing top-right chip. */
 body.mode-play:not(.orient-land) #face-player{
-  padding-bottom:4px;border-bottom:0;
+  padding-bottom:0;border-bottom:0;
 }
+body.mode-play:not(.orient-land) .pmeta{margin-top:6px}
 body.mode-play:not(.orient-land) .kitbar.land-hide{
   display:flex;flex-direction:column;align-items:stretch;width:100%;
-  margin-top:6px;padding-top:0;border-top:0;gap:4px;
+  margin-top:4px;padding-top:0;border-top:0;gap:2px;
 }
 body.mode-play:not(.orient-land) #face-grooves{padding-top:0}
-body.mode-play:not(.orient-land) #kitstrip{margin-top:0;padding-top:8px}
+body.mode-play:not(.orient-land) #kitstrip{margin-top:0;padding-top:6px}
 body.mode-play:not(.orient-land) .kitbar.land-hide .hint:empty{display:none}
 body.mode-play:not(.orient-land) .kitbar.land-hide #bgbtn{
   width:100%;flex:0 0 auto;min-width:0;min-height:48px;gap:10px;
