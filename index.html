@@ -1455,20 +1455,6 @@ body.mode-play:not(.orient-land) button.key.slot[data-slot]::after{
 }
 #cpy-targets .key:active{filter:brightness(.7) saturate(1.12);transform:none}
 
-body.orient-land.land-beat .pat-tools{
-  flex:0 0 auto;margin:0 0 4px;gap:4px;
-}
-body.orient-land.land-beat .pat-tools #cpy-targets,
-body.orient-land.land-beat .pat-tools .cpy-targets{
-  flex:0 0 auto;min-width:0;
-}
-body.orient-land.land-beat button.key#clr,
-body.orient-land.land-beat #cpy-targets .key{
-  width:var(--pat-key);height:var(--pat-key);
-  min-width:var(--pat-key);min-height:var(--pat-key);max-width:var(--pat-key);
-  flex:0 0 var(--pat-key);
-}
-
 button.key#play:active,
 button.key#play2:active,
 button.key.slot[data-slot]:active,
@@ -1534,85 +1520,110 @@ body.orient-land.mode-play .prow button.key#play2{
 }
 
 /* ===================================================================
-   Pattern L — small A–D up the left, DEL in the corner, copy A–D across.
-   Portrait PLAY + EDIT keep the L. Landscape Beat is lamps plus a
-   right A–D + DEL rail — no composition tiles. Compose keeps its 4×6 sheet.
+   Pattern pad — 5×5 tiles. A–D down the left, DEL + copy A–D across
+   the bottom. PATTERN sits in the open 4×4. Lamp strips stay above
+   (portrait) or beside (landscape Beat). Compose keeps its 4×6 sheet.
    =================================================================== */
 #playbars{display:none}
+.pat-pad{
+  --pat-gap:6px;
+  --pat-tile:52px;
+  display:grid;
+  grid-template-columns:repeat(5,var(--pat-tile));
+  grid-template-rows:repeat(5,var(--pat-tile));
+  gap:var(--pat-gap);
+  justify-content:center;
+  align-content:center;
+  flex:0 0 auto;min-width:0;min-height:0;
+  position:relative;
+}
+.pat-pad .pat-col,
+.pat-pad .pat-tools,
+.pat-pad .pat-work .row.pat-tools,
+.pat-pad #cpy-targets,
+.pat-pad .cpy-targets{display:contents}
+.pat-pad .pat-col-h{display:none}
+.pat-pad button.key.slot[data-slot="0"]{grid-column:1;grid-row:1}
+.pat-pad button.key.slot[data-slot="1"]{grid-column:1;grid-row:2}
+.pat-pad button.key.slot[data-slot="2"]{grid-column:1;grid-row:3}
+.pat-pad button.key.slot[data-slot="3"]{grid-column:1;grid-row:4}
+.pat-pad button.key#clr{grid-column:1;grid-row:5}
+.pat-pad #cpy-targets .key[data-copy="0"]{grid-column:2;grid-row:5}
+.pat-pad #cpy-targets .key[data-copy="1"]{grid-column:3;grid-row:5}
+.pat-pad #cpy-targets .key[data-copy="2"]{grid-column:4;grid-row:5}
+.pat-pad #cpy-targets .key[data-copy="3"]{grid-column:5;grid-row:5}
+.pat-holes{
+  grid-column:2 / 6;grid-row:1 / 5;
+  display:grid;grid-template-columns:repeat(4,minmax(0,1fr));
+  grid-template-rows:repeat(4,minmax(0,1fr));
+  gap:var(--pat-gap);
+}
+.pat-holes i{
+  display:block;min-width:0;min-height:0;border-radius:10px;
+  background:linear-gradient(180deg,#0a0705,#120b06);
+  box-shadow:inset 0 2px 7px rgba(0,0,0,.88), inset 0 0 0 1px rgba(0,0,0,.55);
+}
+.pat-mark{
+  grid-column:2 / 6;grid-row:1 / 5;
+  z-index:2;pointer-events:none;
+  display:flex;align-items:center;justify-content:center;
+  font-family:var(--sil);font-weight:700;
+  font-size:clamp(22px,7vw,34px);letter-spacing:.34em;
+  text-transform:uppercase;line-height:1;text-align:center;
+  color:var(--amber-hi);-webkit-text-fill-color:var(--amber-hi);
+  text-shadow:0 1px 2px #000, 0 0 14px var(--amber-glow);
+}
+.pat-pad button.key.slot[data-slot],
+.pat-pad #cpy-targets .key,
+.pat-pad button.key#clr{
+  width:var(--pat-tile);height:var(--pat-tile);
+  min-width:var(--pat-tile);min-height:var(--pat-tile);
+  max-width:var(--pat-tile);
+  flex:0 0 var(--pat-tile);padding:0;border-radius:10px;
+}
+
 body.phone.mode-edit:not(.orient-land) #face-pat,
 body.mode-play:not(.orient-land) #face-pat{
-  --pat-key:40px;
+  --pat-key:52px;
+  --pat-tile:52px;
   min-height:0;margin:0;border-bottom:0;
-  display:grid;
-  grid-template-columns:var(--pat-key) minmax(0,1fr);
-  grid-template-rows:auto minmax(0,1fr) var(--pat-key);
-  column-gap:8px;row-gap:6px;
+  display:flex;flex-direction:column;
   padding:4px 0 0;
-  align-content:stretch;
 }
 body.mode-play:not(.orient-land) #face-pat{flex:1 1 0}
 body.phone.mode-edit:not(.orient-land) #face-pat > .pat-head,
 body.phone.mode-edit:not(.orient-land) #face-pat > .row.pat-head,
 body.mode-play:not(.orient-land) #face-pat > .pat-head,
-body.mode-play:not(.orient-land) #face-pat > .row.pat-head{
-  grid-column:1 / -1;grid-row:1;
-  margin:0 !important;padding:2px 0 4px;min-height:0;
-  justify-content:flex-start !important;align-items:center;
-  border-bottom:1px solid var(--hairline);
-  gap:8px;
-}
-body.mode-play:not(.orient-land) #face-pat > .pat-head .lbl{
-  color:var(--faint);opacity:.62;font-size:9px;letter-spacing:.28em;
-  font-family:var(--sil);font-weight:600;text-transform:uppercase;
-}
+body.mode-play:not(.orient-land) #face-pat > .row.pat-head{display:none}
 body.phone.mode-edit:not(.orient-land) .pat-work,
+body.mode-play:not(.orient-land) .pat-work{
+  display:flex;flex-direction:column;flex:1 1 auto;min-height:0;gap:8px;
+}
 body.phone.mode-edit:not(.orient-land) .pat-lamps,
-body.phone.mode-edit:not(.orient-land) .pat-tools,
-body.phone.mode-edit:not(.orient-land) .pat-work .row.pat-tools,
-body.mode-play:not(.orient-land) .pat-work,
-body.mode-play:not(.orient-land) .pat-lamps,
-body.mode-play:not(.orient-land) .pat-tools,
-body.mode-play:not(.orient-land) .pat-work .row.pat-tools{
-  display:contents;
+body.mode-play:not(.orient-land) .pat-lamps{
+  display:flex;flex-direction:row;flex:1 1 auto;min-height:0;min-width:0;
 }
-body.phone.mode-edit:not(.orient-land) .pat-col,
-body.mode-play:not(.orient-land) .pat-col{
-  grid-column:1;grid-row:2;
-  display:flex;flex-direction:column;
-  width:var(--pat-key);min-width:36px;max-width:var(--pat-key);
-  height:auto;min-height:0;gap:4px;align-self:stretch;
-}
-body.phone.mode-edit:not(.orient-land) .pat-col{justify-content:flex-end}
-body.mode-play:not(.orient-land) .pat-col{justify-content:space-between}
 body.phone.mode-edit:not(.orient-land) #face-pat{
   flex:0 1 auto;
-  grid-template-rows:auto auto var(--pat-key);
 }
-body.phone.mode-edit:not(.orient-land) #face-arr{
-  flex:1 1 auto;
-}
-body.phone.mode-edit:not(.orient-land) .pat-col-h,
-body.mode-play:not(.orient-land) .pat-col-h{display:none}
-body.phone.mode-edit:not(.orient-land) button.key.slot[data-slot],
-body.mode-play:not(.orient-land) button.key.slot[data-slot]{
-  width:var(--pat-key);max-width:var(--pat-key);
-  min-width:36px;min-height:36px;height:var(--pat-key);
-  flex:0 0 var(--pat-key);border-radius:10px;aspect-ratio:auto;
-}
-body.mode-play:not(.orient-land) button.key.slot[data-slot]::after{content:none}
+body.phone.mode-edit:not(.orient-land) .pat-lamps{flex:0 1 auto}
+body.phone.mode-edit:not(.orient-land) #face-arr{flex:1 1 auto}
 body.phone.mode-edit:not(.orient-land) #face-pat .edit-only{
-  grid-column:2;grid-row:2;
-  min-width:0;min-height:0;align-self:stretch;justify-self:stretch;
+  flex:1 1 auto;min-width:0;min-height:0;
   display:flex;flex-direction:column;overflow:hidden;
 }
 body.phone.mode-edit:not(.orient-land) #face-pat .gridwrap{
   flex:1 1 auto;min-width:0;min-height:0;overflow:auto;
 }
+body.phone.mode-edit:not(.orient-land) .pat-pad{
+  --pat-tile:48px;--pat-gap:6px;
+  margin:2px auto 6px;
+}
+body.mode-play:not(.orient-land) button.key.slot[data-slot]::after{content:none}
 body.mode-play:not(.orient-land) #playbars{
-  grid-column:2;grid-row:2;
   display:grid;grid-template-columns:repeat(4,minmax(0,1fr));
   grid-template-rows:repeat(4,minmax(0,1fr));
-  gap:5px;min-width:0;min-height:0;align-self:stretch;
+  gap:5px;flex:1 1 auto;min-width:0;min-height:0;
 }
 .pbar-tile{
   display:flex;align-items:center;justify-content:center;
@@ -1634,55 +1645,24 @@ body.mode-play:not(.orient-land) #playbars{
   box-shadow:0 0 10px var(--amber-glow), 0 0 2px rgba(255,200,120,.9),
              inset 0 1px 0 rgba(255,220,160,.35);
 }
-body.phone.mode-edit:not(.orient-land) button.key#clr,
-body.mode-play:not(.orient-land) button.key#clr{
-  grid-column:1;grid-row:3;align-self:end;justify-self:start;
-}
-body.phone.mode-edit:not(.orient-land) #cpy-targets,
-body.mode-play:not(.orient-land) #cpy-targets,
-body.phone.mode-edit:not(.orient-land) .cpy-targets,
-body.mode-play:not(.orient-land) .cpy-targets{
-  grid-column:2;grid-row:3;
-  display:flex;flex-wrap:nowrap;align-items:center;justify-content:flex-start;
-  gap:4px;align-self:stretch;
-}
 
-/* Landscape Beat: lamps + mute rail, then A–D + DEL as one right column.
-   No composition tiles. Do not contents-flatten .edit-only. */
+/* Landscape Beat: lamp strips + mute rail, 5×5 pattern pad on the right. */
 body.orient-land.land-beat #face-pat{
-  --pat-key:36px;
+  --pat-key:56px;
   display:grid;
-  grid-template-columns:minmax(0,1fr) var(--pat-key);
-  grid-template-rows:minmax(0,1fr) var(--pat-key);
-  column-gap:8px;row-gap:4px;
+  grid-template-columns:minmax(0,1fr) auto;
+  grid-template-rows:minmax(0,1fr);
+  column-gap:8px;
   min-height:0;min-width:0;height:100%;
 }
 body.orient-land.land-beat #face-pat > .pat-head,
 body.orient-land.land-beat #face-pat > .row.pat-head{display:none}
 body.orient-land.land-beat .pat-work,
-body.orient-land.land-beat .pat-lamps,
-body.orient-land.land-beat .pat-tools,
-body.orient-land.land-beat .pat-work .row.pat-tools,
-body.orient-land.land-beat #face-pat .pat-work,
-body.orient-land.land-beat #face-pat .pat-lamps,
-body.orient-land.land-beat #face-pat .pat-tools,
-body.orient-land.land-beat #face-pat .pat-work .row.pat-tools{
+body.orient-land.land-beat .pat-lamps{
   display:contents;
 }
-body.orient-land.land-beat .pat-col{
-  grid-column:2;grid-row:1;
-  display:flex;flex-direction:column;justify-content:flex-end;
-  width:var(--pat-key);min-width:32px;max-width:var(--pat-key);
-  height:auto;min-height:0;gap:4px;align-self:stretch;
-}
-body.orient-land.land-beat button.key.slot[data-slot],
-body.orient-land.land-beat #cpy-targets .key{
-  width:var(--pat-key);max-width:var(--pat-key);
-  min-width:32px;min-height:32px;height:var(--pat-key);
-  flex:0 0 var(--pat-key);border-radius:9px;aspect-ratio:auto;
-}
 body.orient-land.land-beat #face-pat .edit-only{
-  grid-column:1;grid-row:1 / span 2;
+  grid-column:1;grid-row:1;
   min-width:0;min-height:0;height:100%;
   align-self:stretch;justify-self:stretch;
   display:flex;flex-direction:row;align-items:stretch;gap:4px;
@@ -1692,15 +1672,23 @@ body.orient-land.land-beat #face-pat .gridwrap{
   flex:1 1 auto;min-width:0;min-height:0;height:100%;
   overflow-x:auto;overflow-y:hidden;
 }
-body.orient-land.land-beat button.key#clr{
-  grid-column:2;grid-row:2;align-self:end;justify-self:end;
-  width:var(--pat-key);height:var(--pat-key);
-  min-width:var(--pat-key);min-height:var(--pat-key);
+body.orient-land.land-beat .pat-pad{
+  grid-column:2;grid-row:1;
+  --pat-gap:5px;
+  height:100%;max-height:100%;
+  width:auto;aspect-ratio:1;
+  grid-template-columns:repeat(5,minmax(0,1fr));
+  grid-template-rows:repeat(5,minmax(0,1fr));
+  --pat-tile:minmax(0,1fr);
+  justify-self:end;align-self:stretch;
 }
-body.orient-land.land-beat #cpy-targets,
-body.orient-land.land-beat .cpy-targets{
-  display:none !important;
+body.orient-land.land-beat .pat-pad button.key.slot[data-slot],
+body.orient-land.land-beat .pat-pad #cpy-targets .key,
+body.orient-land.land-beat .pat-pad button.key#clr{
+  width:100%;height:100%;min-width:0;min-height:0;max-width:none;
+  flex:none;border-radius:10px;
 }
+body.orient-land.land-beat .pat-mark{font-size:clamp(18px,3.4vw,28px);letter-spacing:.28em}
 
 /* Track mutes sit between lamps and the pattern column, not on labels. */
 .mute-rail{display:none}
@@ -1836,13 +1824,6 @@ body.orient-land.land-beat .mute-rail .mute-key.on{
     </div>
     <div class="pat-work">
       <div class="pat-lamps">
-        <div class="pat-col">
-          <span class="lbl pat-col-h">Pat</span>
-          <button class="key play slot on" data-slot="0" data-cue="Pat" aria-label="Pattern A" title="Pattern A">A</button>
-          <button class="key play slot" data-slot="1" data-cue="Pat" aria-label="Pattern B" title="Pattern B">B</button>
-          <button class="key play slot" data-slot="2" data-cue="Pat" aria-label="Pattern C" title="Pattern C">C</button>
-          <button class="key play slot" data-slot="3" data-cue="Pat" aria-label="Pattern D" title="Pattern D">D</button>
-        </div>
         <div class="edit-only">
         <div class="gridwrap">
           <div class="grid" id="grid"></div>
@@ -1851,11 +1832,27 @@ body.orient-land.land-beat .mute-rail .mute-key.on{
         </div>
         <div class="play-bars play-only" id="playbars" aria-label="16-bar sequence"></div>
       </div>
-      <div class="row pat-tools">
-        <button class="key" id="clr" aria-label="Delete pattern" title="Delete">DEL</button>
-        <span id="cpy-targets" class="cpy-targets">
-          <!-- populated by info() -->
-        </span>
+      <div class="pat-pad" aria-label="Pattern">
+        <div class="pat-holes" aria-hidden="true">
+          <i></i><i></i><i></i><i></i>
+          <i></i><i></i><i></i><i></i>
+          <i></i><i></i><i></i><i></i>
+          <i></i><i></i><i></i><i></i>
+        </div>
+        <span class="pat-mark">PATTERN</span>
+        <div class="pat-col">
+          <span class="lbl pat-col-h">Pat</span>
+          <button class="key play slot on" data-slot="0" data-cue="Pat" aria-label="Pattern A" title="Pattern A">A</button>
+          <button class="key play slot" data-slot="1" data-cue="Pat" aria-label="Pattern B" title="Pattern B">B</button>
+          <button class="key play slot" data-slot="2" data-cue="Pat" aria-label="Pattern C" title="Pattern C">C</button>
+          <button class="key play slot" data-slot="3" data-cue="Pat" aria-label="Pattern D" title="Pattern D">D</button>
+        </div>
+        <div class="row pat-tools">
+          <button class="key" id="clr" aria-label="Delete pattern" title="Delete">DEL</button>
+          <span id="cpy-targets" class="cpy-targets">
+            <!-- populated by info() -->
+          </span>
+        </div>
       </div>
     </div>
   </section>
