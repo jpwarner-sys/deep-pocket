@@ -1619,50 +1619,20 @@ body.mode-play:not(.orient-land) .cpy-targets{
   gap:4px;align-self:stretch;
 }
 
-/* Landscape Beat: same L, no Pattern header. */
-body.orient-land.land-beat #face-pat{
-  --pat-key:36px;
-  display:grid;
-  grid-template-columns:var(--pat-key) minmax(0,1fr);
-  grid-template-rows:minmax(0,1fr) var(--pat-key);
-  column-gap:6px;row-gap:4px;
-}
-body.orient-land.land-beat .pat-work,
-body.orient-land.land-beat .pat-lamps,
-body.orient-land.land-beat .pat-tools,
-body.orient-land.land-beat .pat-work .row.pat-tools{
-  display:contents;
-}
+/* Landscape Beat: A–D stay a slim LEFT rail; do not break the 16-step grid. */
+body.orient-land.land-beat #face-pat{ --pat-key:36px; }
 body.orient-land.land-beat .pat-col{
-  grid-column:1;grid-row:1;
-  display:flex;flex-direction:column;justify-content:flex-end;
-  width:var(--pat-key);min-width:32px;max-width:var(--pat-key);
-  height:auto;min-height:0;gap:3px;align-self:stretch;
+  justify-content:flex-end;
+  flex:0 0 var(--pat-key);width:var(--pat-key);min-width:32px;max-width:var(--pat-key);
 }
-body.orient-land.land-beat .pat-col-h{display:none}
 body.orient-land.land-beat button.key.slot[data-slot]{
   width:var(--pat-key);max-width:var(--pat-key);
   min-width:32px;min-height:32px;height:var(--pat-key);
   flex:0 0 var(--pat-key);border-radius:9px;aspect-ratio:auto;
 }
-body.orient-land.land-beat #face-pat .edit-only{
-  grid-column:2;grid-row:1;
-  min-width:0;min-height:0;align-self:stretch;justify-self:stretch;
-  display:flex;flex-direction:column;overflow:hidden;
-}
-body.orient-land.land-beat #face-pat .gridwrap{
-  flex:1 1 auto;min-width:0;min-height:0;
-  display:block;
-  overflow-x:auto;overflow-y:hidden;
-}
 body.orient-land.land-beat button.key#clr{
-  grid-column:1;grid-row:2;align-self:end;justify-self:start;
-}
-body.orient-land.land-beat #cpy-targets,
-body.orient-land.land-beat .cpy-targets{
-  grid-column:2;grid-row:2;
-  display:flex;flex-wrap:nowrap;align-items:center;justify-content:flex-start;
-  gap:4px;
+  width:var(--pat-key);height:var(--pat-key);
+  min-width:var(--pat-key);min-height:var(--pat-key);
 }
 
 .clr-ask{
