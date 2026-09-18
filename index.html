@@ -4318,8 +4318,14 @@ function setUiMode(m){
 }
 $("modeplay").onclick=function(){ setUiMode("play"); };
 $("modeedit").onclick=function(){ setUiMode("edit"); };
-$("landbeat").onclick=function(){ LAY.land="beat"; try{localStorage.setItem("deeppocket.ui.land","beat");}catch(e){} applyLayout(); };
-$("landcompose").onclick=function(){ LAY.land="compose"; try{localStorage.setItem("deeppocket.ui.land","compose");}catch(e){} applyLayout(); };
+function landTab(which){
+  LAY.land=which;
+  try{ localStorage.setItem("deeppocket.ui.land", which); }catch(e){}
+  applyLayout();
+  var a=$("arr"); if(a) a.scrollTop=0;
+}
+$("landbeat").onclick=function(){ landTab("beat"); };
+$("landcompose").onclick=function(){ landTab("compose"); };
 if($("play2")) $("play2").onclick=function(){ $("play").click(); };
 if($("pmin")) $("pmin").onclick=function(){ $("bmin").click(); };
 if($("pplus")) $("pplus").onclick=function(){ $("bplus").click(); };
