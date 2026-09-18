@@ -661,7 +661,6 @@ body:not(.orient-land) #cpy-targets{display:flex;gap:4px;flex:0 0 auto}
 body:not(.orient-land) #cpy-targets .key{
   border-radius:10px;min-width:var(--pat-key);min-height:var(--pat-key);
   width:var(--pat-key);height:var(--pat-key);padding:0;
-  font-size:16px;letter-spacing:.12em;
 }
 body.mode-play:not(.orient-land) #face-pat{padding-bottom:4px}
 
@@ -1281,6 +1280,7 @@ html.insets #insetdbg{display:block}
 button.key#play,
 button.key#play2,
 button.key.slot[data-slot],
+#cpy-targets .key,
 button.key#bgbtn{
   position:relative;
   isolation:isolate;
@@ -1308,10 +1308,14 @@ button.key#play.on,
 button.key#play2.on{
   background-image:url("assets/buttons/btn-stop.png") !important;
 }
-button.key.slot[data-slot="0"]{background-image:url("assets/buttons/btn-A.png") !important}
-button.key.slot[data-slot="1"]{background-image:url("assets/buttons/btn-B.png") !important}
-button.key.slot[data-slot="2"]{background-image:url("assets/buttons/btn-C.png") !important}
-button.key.slot[data-slot="3"]{background-image:url("assets/buttons/btn-D.png") !important}
+button.key.slot[data-slot="0"],
+#cpy-targets .key[data-copy="0"]{background-image:url("assets/buttons/btn-A.png") !important}
+button.key.slot[data-slot="1"],
+#cpy-targets .key[data-copy="1"]{background-image:url("assets/buttons/btn-B.png") !important}
+button.key.slot[data-slot="2"],
+#cpy-targets .key[data-copy="2"]{background-image:url("assets/buttons/btn-C.png") !important}
+button.key.slot[data-slot="3"],
+#cpy-targets .key[data-copy="3"]{background-image:url("assets/buttons/btn-D.png") !important}
 button.key#bgbtn{background-image:url("assets/buttons/btn-lock.png") !important}
 
 /* DEL: same walnut grain as the wood keys, wine letters + wine ring.
@@ -1321,6 +1325,7 @@ button.key#bgbtn{background-image:url("assets/buttons/btn-lock.png") !important}
 button.key#play::before,
 button.key#play2::before,
 button.key.slot[data-slot]::before,
+#cpy-targets .key::before,
 button.key#bgbtn::before,
 button.key#bassbtn::before{
   content:"";position:absolute;inset:0;border-radius:inherit;
@@ -1444,14 +1449,7 @@ body.mode-play:not(.orient-land) button.key.slot[data-slot]::after{
   width:var(--pat-key);min-width:var(--pat-key);max-width:var(--pat-key);
   min-height:var(--pat-key);height:var(--pat-key);
   padding:0;border-radius:10px;
-  font-size:16px;letter-spacing:.12em;color:var(--amber);
-  background:
-    repeating-linear-gradient(88deg, rgba(0,0,0,.22) 0 1px, transparent 1px 3px),
-    linear-gradient(165deg,#4a301c,#24150c 55%,#1a1008);
-  box-shadow:
-    inset 0 0 0 1px rgba(255,160,44,.45),
-    inset 0 1px 0 rgba(214,170,120,.22),
-    0 2px 0 #0a0705;
+  font-size:inherit;letter-spacing:0;
 }
 #cpy-targets .key.is-cur{
   opacity:.38;pointer-events:none;
@@ -1475,6 +1473,7 @@ body.orient-land.land-beat #cpy-targets .key{
 button.key#play:active,
 button.key#play2:active,
 button.key.slot[data-slot]:active,
+#cpy-targets .key:active,
 button.key#bgbtn:active,
 button.key#clr:active,
 button.key#bassbtn:active{
@@ -1677,7 +1676,8 @@ body.orient-land.land-beat .pat-col{
   width:var(--pat-key);min-width:32px;max-width:var(--pat-key);
   height:auto;min-height:0;gap:4px;align-self:stretch;
 }
-body.orient-land.land-beat button.key.slot[data-slot]{
+body.orient-land.land-beat button.key.slot[data-slot],
+body.orient-land.land-beat #cpy-targets .key{
   width:var(--pat-key);max-width:var(--pat-key);
   min-width:32px;min-height:32px;height:var(--pat-key);
   flex:0 0 var(--pat-key);border-radius:9px;aspect-ratio:auto;
