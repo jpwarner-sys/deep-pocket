@@ -1561,7 +1561,7 @@ body.orient-land.mode-play .prow button.key#play2{
 .pat-holes i{
   display:block;min-width:0;min-height:0;border-radius:10px;
   background:linear-gradient(180deg,#0a0705,#120b06);
-  box-shadow:inset 0 2px 7px rgba(0,0,0,.88), inset 0 0 0 1px rgba(0,0,0,.55);
+  box-shadow:inset 0 2px 7px rgba(0,0,0,.88), inset 0 0 0 1px rgba(255,160,44,.18);
 }
 .pat-mark{
   grid-column:2 / 6;grid-row:1 / 5;
@@ -1584,8 +1584,8 @@ body.orient-land.mode-play .prow button.key#play2{
 
 body.phone.mode-edit:not(.orient-land) #face-pat,
 body.mode-play:not(.orient-land) #face-pat{
-  --pat-key:52px;
-  --pat-tile:52px;
+  --pat-key:44px;
+  --pat-tile:44px;
   min-height:0;margin:0;border-bottom:0;
   display:flex;flex-direction:column;
   padding:4px 0 0;
@@ -1604,10 +1604,12 @@ body.mode-play:not(.orient-land) .pat-lamps{
   display:flex;flex-direction:row;flex:1 1 auto;min-height:0;min-width:0;
 }
 body.phone.mode-edit:not(.orient-land) #face-pat{
-  flex:0 1 auto;
+  flex:1.15 1 0;min-height:0;
 }
-body.phone.mode-edit:not(.orient-land) .pat-lamps{flex:0 1 auto}
-body.phone.mode-edit:not(.orient-land) #face-arr{flex:1 1 auto}
+body.phone.mode-edit:not(.orient-land) .pat-lamps{
+  flex:1 1 auto;min-height:170px;
+}
+body.phone.mode-edit:not(.orient-land) #face-arr{flex:0.95 1 0;min-height:0}
 body.phone.mode-edit:not(.orient-land) #face-pat .edit-only{
   flex:1 1 auto;min-width:0;min-height:0;
   display:flex;flex-direction:column;overflow:hidden;
@@ -1616,8 +1618,8 @@ body.phone.mode-edit:not(.orient-land) #face-pat .gridwrap{
   flex:1 1 auto;min-width:0;min-height:0;overflow:auto;
 }
 body.phone.mode-edit:not(.orient-land) .pat-pad{
-  --pat-tile:48px;--pat-gap:6px;
-  margin:2px auto 6px;
+  --pat-tile:44px;--pat-gap:5px;
+  margin:4px auto 6px;flex:0 0 auto;
 }
 body.mode-play:not(.orient-land) button.key.slot[data-slot]::after{content:none}
 body.mode-play:not(.orient-land) #playbars{
@@ -1646,25 +1648,23 @@ body.mode-play:not(.orient-land) #playbars{
              inset 0 1px 0 rgba(255,220,160,.35);
 }
 
-/* Landscape Beat: lamp strips + mute rail, 5×5 pattern pad on the right. */
+/* Landscape Beat: lamp strips + mute rail, square 5×5 pad on the right. */
 body.orient-land.land-beat #face-pat{
-  --pat-key:56px;
-  display:grid;
-  grid-template-columns:minmax(0,1fr) auto;
-  grid-template-rows:minmax(0,1fr);
-  column-gap:8px;
+  --pat-key:52px;
+  display:flex;flex-direction:row;align-items:stretch;gap:8px;
   min-height:0;min-width:0;height:100%;
 }
 body.orient-land.land-beat #face-pat > .pat-head,
 body.orient-land.land-beat #face-pat > .row.pat-head{display:none}
-body.orient-land.land-beat .pat-work,
+body.orient-land.land-beat .pat-work{
+  display:flex;flex-direction:row;align-items:stretch;gap:8px;
+  flex:1 1 auto;min-width:0;min-height:0;height:100%;
+}
 body.orient-land.land-beat .pat-lamps{
-  display:contents;
+  display:flex;flex-direction:row;flex:1 1 auto;min-width:0;min-height:0;
 }
 body.orient-land.land-beat #face-pat .edit-only{
-  grid-column:1;grid-row:1;
-  min-width:0;min-height:0;height:100%;
-  align-self:stretch;justify-self:stretch;
+  flex:1 1 auto;min-width:0;min-height:0;height:100%;
   display:flex;flex-direction:row;align-items:stretch;gap:4px;
   overflow:hidden;padding:0;
 }
@@ -1673,14 +1673,14 @@ body.orient-land.land-beat #face-pat .gridwrap{
   overflow-x:auto;overflow-y:hidden;
 }
 body.orient-land.land-beat .pat-pad{
-  grid-column:2;grid-row:1;
   --pat-gap:5px;
+  flex:0 0 auto;
   height:100%;max-height:100%;
-  width:auto;aspect-ratio:1;
+  width:min(46vh, 320px);
+  aspect-ratio:1;
   grid-template-columns:repeat(5,minmax(0,1fr));
   grid-template-rows:repeat(5,minmax(0,1fr));
-  --pat-tile:minmax(0,1fr);
-  justify-self:end;align-self:stretch;
+  align-self:stretch;
 }
 body.orient-land.land-beat .pat-pad button.key.slot[data-slot],
 body.orient-land.land-beat .pat-pad #cpy-targets .key,
@@ -1688,7 +1688,7 @@ body.orient-land.land-beat .pat-pad button.key#clr{
   width:100%;height:100%;min-width:0;min-height:0;max-width:none;
   flex:none;border-radius:10px;
 }
-body.orient-land.land-beat .pat-mark{font-size:clamp(18px,3.4vw,28px);letter-spacing:.28em}
+body.orient-land.land-beat .pat-mark{font-size:clamp(16px,2.6vw,26px);letter-spacing:.26em}
 
 /* Track mutes sit between lamps and the pattern column, not on labels. */
 .mute-rail{display:none}
