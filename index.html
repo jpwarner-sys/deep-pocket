@@ -1531,7 +1531,7 @@ body.mode-play:not(.orient-land) #face-pat > .row.pat-head{
   margin:0 !important;padding:2px 0 4px;min-height:0;
   justify-content:flex-start !important;align-items:center;
   border-bottom:1px solid var(--hairline);
-  gap:0;
+  gap:8px;
 }
 body.mode-play:not(.orient-land) #face-pat > .pat-head .lbl{
   color:var(--faint);opacity:.62;font-size:9px;letter-spacing:.28em;
@@ -1550,9 +1550,18 @@ body.mode-play:not(.orient-land) .pat-work .row.pat-tools{
 body.phone.mode-edit:not(.orient-land) .pat-col,
 body.mode-play:not(.orient-land) .pat-col{
   grid-column:1;grid-row:2;
-  display:flex;flex-direction:column;justify-content:space-between;
+  display:flex;flex-direction:column;
   width:var(--pat-key);min-width:36px;max-width:var(--pat-key);
   height:auto;min-height:0;gap:4px;align-self:stretch;
+}
+body.phone.mode-edit:not(.orient-land) .pat-col{justify-content:flex-end}
+body.mode-play:not(.orient-land) .pat-col{justify-content:space-between}
+body.phone.mode-edit:not(.orient-land) #face-pat{
+  flex:0 1 auto;
+  grid-template-rows:auto auto var(--pat-key);
+}
+body.phone.mode-edit:not(.orient-land) #face-arr{
+  flex:1 1 auto;
 }
 body.phone.mode-edit:not(.orient-land) .pat-col-h,
 body.mode-play:not(.orient-land) .pat-col-h{display:none}
@@ -1563,11 +1572,13 @@ body.mode-play:not(.orient-land) button.key.slot[data-slot]{
   flex:0 0 var(--pat-key);border-radius:10px;aspect-ratio:auto;
 }
 body.mode-play:not(.orient-land) button.key.slot[data-slot]::after{content:none}
-body.phone.mode-edit:not(.orient-land) #face-pat .edit-only,
-body.phone.mode-edit:not(.orient-land) #face-pat .gridwrap{
+body.phone.mode-edit:not(.orient-land) #face-pat .edit-only{
   grid-column:2;grid-row:2;
-  min-width:0;min-height:0;align-self:stretch;
+  min-width:0;min-height:0;align-self:stretch;justify-self:stretch;
   display:flex;flex-direction:column;overflow:hidden;
+}
+body.phone.mode-edit:not(.orient-land) #face-pat .gridwrap{
+  flex:1 1 auto;min-width:0;min-height:0;overflow:auto;
 }
 body.mode-play:not(.orient-land) #playbars{
   grid-column:2;grid-row:2;
@@ -1624,7 +1635,7 @@ body.orient-land.land-beat .pat-work .row.pat-tools{
 }
 body.orient-land.land-beat .pat-col{
   grid-column:1;grid-row:1;
-  display:flex;flex-direction:column;justify-content:space-between;
+  display:flex;flex-direction:column;justify-content:flex-end;
   width:var(--pat-key);min-width:32px;max-width:var(--pat-key);
   height:auto;min-height:0;gap:3px;align-self:stretch;
 }
@@ -1634,11 +1645,15 @@ body.orient-land.land-beat button.key.slot[data-slot]{
   min-width:32px;min-height:32px;height:var(--pat-key);
   flex:0 0 var(--pat-key);border-radius:9px;aspect-ratio:auto;
 }
-body.orient-land.land-beat #face-pat .edit-only,
-body.orient-land.land-beat #face-pat .gridwrap{
+body.orient-land.land-beat #face-pat .edit-only{
   grid-column:2;grid-row:1;
-  min-width:0;min-height:0;align-self:stretch;
+  min-width:0;min-height:0;align-self:stretch;justify-self:stretch;
   display:flex;flex-direction:column;overflow:hidden;
+}
+body.orient-land.land-beat #face-pat .gridwrap{
+  flex:1 1 auto;min-width:0;min-height:0;
+  display:block;
+  overflow-x:auto;overflow-y:hidden;
 }
 body.orient-land.land-beat button.key#clr{
   grid-column:1;grid-row:2;align-self:end;justify-self:start;
