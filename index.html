@@ -951,8 +951,13 @@ body.orient-land #unit{
   padding:calc(2px + var(--sai-t)) calc(6px + var(--sai-r))
           calc(2px + var(--sai-b)) calc(6px + var(--sai-l));
 }
-/* Beat: lamps take leftover width; composition is a 4×6 of squares. */
-body.orient-land.land-beat #unit{grid-template-columns:minmax(0,1fr) auto}
+/* Beat: lamps fill the work row. Pattern select is a right rail. No arr tiles. */
+body.orient-land.land-beat #unit{
+  grid-template-columns:minmax(0,1fr);
+  grid-template-areas:
+    "chrome"
+    "pat";
+}
 /* COMPOSE: 32-bar grid pops out and eats the work row. MONITOR is gone.
    :not(.mode-play) so H-PLAY filmstrip still owns landscape when Compose was last. */
 body.orient-land.land-compose:not(.mode-play) #unit{
@@ -1197,13 +1202,7 @@ body.orient-land #prog{display:none}
 body.orient-land #arr{
   flex:1 1 auto;min-height:0;min-width:0;overflow:auto;
 }
-body.orient-land.land-beat #face-arr{
-  width:auto;max-width:46vw;height:100%;min-width:0;justify-self:end;
-}
-body.orient-land.land-beat #arr{
-  flex:1 1 auto;min-height:0;width:auto;height:100%;max-height:100%;
-  aspect-ratio:4 / 6;overflow-x:hidden;overflow-y:auto;
-}
+body.orient-land.land-beat #face-arr{display:none !important}
 body.orient-land.land-compose #arr{
   flex:1 1 auto;min-height:0;min-width:0;overflow-x:hidden;overflow-y:auto;
 }
@@ -1536,8 +1535,8 @@ body.orient-land.mode-play .prow button.key#play2{
 
 /* ===================================================================
    Pattern L — small A–D up the left, DEL in the corner, copy A–D across.
-   Portrait PLAY + EDIT, and landscape Beat. Compose keeps its sheet;
-   only the 32-bar tile grid is 4×6.
+   Portrait PLAY + EDIT keep the L. Landscape Beat is lamps plus a
+   right A–D + DEL rail — no composition tiles. Compose keeps its 4×6 sheet.
    =================================================================== */
 #playbars{display:none}
 body.phone.mode-edit:not(.orient-land) #face-pat,
@@ -1648,12 +1647,12 @@ body.mode-play:not(.orient-land) .cpy-targets{
   gap:4px;align-self:stretch;
 }
 
-/* Landscape Beat: same A–D L as portrait. Lamps stay a real flex box
-   (do not contents-flatten .edit-only — that shrinks the 16-step grid). */
+/* Landscape Beat: lamps + mute rail, then A–D + DEL as one right column.
+   No composition tiles. Do not contents-flatten .edit-only. */
 body.orient-land.land-beat #face-pat{
   --pat-key:36px;
   display:grid;
-  grid-template-columns:var(--pat-key) minmax(0,1fr);
+  grid-template-columns:minmax(0,1fr) var(--pat-key);
   grid-template-rows:minmax(0,1fr) var(--pat-key);
   column-gap:8px;row-gap:4px;
   min-height:0;min-width:0;height:100%;
@@ -1671,7 +1670,7 @@ body.orient-land.land-beat #face-pat .pat-work .row.pat-tools{
   display:contents;
 }
 body.orient-land.land-beat .pat-col{
-  grid-column:1;grid-row:1;
+  grid-column:2;grid-row:1;
   display:flex;flex-direction:column;justify-content:flex-end;
   width:var(--pat-key);min-width:32px;max-width:var(--pat-key);
   height:auto;min-height:0;gap:4px;align-self:stretch;
@@ -1683,7 +1682,7 @@ body.orient-land.land-beat #cpy-targets .key{
   flex:0 0 var(--pat-key);border-radius:9px;aspect-ratio:auto;
 }
 body.orient-land.land-beat #face-pat .edit-only{
-  grid-column:2;grid-row:1;
+  grid-column:1;grid-row:1 / span 2;
   min-width:0;min-height:0;height:100%;
   align-self:stretch;justify-self:stretch;
   display:flex;flex-direction:row;align-items:stretch;gap:4px;
@@ -1694,18 +1693,16 @@ body.orient-land.land-beat #face-pat .gridwrap{
   overflow-x:auto;overflow-y:hidden;
 }
 body.orient-land.land-beat button.key#clr{
-  grid-column:1;grid-row:2;align-self:end;justify-self:start;
+  grid-column:2;grid-row:2;align-self:end;justify-self:end;
   width:var(--pat-key);height:var(--pat-key);
   min-width:var(--pat-key);min-height:var(--pat-key);
 }
 body.orient-land.land-beat #cpy-targets,
 body.orient-land.land-beat .cpy-targets{
-  grid-column:2;grid-row:2;
-  display:flex;flex-wrap:nowrap;align-items:center;justify-content:flex-start;
-  gap:4px;align-self:stretch;
+  display:none !important;
 }
 
-/* Track mutes sit between lamps and the 4×6 composition, not on labels. */
+/* Track mutes sit between lamps and the pattern column, not on labels. */
 .mute-rail{display:none}
 body.orient-land.land-beat .mute-rail{
   display:flex;flex-direction:column;gap:2px;
