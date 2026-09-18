@@ -952,7 +952,8 @@ body.orient-land #unit{
   padding:calc(2px + var(--sai-t)) calc(6px + var(--sai-r))
           calc(2px + var(--sai-b)) calc(6px + var(--sai-l));
 }
-body.orient-land.land-beat #unit{grid-template-columns:minmax(0,65fr) minmax(0,35fr)}
+/* Beat: lamps take leftover width; composition is a 4×6 of squares. */
+body.orient-land.land-beat #unit{grid-template-columns:minmax(0,1fr) auto}
 /* COMPOSE: 32-bar grid pops out and eats the work row. MONITOR is gone.
    :not(.mode-play) so H-PLAY filmstrip still owns landscape when Compose was last. */
 body.orient-land.land-compose:not(.mode-play) #unit{
@@ -1086,13 +1087,15 @@ body.orient-land #face-arr{
 body.orient-land .land-chords{display:none !important}
 body.orient-land #face-pat > .pat-head,
 body.orient-land #face-pat > .row.pat-head{display:none}
-body.orient-land.land-beat #face-pat .pat-tools{display:flex}
 body.orient-land.land-beat #face-arr > .row{display:none}
 body.orient-land #face-pat .pat-work{
   flex:1;min-height:0;min-width:0;display:flex;flex-direction:column;gap:4px;
 }
 body.orient-land.land-beat #face-pat .pat-lamps{flex:1;min-height:0;min-width:0}
 body.orient-land #face-pat .edit-only{flex:1;min-height:0;min-width:0;display:flex;flex-direction:column;overflow:hidden;padding:0}
+body.orient-land.land-beat #face-pat .edit-only{
+  flex-direction:row;align-items:stretch;gap:4px;
+}
 body.orient-land #face-pat .gridwrap{
   flex:1;min-height:0;min-width:0;display:block;overflow-x:auto;overflow-y:hidden;padding:0;
   -webkit-overflow-scrolling:touch;scroll-snap-type:x mandatory;scroll-padding-left:var(--grid-label,58px);
@@ -1107,10 +1110,11 @@ body.orient-land .vn{padding-right:4px;gap:4px}
 body.orient-land .vn b{
   font-size:10px;letter-spacing:.04em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;
 }
-body.orient-land.land-beat .vn button{display:inline-flex;align-items:center;justify-content:center}
+body.orient-land.land-beat .grid{--grid-label:42px}
+body.orient-land.land-beat .vn button{display:none !important}
 body.orient-land.land-beat .st{
   max-width:none;max-height:100%;width:100%;height:100%;min-width:0;min-height:0;
-  aspect-ratio:auto;border-radius:30%;
+  aspect-ratio:auto;border-radius:32%;
 }
 body.orient-land.land-compose:not(.mode-play) #face-pat{display:none !important}
 body.orient-land .arr{
@@ -1118,12 +1122,27 @@ body.orient-land .arr{
   grid-template-rows:repeat(4,minmax(0,1fr));
   gap:3px;flex:1;min-height:0;min-width:0;align-content:stretch;
 }
-body.orient-land.land-compose .arr{
+/* Beat: 4×6 square viewport (32 bars scroll). Compose: 4×6 tiles, fill the sheet. */
+body.orient-land.land-beat .arr{
+  --arr-gap:3px;
   grid-template-columns:repeat(4,minmax(0,1fr));
-  grid-template-rows:repeat(8,minmax(0,1fr));
-  gap:3px;
-  overflow:hidden;
-  align-content:stretch;
+  grid-template-rows:none;
+  grid-auto-rows:calc((100% - 5 * var(--arr-gap)) / 6);
+  gap:var(--arr-gap);
+  align-content:start;
+  overflow-x:hidden;overflow-y:auto;
+  flex:1 1 auto;min-height:0;
+  width:auto;height:auto;
+  aspect-ratio:4 / 6;
+}
+body.orient-land.land-compose .arr{
+  --arr-gap:3px;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  grid-template-rows:none;
+  grid-auto-rows:calc((100% - 5 * var(--arr-gap)) / 6);
+  gap:var(--arr-gap);
+  overflow-x:hidden;overflow-y:auto;
+  align-content:start;
   flex:1 1 auto;min-height:0;min-width:0;
 }
 body.orient-land #arr{flex:1;min-height:0;min-width:0}
@@ -1139,7 +1158,10 @@ body.orient-land .cell .chd{
   margin-top:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
   font-size:11px;line-height:1.1;
 }
-body.orient-land.land-beat .cell .chd{font-size:13px}
+body.orient-land.land-beat .cell{
+  min-height:0;min-width:0;padding:8px 2px 2px 5px;
+}
+body.orient-land.land-beat .cell .chd{font-size:11px}
 /* COMPOSE: 32-bar sequence sheet. Raised wood keys, not leftover walnut. */
 body.orient-land.land-compose:not(.mode-play) #face-arr{
   grid-area:arr;
@@ -1169,15 +1191,22 @@ body.orient-land.land-compose .arr-tools > .row:nth-child(1){flex:0 0 auto}
 body.orient-land.land-compose .arr-tools > .row:nth-child(2){flex:0 1 9em}
 body.orient-land.land-compose .arr-tools > .row:nth-child(3){flex:1 1 14em}
 body.orient-land.land-compose .arr-tools .row .row{flex:0 0 auto;min-width:0}
-body.orient-land.land-beat .arr-tools > .row{flex-wrap:wrap !important}
+body.orient-land.land-beat .arr-tools{display:none}
 body.orient-land .arr-tools .lbl,
 body.orient-land #loophint,
 body.orient-land #prog{display:none}
 body.orient-land #arr{
   flex:1 1 auto;min-height:0;min-width:0;overflow:auto;
 }
+body.orient-land.land-beat #face-arr{
+  width:auto;max-width:46vw;height:100%;min-width:0;justify-self:end;
+}
+body.orient-land.land-beat #arr{
+  flex:1 1 auto;min-height:0;width:auto;height:100%;max-height:100%;
+  aspect-ratio:4 / 6;overflow-x:hidden;overflow-y:auto;
+}
 body.orient-land.land-compose #arr{
-  flex:1 1 auto;min-height:0;min-width:0;overflow:hidden;
+  flex:1 1 auto;min-height:0;min-width:0;overflow-x:hidden;overflow-y:auto;
 }
 body.orient-land.land-compose .arr-tools > .row.arr-presets{flex:0 0 auto}
 body.orient-land.land-compose .arr-tools > .row.arr-changes{flex:0 0 auto}
@@ -1508,7 +1537,8 @@ body.orient-land.mode-play .prow button.key#play2{
 
 /* ===================================================================
    Pattern L — small A–D up the left, DEL in the corner, copy A–D across.
-   Portrait PLAY + EDIT, and landscape Beat. Compose is untouched.
+   Portrait PLAY + EDIT, and landscape Beat. Compose keeps its sheet;
+   only the 32-bar tile grid is 4×6.
    =================================================================== */
 #playbars{display:none}
 body.phone.mode-edit:not(.orient-land) #face-pat,
@@ -1619,20 +1649,85 @@ body.mode-play:not(.orient-land) .cpy-targets{
   gap:4px;align-self:stretch;
 }
 
-/* Landscape Beat: A–D stay a slim LEFT rail; do not break the 16-step grid. */
-body.orient-land.land-beat #face-pat{ --pat-key:36px; }
+/* Landscape Beat: same A–D L as portrait. Lamps stay a real flex box
+   (do not contents-flatten .edit-only — that shrinks the 16-step grid). */
+body.orient-land.land-beat #face-pat{
+  --pat-key:36px;
+  display:grid;
+  grid-template-columns:var(--pat-key) minmax(0,1fr);
+  grid-template-rows:minmax(0,1fr) var(--pat-key);
+  column-gap:8px;row-gap:4px;
+  min-height:0;min-width:0;height:100%;
+}
+body.orient-land.land-beat #face-pat > .pat-head,
+body.orient-land.land-beat #face-pat > .row.pat-head{display:none}
+body.orient-land.land-beat .pat-work,
+body.orient-land.land-beat .pat-lamps,
+body.orient-land.land-beat .pat-tools,
+body.orient-land.land-beat .pat-work .row.pat-tools,
+body.orient-land.land-beat #face-pat .pat-work,
+body.orient-land.land-beat #face-pat .pat-lamps,
+body.orient-land.land-beat #face-pat .pat-tools,
+body.orient-land.land-beat #face-pat .pat-work .row.pat-tools{
+  display:contents;
+}
 body.orient-land.land-beat .pat-col{
-  justify-content:flex-end;
-  flex:0 0 var(--pat-key);width:var(--pat-key);min-width:32px;max-width:var(--pat-key);
+  grid-column:1;grid-row:1;
+  display:flex;flex-direction:column;justify-content:flex-end;
+  width:var(--pat-key);min-width:32px;max-width:var(--pat-key);
+  height:auto;min-height:0;gap:4px;align-self:stretch;
 }
 body.orient-land.land-beat button.key.slot[data-slot]{
   width:var(--pat-key);max-width:var(--pat-key);
   min-width:32px;min-height:32px;height:var(--pat-key);
   flex:0 0 var(--pat-key);border-radius:9px;aspect-ratio:auto;
 }
+body.orient-land.land-beat #face-pat .edit-only{
+  grid-column:2;grid-row:1;
+  min-width:0;min-height:0;height:100%;
+  align-self:stretch;justify-self:stretch;
+  display:flex;flex-direction:row;align-items:stretch;gap:4px;
+  overflow:hidden;padding:0;
+}
+body.orient-land.land-beat #face-pat .gridwrap{
+  flex:1 1 auto;min-width:0;min-height:0;height:100%;
+  overflow-x:auto;overflow-y:hidden;
+}
 body.orient-land.land-beat button.key#clr{
+  grid-column:1;grid-row:2;align-self:end;justify-self:start;
   width:var(--pat-key);height:var(--pat-key);
   min-width:var(--pat-key);min-height:var(--pat-key);
+}
+body.orient-land.land-beat #cpy-targets,
+body.orient-land.land-beat .cpy-targets{
+  grid-column:2;grid-row:2;
+  display:flex;flex-wrap:nowrap;align-items:center;justify-content:flex-start;
+  gap:4px;align-self:stretch;
+}
+
+/* Track mutes sit between lamps and the 4×6 composition, not on labels. */
+.mute-rail{display:none}
+body.orient-land.land-beat .mute-rail{
+  display:flex;flex-direction:column;gap:2px;
+  flex:0 0 32px;width:32px;min-width:32px;max-width:32px;
+  min-height:0;height:100%;align-self:stretch;
+}
+body.orient-land.land-beat .mute-rail .mute-pad{
+  flex:0 0 auto;margin:0;overflow:hidden;
+  grid-template-columns:1fr;
+}
+body.orient-land.land-beat .mute-rail .mute-pad span{visibility:hidden}
+body.orient-land.land-beat .mute-rail .mute-key{
+  flex:1 1 0;min-height:0;min-width:0;padding:0;
+  display:flex;align-items:center;justify-content:center;
+  font-family:var(--mono);font-size:9px;letter-spacing:.06em;
+  color:var(--amber);border:0;border-radius:6px;
+  background:linear-gradient(180deg,#2a1c10,#170e07);
+  box-shadow:inset 0 0 0 1px rgba(255,160,44,.35), inset 0 1px 0 rgba(214,170,120,.14), 0 2px 0 #0a0705;
+}
+body.orient-land.land-beat .mute-rail .mute-key.on{
+  color:#1a1008;background:linear-gradient(180deg,#ffc978,#e08a12);
+  box-shadow:inset 0 0 0 1px var(--amber), 0 2px 0 #7a4a08, 0 0 8px var(--amber-glow);
 }
 
 .clr-ask{
@@ -1755,6 +1850,7 @@ body.orient-land.land-beat button.key#clr{
         <div class="gridwrap">
           <div class="grid" id="grid"></div>
         </div>
+        <div class="mute-rail" id="muterail" aria-label="Track mutes"></div>
         </div>
         <div class="play-bars play-only" id="playbars" aria-label="16-bar sequence"></div>
       </div>
@@ -3638,6 +3734,14 @@ function paintPlayBars(bar){
   }
 }
 
+function setMute(v, on){
+  S.mutes[v]=!!on;
+  if(eng && eng.setVoiceMute) eng.setVoiceMute(v, S.mutes[v]);
+  document.querySelectorAll('[data-mute="'+v+'"]').forEach(function(b){
+    b.classList.toggle("on", S.mutes[v]);
+  });
+}
+
 // step grid — viewport is 1 pattern bar (half of a 2-bar groove).
 // Horizontal swipe reveals the rest of THIS pattern only. Never the 32-bar arranger.
 function drawGrid(){
@@ -3658,14 +3762,33 @@ function drawGrid(){
     if(inBar===0) sp.classList.add("bar-start");
     ruler.appendChild(sp); }
   g.appendChild(ruler);
+  var rail=$("muterail");
+  if(rail){
+    rail.innerHTML="";
+    var pad=document.createElement("div");
+    pad.className="ruler mute-pad";
+    pad.setAttribute("aria-hidden","true");
+    pad.appendChild(document.createElement("span"));
+    rail.appendChild(pad);
+  }
   ROWS.forEach(function(v){
     var row=document.createElement("div"); row.className="gr";
     var nm=document.createElement("div"); nm.className="vn";
     nm.innerHTML="<b>"+voiceName(v)+"</b>";
-    var mb=document.createElement("button"); mb.textContent="M"; mb.className=S.mutes[v]?"on":"";
+    var mb=document.createElement("button"); mb.type="button"; mb.textContent="M";
+    mb.dataset.mute=v; mb.className=S.mutes[v]?"on":"";
     mb.title="mute "+voiceName(v);
-    mb.onclick=function(){ S.mutes[v]=!S.mutes[v]; mb.className=S.mutes[v]?"on":""; eng.setVoiceMute(v,S.mutes[v]); };
+    mb.onclick=function(){ setMute(v, !S.mutes[v]); };
     nm.appendChild(mb); row.appendChild(nm);
+    if(rail){
+      var rb=document.createElement("button");
+      rb.type="button"; rb.textContent="M"; rb.dataset.mute=v;
+      rb.className="mute-key"+(S.mutes[v]?" on":"");
+      rb.title="mute "+voiceName(v);
+      rb.setAttribute("aria-label","Mute "+voiceName(v));
+      rb.onclick=function(){ setMute(v, !S.mutes[v]); };
+      rail.appendChild(rb);
+    }
     for(var s=0;s<n;s++){
       (function(s){
         var b=document.createElement("button"); b.className="st"; b.dataset.v=v; b.dataset.s=s;
