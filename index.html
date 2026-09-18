@@ -1656,11 +1656,11 @@ body.orient-land.land-beat #face-pat{
 }
 body.orient-land.land-beat #face-pat > .pat-head,
 body.orient-land.land-beat #face-pat > .row.pat-head{display:none}
-body.orient-land.land-beat .pat-work{
+body.orient-land.land-beat #face-pat .pat-work{
   display:flex;flex-direction:row;align-items:stretch;gap:8px;
   flex:1 1 auto;min-width:0;min-height:0;height:100%;
 }
-body.orient-land.land-beat .pat-lamps{
+body.orient-land.land-beat #face-pat .pat-lamps{
   display:flex;flex-direction:row;flex:1 1 auto;min-width:0;min-height:0;
 }
 body.orient-land.land-beat #face-pat .edit-only{
@@ -1675,12 +1675,13 @@ body.orient-land.land-beat #face-pat .gridwrap{
 body.orient-land.land-beat .pat-pad{
   --pat-gap:5px;
   flex:0 0 auto;
-  height:100%;max-height:100%;
-  width:min(46vh, 320px);
+  width:min(320px,36vw);
+  max-height:100%;
   aspect-ratio:1;
+  height:auto;
   grid-template-columns:repeat(5,minmax(0,1fr));
   grid-template-rows:repeat(5,minmax(0,1fr));
-  align-self:stretch;
+  align-self:center;
 }
 body.orient-land.land-beat .pat-pad button.key.slot[data-slot],
 body.orient-land.land-beat .pat-pad #cpy-targets .key,
