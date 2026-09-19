@@ -1125,9 +1125,10 @@ body.orient-land.land-beat .vn{justify-self:stretch}
 /* Full-width Beat: round trigger lamps, sized to the row, extra air in the cells. */
 body.orient-land.land-beat .st{
   box-sizing:border-box;
-  width:auto;height:auto;
-  max-width:calc(100% - 6px);max-height:calc(100% - 4px);
-  aspect-ratio:1;border-radius:50%;
+  height:calc(100% - 4px);width:auto;
+  min-width:22px;min-height:22px;
+  aspect-ratio:1;max-width:calc(100% - 8px);
+  border-radius:50%;
   justify-self:center;align-self:center;
 }
 body.orient-land.land-compose:not(.mode-play) #face-pat{
@@ -1155,9 +1156,10 @@ body.orient-land.land-compose:not(.mode-play) .ruler{
 body.orient-land.land-compose:not(.mode-play) .vn{justify-self:stretch}
 body.orient-land.land-compose:not(.mode-play) .st{
   box-sizing:border-box;
-  width:auto;height:auto;
-  max-width:calc(100% - 4px);max-height:calc(100% - 3px);
-  aspect-ratio:1;border-radius:50%;
+  height:calc(100% - 3px);width:auto;
+  min-width:14px;min-height:14px;
+  aspect-ratio:1;max-width:calc(100% - 4px);
+  border-radius:50%;
   justify-self:center;align-self:center;
   pointer-events:none;
 }
