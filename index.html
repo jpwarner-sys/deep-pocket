@@ -176,6 +176,10 @@
   --sai-r:env(safe-area-inset-right,0px);
   --sai-b:env(safe-area-inset-bottom,0px);
   --sai-l:env(safe-area-inset-left,0px);
+  /* Steamed-walnut trim: outer frame + thin section rails */
+  --bezel-outer:8px;
+  --bezel-bottom:14px; /* ~70% thicker than the side/top frame */
+  --bezel-rail:4px;
   color-scheme:dark;
 }
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -185,10 +189,11 @@ html.walnut{min-height:100%}
 body{
   margin:0;color:var(--bone);font-family:var(--sil);font-size:16px;-webkit-text-size-adjust:100%;
   background:transparent;
-  padding:9px;
+  padding:var(--bezel-outer) var(--bezel-outer) var(--bezel-bottom) var(--bezel-outer);
 }
 #unit{
-  max-width:1120px;margin:0 auto;overflow-x:hidden;min-height:calc(100dvh - 18px);
+  max-width:1120px;margin:0 auto;overflow-x:hidden;
+  min-height:calc(100dvh - var(--bezel-outer) - var(--bezel-bottom));
   padding:calc(8px + var(--sai-t)) calc(12px + var(--sai-r))
           calc(18px + var(--sai-b)) calc(12px + var(--sai-l));
   border-radius:14px;
@@ -199,10 +204,25 @@ body{
 }
 .rail,.gridwrap{max-width:100%}
 
+/* Thin steamed-walnut rails — section separators (kit→grooves, grid→pattern).
+   Outer frame is body padding over html.walnut. */
+.walnut-rail{
+  height:var(--bezel-rail);
+  width:100%;
+  flex:0 0 var(--bezel-rail);
+  min-height:var(--bezel-rail);
+  min-width:0;
+  pointer-events:none;
+  box-shadow:
+    inset 0 1px 0 rgba(214,170,120,.28),
+    inset 0 -1px 0 rgba(0,0,0,.55),
+    0 1px 0 rgba(0,0,0,.22);
+}
+
 .lbl{font-family:var(--sil);font-weight:600;font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:var(--faint)}
 .num{font-family:var(--mono);font-variant-numeric:tabular-nums}
 
-/* faces sit ON the deck — hairline, not a second wood */
+/* faces sit ON the deck — hairline between blocks; walnut rails mark major seams */
 .face{
   background:transparent;
   border:0;
@@ -322,15 +342,22 @@ button.key.ico.lamp.on{color:var(--amber);background:transparent;
    Play/Stop size is untouched. Landscape play keeps the existing top-right chip. */
 .lock-caption,#bgbtn{display:none !important}
 body.mode-play:not(.orient-land) #face-player{
-  padding:2px 0 4px;border-bottom:0;flex:0 0 auto;
+  padding:2px 0 2px;border-bottom:0;flex:0 0 auto;
 }
-body.mode-play:not(.orient-land) .pmeta{margin-top:4px}
+body.mode-play:not(.orient-land) .pmeta{margin-top:3px}
 body.mode-play:not(.orient-land) .kitbar.land-hide{
   display:flex;flex-direction:row;align-items:center;flex-wrap:nowrap;
   width:100%;margin-top:4px;padding:2px 0;border-top:0;gap:10px;flex:0 0 auto;
 }
-body.mode-play:not(.orient-land) #face-grooves{padding:4px 0 6px;flex:0 0 auto;min-height:0;overflow:hidden;display:flex;flex-direction:column;border-bottom:1px solid var(--hairline)}
-body.mode-play:not(.orient-land) #kitstrip{margin-top:0;padding-top:2px;width:100%;gap:4px}
+body.mode-play:not(.orient-land) #face-grooves{
+  padding:2px 0 4px;flex:0 0 auto;min-height:0;overflow:hidden;
+  display:flex;flex-direction:column;gap:6px;border-bottom:1px solid var(--hairline);
+}
+body.mode-play:not(.orient-land) #kitstrip{
+  margin-top:0;padding-top:0;width:100%;
+  display:flex;flex-wrap:wrap;align-content:flex-start;
+  column-gap:7px;row-gap:4px;
+}
 body.mode-play:not(.orient-land) .kitbar.land-hide .hint{display:none}
 body.mode-play:not(.orient-land) .lock-caption{
   display:block;flex:1 1 auto;min-width:0;
@@ -353,19 +380,22 @@ body.mode-play:not(.orient-land) .kitbar.land-hide #bgbtn.on{
    Pattern A–D is a slim right rail beside the step lamps (see .pat-col). */
 html:has(body.mode-play:not(.orient-land)){height:100%;overflow:hidden}
 body.mode-play:not(.orient-land){
-  padding:4px;height:100%;overflow:hidden;
+  padding:var(--bezel-outer) var(--bezel-outer) var(--bezel-bottom) var(--bezel-outer);
+  height:100%;overflow:hidden;
 }
 body.mode-play:not(.orient-land) #unit{
-  display:flex;flex-direction:column;height:calc(100dvh - 8px);max-width:none;overflow:hidden;
-  padding:calc(4px + var(--sai-t)) calc(6px + var(--sai-r))
-          calc(6px + var(--sai-b)) calc(6px + var(--sai-l));
+  display:flex;flex-direction:column;
+  height:calc(100dvh - var(--bezel-outer) - var(--bezel-bottom));
+  max-width:none;overflow:hidden;
+  padding:calc(3px + var(--sai-t)) calc(6px + var(--sai-r))
+          calc(4px + var(--sai-b)) calc(6px + var(--sai-l));
   min-height:0;
 }
 @media (display-mode:standalone){
-  body.mode-play:not(.orient-land) #unit{ padding-top:calc(8px + var(--sai-t)); }
+  body.mode-play:not(.orient-land) #unit{ padding-top:calc(7px + var(--sai-t)); }
 }
 body.mode-play:not(.orient-land) .brand{
-  margin:0 0 4px;gap:6px;flex:0 0 auto;flex-wrap:nowrap;
+  margin:0 0 3px;gap:6px;flex:0 0 auto;flex-wrap:nowrap;
 }
 body.mode-play:not(.orient-land) .brand h1,
 body.mode-play:not(.orient-land) .brand .ver{display:none}
@@ -376,16 +406,16 @@ body.mode-play:not(.orient-land) .modebar{
   display:flex;flex:1 1 auto;width:100%;gap:6px;
 }
 body.mode-play:not(.orient-land) .modebar .key.sm{
-  flex:1 1 0;min-height:44px;padding:8px 12px;
+  flex:1 1 0;min-height:40px;padding:7px 12px;
 }
 body.mode-play:not(.orient-land) #face-top,
 body.mode-play:not(.orient-land) .cols,
 body.mode-play:not(.orient-land) #face-mem,
 body.mode-play:not(.orient-land) #unit > .hint{display:none !important}
-body.mode-play:not(.orient-land) .player{padding:2px 0 4px}
-body.mode-play:not(.orient-land) .film{padding:2px 0 4px}
+body.mode-play:not(.orient-land) .player{padding:1px 0 2px}
+body.mode-play:not(.orient-land) .film{padding:1px 0 2px}
 body.mode-play:not(.orient-land) .prow{
-  margin-top:6px;gap:6px;width:100%;flex-wrap:nowrap;justify-content:center;
+  margin-top:4px;gap:6px;width:100%;flex-wrap:nowrap;justify-content:center;
 }
 body.mode-play:not(.orient-land) .prow .key.sm{
   min-width:44px;min-height:44px;
@@ -398,16 +428,14 @@ body.mode-play:not(.orient-land) #bassbtn{
   flex:0 0 44px;min-width:44px;min-height:44px;width:44px;height:44px;padding:0;
 }
 body.mode-play:not(.orient-land) #kithint{display:none}
-body.mode-play:not(.orient-land) #kitstrip{
-  gap:6px;
-}
+/* Shorter kit keys — still wrap to two rows on phone (seven tiles). */
 body.mode-play:not(.orient-land) #kitstrip .key.sm{
-  min-height:40px;padding:6px 8px;font-size:11px;
+  min-height:32px;padding:4px 9px;font-size:12px;
 }
 body.mode-play:not(.orient-land) #rail{
-  flex:0 0 auto;min-height:0;min-width:0;width:100%;padding-bottom:2px;
+  flex:0 0 auto;min-height:0;min-width:0;width:100%;padding-bottom:1px;
 }
-body.mode-play:not(.orient-land) .gv{min-height:44px}
+body.mode-play:not(.orient-land) .gv{min-height:40px;padding:6px 11px 8px}
 body.mode-play:not(.orient-land) #gridinfo{display:none}
 body.mode-play:not(.orient-land) .pat-tools .hint{display:none}
 /* Kit strip: buttons stay a stable row; hint is one reserved line so
@@ -416,7 +444,7 @@ body.mode-play:not(.orient-land) .pat-tools .hint{display:none}
 #kitstrip .lbl{position:relative;z-index:1}
 #kitstrip .key.sm{
   flex:0 0 auto;position:relative;overflow:visible;z-index:0;
-  padding:8px 10px; /* symmetric — extra bottom pad shifted the ON underline */
+  padding:5px 9px; /* shorter kit keys — two-row wrap stays readable */
   box-shadow:inset 0 1px 0 rgba(214,170,120,.14);
 }
 #kitstrip .key.sm.on{
@@ -662,7 +690,7 @@ body:not(.orient-land) #cpy-targets .key{
   border-radius:10px;min-width:var(--pat-key);min-height:var(--pat-key);
   width:var(--pat-key);height:var(--pat-key);padding:0;
 }
-body.mode-play:not(.orient-land) #face-pat{padding-bottom:4px}
+body.mode-play:not(.orient-land) #face-pat{padding-bottom:2px}
 
 .cols{gap:4px}
 .cols .face{padding:4px 0 6px}
@@ -936,8 +964,12 @@ body.phone #dockmix, body.phone #dockmem{display:inline-flex}
    Work row is minmax(0,1fr); pat+arr fill it. Portrait untouched.
    Keep iOS safe-area; do not fight the status bar. */
 html:has(body.orient-land), body.orient-land{height:100%;overflow:hidden}
-body.orient-land{padding:2px}
-body.orient-land.land-compose{padding:2px}
+body.orient-land{
+  padding:var(--bezel-outer) var(--bezel-outer) var(--bezel-bottom) var(--bezel-outer);
+}
+body.orient-land.land-compose{
+  padding:var(--bezel-outer) var(--bezel-outer) var(--bezel-bottom) var(--bezel-outer);
+}
 body.orient-land #unit{
   display:grid;
   grid-template-columns:minmax(0,65fr) minmax(0,35fr);
@@ -947,7 +979,9 @@ body.orient-land #unit{
     "pat    arr";
   grid-auto-rows:0px;
   grid-auto-columns:0px;
-  gap:4px 6px;height:100%;min-height:0;max-width:none;overflow:hidden;
+  gap:4px 6px;
+  height:calc(100% - var(--bezel-outer) - var(--bezel-bottom));
+  min-height:0;max-width:none;overflow:hidden;
   padding:calc(2px + var(--sai-t)) calc(6px + var(--sai-r))
           calc(2px + var(--sai-b)) calc(6px + var(--sai-l));
 }
@@ -1058,6 +1092,15 @@ body.orient-land.mode-play .pmeta{margin-top:4px;flex:0 0 auto}
 body.orient-land.mode-play #face-grooves{
   display:flex !important;grid-area:kits;flex-direction:row;align-items:center;gap:8px;
   margin:0;padding:4px 0 0;border:0;min-width:0;min-height:0;overflow:hidden;
+}
+/* Landscape kits row: turn the kit→groove rail upright between columns */
+body.orient-land.mode-play #face-grooves > .walnut-rail{
+  width:var(--bezel-rail);height:auto;min-height:0;align-self:stretch;
+  flex:0 0 var(--bezel-rail);
+  box-shadow:
+    inset 1px 0 0 rgba(214,170,120,.28),
+    inset -1px 0 0 rgba(0,0,0,.55),
+    1px 0 0 rgba(0,0,0,.22);
 }
 body.orient-land.mode-play #kitstrip{
   display:flex;flex-wrap:nowrap;align-items:center;gap:5px;
@@ -1637,16 +1680,16 @@ body.mode-play:not(.orient-land) #face-pat{
   --pat-tile:44px;
   min-height:0;margin:0;border-bottom:0;
   display:flex;flex-direction:column;
-  padding:4px 0 0;
+  padding:2px 0 0;
 }
-body.mode-play:not(.orient-land) #face-pat{flex:1 1 0}
+body.mode-play:not(.orient-land) #face-pat{flex:1 1 0;padding-bottom:2px}
 body.phone.mode-edit:not(.orient-land) #face-pat > .pat-head,
 body.phone.mode-edit:not(.orient-land) #face-pat > .row.pat-head,
 body.mode-play:not(.orient-land) #face-pat > .pat-head,
 body.mode-play:not(.orient-land) #face-pat > .row.pat-head{display:none}
 body.phone.mode-edit:not(.orient-land) .pat-work,
 body.mode-play:not(.orient-land) .pat-work{
-  display:flex;flex-direction:column;flex:1 1 auto;min-height:0;gap:8px;
+  display:flex;flex-direction:column;flex:1 1 auto;min-height:0;gap:6px;
 }
 body.phone.mode-edit:not(.orient-land) .pat-lamps,
 body.mode-play:not(.orient-land) .pat-lamps{
@@ -1709,6 +1752,15 @@ body.orient-land.land-beat #face-pat > .row.pat-head{display:none}
 body.orient-land.land-beat #face-pat .pat-work{
   display:flex;flex-direction:row;align-items:stretch;gap:8px;
   flex:1 1 auto;min-width:0;min-height:0;height:100%;
+}
+/* Landscape Beat: upright rail between lamp grid and A–D column */
+body.orient-land.land-beat .pat-work > .walnut-rail{
+  width:var(--bezel-rail);height:auto;min-height:0;align-self:stretch;
+  flex:0 0 var(--bezel-rail);
+  box-shadow:
+    inset 1px 0 0 rgba(214,170,120,.28),
+    inset -1px 0 0 rgba(0,0,0,.55),
+    1px 0 0 rgba(0,0,0,.22);
 }
 body.orient-land.land-beat #face-pat .pat-lamps{
   display:flex;flex-direction:row;flex:1 1 auto;min-width:0;min-height:0;
@@ -1886,6 +1938,7 @@ body.orient-land.land-beat .mute-rail .mute-key.on{
       <button class="key sm" id="kitlm2">LinnDrum</button>
       <span class="hint" id="kithint"></span>
     </div>
+    <div class="walnut walnut-rail" aria-hidden="true"></div>
     <div class="rail" id="rail"></div>
   </section>
 
@@ -1904,6 +1957,7 @@ body.orient-land.land-beat .mute-rail .mute-key.on{
         </div>
         <div class="play-bars play-only" id="playbars" aria-label="16-bar sequence"></div>
       </div>
+      <div class="walnut walnut-rail" aria-hidden="true"></div>
       <div class="pat-pad" aria-label="Pattern">
         <div class="pat-holes" aria-hidden="true">
           <i></i><i></i><i></i><i></i>
