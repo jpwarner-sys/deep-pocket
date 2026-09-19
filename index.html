@@ -355,9 +355,16 @@ body.mode-play:not(.orient-land) #face-grooves{
 }
 body.mode-play:not(.orient-land) #kitstrip{
   margin-top:0;padding-top:0;width:100%;
-  display:flex;flex-wrap:wrap;align-content:flex-start;
-  column-gap:7px;row-gap:4px;
+  display:grid;
+  grid-template-columns:auto repeat(4,minmax(0,1fr));
+  column-gap:6px;row-gap:4px;
+  align-items:stretch;
+  align-content:start;
 }
+body.mode-play:not(.orient-land) #kitstrip .lbl{
+  grid-row:1 / span 2;align-self:center;padding-right:2px;
+}
+body.mode-play:not(.orient-land) #kitstrip .hint{display:none}
 body.mode-play:not(.orient-land) .kitbar.land-hide .hint{display:none}
 body.mode-play:not(.orient-land) .lock-caption{
   display:block;flex:1 1 auto;min-width:0;
@@ -428,9 +435,10 @@ body.mode-play:not(.orient-land) #bassbtn{
   flex:0 0 44px;min-width:44px;min-height:44px;width:44px;height:44px;padding:0;
 }
 body.mode-play:not(.orient-land) #kithint{display:none}
-/* Shorter kit keys — still wrap to two rows on phone (seven tiles). */
+/* Shorter kit keys — seven kits in a fixed two-row grid on phone. */
 body.mode-play:not(.orient-land) #kitstrip .key.sm{
-  min-height:32px;padding:4px 9px;font-size:12px;
+  min-height:32px;padding:4px 6px;font-size:11px;
+  width:100%;min-width:0;justify-content:center;
 }
 body.mode-play:not(.orient-land) #rail{
   flex:0 0 auto;min-height:0;min-width:0;width:100%;padding-bottom:1px;
@@ -1929,13 +1937,13 @@ body.orient-land.land-beat .mute-rail .mute-key.on{
   <section class="face" id="face-grooves">
     <div class="kitbar" id="kitstrip">
       <span class="lbl">Kit</span>
-      <button class="key sm on" id="kitsynth">Synth</button>
-      <button class="key sm" id="kitbp">Black Pearl</button>
-      <button class="key sm" id="kitrz">Red Zeppelin</button>
-      <button class="key sm" id="kitbop">Blonde Bop</button>
-      <button class="key sm" id="kithr">Hot Rods</button>
-      <button class="key sm" id="kit808">TR-808</button>
-      <button class="key sm" id="kitlm2">LinnDrum</button>
+      <button class="key sm on" id="kitsynth" title="Synth">Synth</button>
+      <button class="key sm" id="kitbp" title="Black Pearl">Pearl</button>
+      <button class="key sm" id="kitrz" title="Red Zeppelin">Zepp</button>
+      <button class="key sm" id="kitbop" title="Blonde Bop">Bop</button>
+      <button class="key sm" id="kithr" title="Hot Rods">Rods</button>
+      <button class="key sm" id="kit808" title="TR-808">808</button>
+      <button class="key sm" id="kitlm2" title="LinnDrum">Linn</button>
       <span class="hint" id="kithint"></span>
     </div>
     <div class="walnut walnut-rail" aria-hidden="true"></div>
