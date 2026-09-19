@@ -320,7 +320,7 @@ button.key.ico.lamp.on{color:var(--amber);background:transparent;
 .kitbar .hint{flex:1 1 100%;margin-left:0}
 /* V-PLAY portrait: lock chip on the LEFT, Joe's lock-screen caption beside it.
    Play/Stop size is untouched. Landscape play keeps the existing top-right chip. */
-.lock-caption{display:none}
+.lock-caption,#bgbtn{display:none !important}
 body.mode-play:not(.orient-land) #face-player{
   padding:2px 0 4px;border-bottom:0;flex:0 0 auto;
 }
@@ -822,7 +822,7 @@ body.mode-play .transport{display:none}
   font-size:.26em;padding-top:.1em;letter-spacing:.02em}
 .ctile .coff{position:absolute;right:8px;bottom:5px;font-family:var(--mono);
   font-size:10px;letter-spacing:.04em;color:var(--faint);font-style:normal}
-.ctile.now{flex:0 0 auto;min-width:108px;padding:12px 14px 10px 16px;font-size:64px}
+.ctile.now{flex:0 0 auto;min-width:132px;padding:14px 16px 12px 18px;font-size:84px}
 .ctile.now .cr{color:var(--amber);text-shadow:0 0 18px var(--amber-glow)}
 .ctile.now .cext,.ctile.now .cq,.ctile.now .calt{color:var(--amber)}
 .ctile.next{flex:0 1 86px;opacity:1;font-size:36px}
@@ -958,15 +958,15 @@ body.orient-land.land-beat #unit{
     "chrome"
     "pat";
 }
-/* COMPOSE: 32-bar grid pops out and eats the work row. MONITOR is gone.
-   :not(.mode-play) so H-PLAY filmstrip still owns landscape when Compose was last. */
+/* COMPOSE: 4×32 chord sheet + a Beat lamp monitor so the pattern look
+   stays visible when flipping tabs. Chord columns stay 4-wide, just tighter. */
 body.orient-land.land-compose:not(.mode-play) #unit{
-  grid-template-columns:minmax(0,1fr);
+  grid-template-columns:minmax(0,32fr) minmax(0,68fr);
   grid-template-rows:auto minmax(0,1fr);
   grid-template-areas:
-    "chrome"
-    "arr";
-  gap:4px;
+    "chrome chrome"
+    "pat    arr";
+  gap:4px 6px;
   padding:calc(2px + var(--sai-t)) calc(2px + var(--sai-r))
           calc(2px + var(--sai-b)) calc(2px + var(--sai-l));
 }
@@ -1046,7 +1046,7 @@ body.orient-land.mode-play .film{
   flex:1 1 auto;padding:0;align-items:center;min-height:0;
 }
 body.orient-land.mode-play .ctile{padding:10px 12px 9px 14px}
-body.orient-land.mode-play .ctile.now{min-width:148px;padding:14px 16px 12px 18px;font-size:104px}
+body.orient-land.mode-play .ctile.now{min-width:168px;padding:16px 18px 14px 20px;font-size:120px}
 body.orient-land.mode-play .ctile.next{font-size:56px;flex:0 1 110px}
 body.orient-land.mode-play .ctile.after{font-size:42px;flex:0 1 84px}
 body.orient-land.mode-play .ctile.past{font-size:28px;flex:0 1 64px}
@@ -1116,11 +1116,53 @@ body.orient-land .vn b{
 }
 body.orient-land.land-beat .grid{--grid-label:42px}
 body.orient-land.land-beat .vn button{display:none !important}
-body.orient-land.land-beat .st{
-  max-width:none;max-height:100%;width:100%;height:100%;min-width:0;min-height:0;
-  aspect-ratio:auto;border-radius:32%;
+body.orient-land.land-beat #grid{gap:4px}
+body.orient-land.land-beat .gr,
+body.orient-land.land-beat .ruler{
+  gap:3px 3px;align-items:center;justify-items:center;
 }
-body.orient-land.land-compose:not(.mode-play) #face-pat{display:none !important}
+body.orient-land.land-beat .vn{justify-self:stretch}
+/* Full-width Beat: round lamps. Width follows the step column so 32 steps stay circular. */
+body.orient-land.land-beat .st{
+  box-sizing:border-box;
+  width:calc(100% - 2px);height:auto;
+  min-width:0;min-height:0;
+  aspect-ratio:1;max-height:calc(100% - 2px);
+  border-radius:50%;
+  justify-self:center;align-self:center;
+}
+body.orient-land.land-compose:not(.mode-play) #face-pat{
+  display:flex !important;flex-direction:column;
+  grid-area:pat;min-width:0;min-height:0;height:100%;overflow:hidden;
+}
+body.orient-land.land-compose:not(.mode-play) #face-pat .pat-head,
+body.orient-land.land-compose:not(.mode-play) #face-pat .pat-pad,
+body.orient-land.land-compose:not(.mode-play) #face-pat .mute-rail{display:none !important}
+body.orient-land.land-compose:not(.mode-play) #face-pat .pat-work,
+body.orient-land.land-compose:not(.mode-play) #face-pat .pat-lamps,
+body.orient-land.land-compose:not(.mode-play) #face-pat .edit-only{
+  display:flex;flex-direction:column;flex:1 1 auto;min-width:0;min-height:0;
+}
+body.orient-land.land-compose:not(.mode-play) #face-pat .gridwrap{
+  flex:1 1 auto;min-width:0;min-height:0;overflow:hidden;
+}
+body.orient-land.land-compose:not(.mode-play) .grid{--grid-label:36px}
+body.orient-land.land-compose:not(.mode-play) .vn button{display:none !important}
+body.orient-land.land-compose:not(.mode-play) #grid{gap:5px}
+body.orient-land.land-compose:not(.mode-play) .gr,
+body.orient-land.land-compose:not(.mode-play) .ruler{
+  gap:5px 6px;align-items:center;justify-items:center;
+}
+body.orient-land.land-compose:not(.mode-play) .vn{justify-self:stretch}
+body.orient-land.land-compose:not(.mode-play) .st{
+  box-sizing:border-box;
+  width:calc(100% - 3px);height:auto;
+  min-width:10px;min-height:10px;
+  aspect-ratio:1;max-height:calc(100% - 3px);
+  border-radius:50%;
+  justify-self:center;align-self:center;
+  pointer-events:none;
+}
 body.orient-land .arr{
   grid-template-columns:repeat(8,minmax(0,1fr));
   grid-template-rows:repeat(4,minmax(0,1fr));
@@ -1210,7 +1252,7 @@ body.orient-land.land-compose .arr-tools > .row.arr-presets{flex:0 0 auto}
 body.orient-land.land-compose .arr-tools > .row.arr-changes{flex:0 0 auto}
 body.orient-land.land-compose .cell{
   min-height:0;
-  padding:10px 8px 6px 12px;
+  padding:8px 5px 5px 9px;
   border-radius:8px;
   box-shadow:
     inset 0 1px 0 var(--lift),
@@ -1223,10 +1265,10 @@ body.orient-land.land-compose .cell::before{
 }
 body.orient-land.land-compose .cell .bn,
 body.orient-land.land-compose .cell .sec{font-size:11px;top:5px}
-body.orient-land.land-compose .cell .bn{left:12px}
-body.orient-land.land-compose .cell .sec{right:8px}
-body.orient-land.land-compose .cell .chd{font-size:22px;line-height:1.05}
-body.orient-land.land-compose .cell .chd.long{font-size:16px}
+body.orient-land.land-compose .cell .bn{left:9px}
+body.orient-land.land-compose .cell .sec{right:6px}
+body.orient-land.land-compose .cell .chd{font-size:20px;line-height:1.05}
+body.orient-land.land-compose .cell .chd.long{font-size:15px}
 body.orient-land.land-compose .cell.out{opacity:.7}
 body.orient-land.land-compose .cell.now{
   outline:2px solid var(--amber);outline-offset:-2px;
@@ -1480,18 +1522,24 @@ button.key#bgbtn.on:active{
   transform:none;
 }
 
-/* Bass-clef: wood slab + edge ring. Glyph stays; glow sits on the key bounds. */
+/* Bass-clef: wood slab + SVG mark. Unicode U+1D122 does not paint on iPhone. */
 button.key#bassbtn{
   position:relative;isolation:isolate;overflow:visible;
   box-sizing:border-box;transform:none;
+  display:inline-flex;align-items:center;justify-content:center;
   min-width:44px;min-height:44px;padding:0;
   background:linear-gradient(180deg,#2a1c10,#170e07);
   border-radius:11px;
+  color:var(--amber);
 }
+button.key#bassbtn svg{width:18px;height:26px;display:block;flex:0 0 auto}
 button.key#bassbtn.on{
   box-shadow:none;filter:none;
-  text-shadow:0 0 8px rgba(255,160,44,.7);
+  color:var(--amber);
+  text-shadow:none;
 }
+button.key#bassbtn:not(.on){color:#312417}
+button.key#bassbtn:not(.on) svg{opacity:.55}
 
 /* Landscape play: lock stays a chip, still a fat hit. */
 body.orient-land.mode-play #bgbtn{
@@ -1672,8 +1720,14 @@ body.orient-land.land-beat #face-pat .edit-only{
 }
 body.orient-land.land-beat #face-pat .gridwrap{
   flex:1 1 auto;min-width:0;min-height:0;height:100%;
-  overflow-x:auto;overflow-y:hidden;
+  overflow:hidden;scroll-snap-type:none;touch-action:manipulation;
+  -webkit-overflow-scrolling:auto;
 }
+/* All pattern bars on one Beat face — no swipe pager. */
+body.orient-land.land-beat .grid{
+  width:100%;min-width:0;
+}
+body.orient-land.land-beat .gridwrap .st{touch-action:manipulation}
 body.orient-land.land-beat .pat-pad{
   --pat-gap:8px;
   display:grid;
@@ -1706,7 +1760,7 @@ body.orient-land.land-beat .pat-pad button.key#clr{grid-row:5}
 /* Track mutes sit between lamps and the pattern column, not on labels. */
 .mute-rail{display:none}
 body.orient-land.land-beat .mute-rail{
-  display:flex;flex-direction:column;gap:2px;
+  display:flex;flex-direction:column;gap:4px;
   flex:0 0 32px;width:32px;min-width:32px;max-width:32px;
   min-height:0;height:100%;align-self:stretch;
 }
@@ -1812,7 +1866,9 @@ body.orient-land.land-beat .mute-rail .mute-key.on{
       <button class="key sm" id="pplus">+</button>
       <span class="prow-kit">
         <button class="key sm" id="kitcycle">Synth</button>
-        <button class="key sm clef on" id="bassbtn" aria-label="Bass reference">&#119074;</button>
+        <button class="key sm clef on" id="bassbtn" aria-label="Bass reference">
+          <svg viewBox="0 0 24 36" aria-hidden="true"><path fill="currentColor" d="M6.4 5.6c7.2.2 12.8 4.8 12.8 11.2 0 7.8-7 12.8-14.2 17.2.8-2.3 1.7-4.5 1.7-7 0-6-3.6-9.2-8-9.2V15c5.6 0 9.8 3.5 9.8 8.8 0 2.3-.6 4.4-1.5 6.5 5.5-3.6 9.7-7.6 9.7-13.9 0-5.5-4.4-9.1-10.5-9.3V5.6z"/><circle fill="currentColor" cx="19.2" cy="14.6" r="2.15"/><circle fill="currentColor" cx="19.2" cy="21.2" r="2.15"/></svg>
+        </button>
       </span>
     </div>
     <div class="pmeta"><span>BAR <b class="num" id="pbar">1</b></span><span>BEAT <b class="num" id="pbeat">1</b></span></div>
@@ -4223,11 +4279,15 @@ function frame(){
       document.querySelectorAll(".cell").forEach(function(e,i){ e.classList.toggle("now", !live.count && i===(live.bar%loopLen())); });
       var gridEl=$("grid"), wrap=gridEl && gridEl.parentElement;
       if(wrap && col>=0){
-        var vis=Math.floor(col / Math.max(1,c.steps));
-        if(wrap._visBar !== vis){
-          wrap._visBar = vis;
-          var lab=parseFloat(getComputedStyle(gridEl).getPropertyValue("--grid-label"))||0;
-          wrap.scrollLeft = vis * Math.max(1, wrap.clientWidth - lab);
+        var landBeat=document.body.classList.contains("orient-land") && document.body.classList.contains("land-beat");
+        if(landBeat){ wrap.scrollLeft=0; wrap._visBar=0; }
+        else {
+          var vis=Math.floor(col / Math.max(1,c.steps));
+          if(wrap._visBar !== vis){
+            wrap._visBar = vis;
+            var lab=parseFloat(getComputedStyle(gridEl).getPropertyValue("--grid-label"))||0;
+            wrap.scrollLeft = vis * Math.max(1, wrap.clientWidth - lab);
+          }
         }
       }
     }
