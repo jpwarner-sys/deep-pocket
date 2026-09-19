@@ -176,6 +176,9 @@
   --sai-r:env(safe-area-inset-right,0px);
   --sai-b:env(safe-area-inset-bottom,0px);
   --sai-l:env(safe-area-inset-left,0px);
+  /* Steamed-walnut trim: outer frame + thin section rails */
+  --bezel-outer:8px;
+  --bezel-rail:4px;
   color-scheme:dark;
 }
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -185,10 +188,10 @@ html.walnut{min-height:100%}
 body{
   margin:0;color:var(--bone);font-family:var(--sil);font-size:16px;-webkit-text-size-adjust:100%;
   background:transparent;
-  padding:9px;
+  padding:var(--bezel-outer);
 }
 #unit{
-  max-width:1120px;margin:0 auto;overflow-x:hidden;min-height:calc(100dvh - 18px);
+  max-width:1120px;margin:0 auto;overflow-x:hidden;min-height:calc(100dvh - 2 * var(--bezel-outer));
   padding:calc(8px + var(--sai-t)) calc(12px + var(--sai-r))
           calc(18px + var(--sai-b)) calc(12px + var(--sai-l));
   border-radius:14px;
@@ -199,10 +202,25 @@ body{
 }
 .rail,.gridwrap{max-width:100%}
 
+/* Thin steamed-walnut rails — section separators (kit→grooves, grid→pattern).
+   Outer frame is body padding over html.walnut. */
+.walnut-rail{
+  height:var(--bezel-rail);
+  width:100%;
+  flex:0 0 var(--bezel-rail);
+  min-height:var(--bezel-rail);
+  min-width:0;
+  pointer-events:none;
+  box-shadow:
+    inset 0 1px 0 rgba(214,170,120,.28),
+    inset 0 -1px 0 rgba(0,0,0,.55),
+    0 1px 0 rgba(0,0,0,.22);
+}
+
 .lbl{font-family:var(--sil);font-weight:600;font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:var(--faint)}
 .num{font-family:var(--mono);font-variant-numeric:tabular-nums}
 
-/* faces sit ON the deck — hairline, not a second wood */
+/* faces sit ON the deck — hairline between blocks; walnut rails mark major seams */
 .face{
   background:transparent;
   border:0;
@@ -329,7 +347,7 @@ body.mode-play:not(.orient-land) .kitbar.land-hide{
   display:flex;flex-direction:row;align-items:center;flex-wrap:nowrap;
   width:100%;margin-top:4px;padding:2px 0;border-top:0;gap:10px;flex:0 0 auto;
 }
-body.mode-play:not(.orient-land) #face-grooves{padding:4px 0 6px;flex:0 0 auto;min-height:0;overflow:hidden;display:flex;flex-direction:column;border-bottom:1px solid var(--hairline)}
+body.mode-play:not(.orient-land) #face-grooves{padding:4px 0 6px;flex:0 0 auto;min-height:0;overflow:hidden;display:flex;flex-direction:column;gap:5px;border-bottom:1px solid var(--hairline)}
 body.mode-play:not(.orient-land) #kitstrip{margin-top:0;padding-top:2px;width:100%;gap:4px}
 body.mode-play:not(.orient-land) .kitbar.land-hide .hint{display:none}
 body.mode-play:not(.orient-land) .lock-caption{
@@ -353,10 +371,10 @@ body.mode-play:not(.orient-land) .kitbar.land-hide #bgbtn.on{
    Pattern A–D is a slim right rail beside the step lamps (see .pat-col). */
 html:has(body.mode-play:not(.orient-land)){height:100%;overflow:hidden}
 body.mode-play:not(.orient-land){
-  padding:4px;height:100%;overflow:hidden;
+  padding:var(--bezel-outer);height:100%;overflow:hidden;
 }
 body.mode-play:not(.orient-land) #unit{
-  display:flex;flex-direction:column;height:calc(100dvh - 8px);max-width:none;overflow:hidden;
+  display:flex;flex-direction:column;height:calc(100dvh - 2 * var(--bezel-outer));max-width:none;overflow:hidden;
   padding:calc(4px + var(--sai-t)) calc(6px + var(--sai-r))
           calc(6px + var(--sai-b)) calc(6px + var(--sai-l));
   min-height:0;
@@ -936,8 +954,8 @@ body.phone #dockmix, body.phone #dockmem{display:inline-flex}
    Work row is minmax(0,1fr); pat+arr fill it. Portrait untouched.
    Keep iOS safe-area; do not fight the status bar. */
 html:has(body.orient-land), body.orient-land{height:100%;overflow:hidden}
-body.orient-land{padding:2px}
-body.orient-land.land-compose{padding:2px}
+body.orient-land{padding:var(--bezel-outer)}
+body.orient-land.land-compose{padding:var(--bezel-outer)}
 body.orient-land #unit{
   display:grid;
   grid-template-columns:minmax(0,65fr) minmax(0,35fr);
@@ -947,7 +965,7 @@ body.orient-land #unit{
     "pat    arr";
   grid-auto-rows:0px;
   grid-auto-columns:0px;
-  gap:4px 6px;height:100%;min-height:0;max-width:none;overflow:hidden;
+  gap:4px 6px;height:calc(100% - 2 * var(--bezel-outer));min-height:0;max-width:none;overflow:hidden;
   padding:calc(2px + var(--sai-t)) calc(6px + var(--sai-r))
           calc(2px + var(--sai-b)) calc(6px + var(--sai-l));
 }
@@ -1058,6 +1076,15 @@ body.orient-land.mode-play .pmeta{margin-top:4px;flex:0 0 auto}
 body.orient-land.mode-play #face-grooves{
   display:flex !important;grid-area:kits;flex-direction:row;align-items:center;gap:8px;
   margin:0;padding:4px 0 0;border:0;min-width:0;min-height:0;overflow:hidden;
+}
+/* Landscape kits row: turn the kit→groove rail upright between columns */
+body.orient-land.mode-play #face-grooves > .walnut-rail{
+  width:var(--bezel-rail);height:auto;min-height:0;align-self:stretch;
+  flex:0 0 var(--bezel-rail);
+  box-shadow:
+    inset 1px 0 0 rgba(214,170,120,.28),
+    inset -1px 0 0 rgba(0,0,0,.55),
+    1px 0 0 rgba(0,0,0,.22);
 }
 body.orient-land.mode-play #kitstrip{
   display:flex;flex-wrap:nowrap;align-items:center;gap:5px;
@@ -1710,6 +1737,15 @@ body.orient-land.land-beat #face-pat .pat-work{
   display:flex;flex-direction:row;align-items:stretch;gap:8px;
   flex:1 1 auto;min-width:0;min-height:0;height:100%;
 }
+/* Landscape Beat: upright rail between lamp grid and A–D column */
+body.orient-land.land-beat .pat-work > .walnut-rail{
+  width:var(--bezel-rail);height:auto;min-height:0;align-self:stretch;
+  flex:0 0 var(--bezel-rail);
+  box-shadow:
+    inset 1px 0 0 rgba(214,170,120,.28),
+    inset -1px 0 0 rgba(0,0,0,.55),
+    1px 0 0 rgba(0,0,0,.22);
+}
 body.orient-land.land-beat #face-pat .pat-lamps{
   display:flex;flex-direction:row;flex:1 1 auto;min-width:0;min-height:0;
 }
@@ -1883,6 +1919,7 @@ body.orient-land.land-beat .mute-rail .mute-key.on{
       <button class="key sm" id="kit808">TR-808</button>
       <span class="hint" id="kithint"></span>
     </div>
+    <div class="walnut walnut-rail" aria-hidden="true"></div>
     <div class="rail" id="rail"></div>
   </section>
 
@@ -1901,6 +1938,7 @@ body.orient-land.land-beat .mute-rail .mute-key.on{
         </div>
         <div class="play-bars play-only" id="playbars" aria-label="16-bar sequence"></div>
       </div>
+      <div class="walnut walnut-rail" aria-hidden="true"></div>
       <div class="pat-pad" aria-label="Pattern">
         <div class="pat-holes" aria-hidden="true">
           <i></i><i></i><i></i><i></i>
