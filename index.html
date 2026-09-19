@@ -428,9 +428,9 @@ body.mode-play:not(.orient-land) #bassbtn{
   flex:0 0 44px;min-width:44px;min-height:44px;width:44px;height:44px;padding:0;
 }
 body.mode-play:not(.orient-land) #kithint{display:none}
-/* Shorter kit keys — still wrap to two rows on phone. */
+/* Shorter kit keys — seven kits wrap to two compact rows on phone. */
 body.mode-play:not(.orient-land) #kitstrip .key.sm{
-  min-height:32px;padding:4px 9px;font-size:12px;
+  min-height:32px;padding:4px 8px;font-size:11px;
 }
 body.mode-play:not(.orient-land) #rail{
   flex:0 0 auto;min-height:0;min-width:0;width:100%;padding-bottom:1px;
@@ -1932,7 +1932,10 @@ body.orient-land.land-beat .mute-rail .mute-key.on{
       <button class="key sm on" id="kitsynth">Synth</button>
       <button class="key sm" id="kitbp">Black Pearl</button>
       <button class="key sm" id="kitrz">Red Zeppelin</button>
+      <button class="key sm" id="kitbop">Blonde Bop</button>
+      <button class="key sm" id="kithr">Hot Rods</button>
       <button class="key sm" id="kit808">TR-808</button>
+      <button class="key sm" id="kitlm2">LinnDrum</button>
       <span class="hint" id="kithint"></span>
     </div>
     <div class="walnut walnut-rail" aria-hidden="true"></div>
@@ -3679,8 +3682,15 @@ var KIT_NAMES = {
   synth:       {kick:"Kick",snare:"Snare",hh:"Hats",oh:"Open",rim:"Rim",ride:"Ride",clap:"Clap",tom:"TOM",perc:"COLOR"},
   blackpearl:  {kick:"Kick",snare:"Snare",hh:"Hats",oh:"Open",rim:"Rim",ride:"Ride",clap:"Clap",tom:"Rototom",perc:"Cowbell"},
   redzeppelin: {kick:"Kick",snare:"Snare",hh:"Hats",oh:"Open",rim:"Rim",ride:"Ride",clap:"Clap",tom:"Tom",perc:"Perc"},
-  tr808:       {kick:"Kick",snare:"Snare",hh:"Hats",oh:"Open",rim:"Rim",ride:"Ride",clap:"Clap",tom:"Tom",perc:"Cowbell"}
+  blondebop:   {kick:"Kick",snare:"Snare",hh:"Hats",oh:"Open",rim:"Rim",ride:"Ride",clap:"Clap",tom:"Tom",perc:"Cowbell"},
+  hotrods:     {kick:"Kick",snare:"Snare",hh:"Hats",oh:"Open",rim:"Rim",ride:"Ride",clap:"Clap",tom:"Tom",perc:"Cowbell"},
+  tr808:       {kick:"Kick",snare:"Snare",hh:"Hats",oh:"Open",rim:"Rim",ride:"Ride",clap:"Clap",tom:"Tom",perc:"Cowbell"},
+  lm2:         {kick:"Kick",snare:"Snare",hh:"Hats",oh:"Open",rim:"Rim",ride:"Ride",clap:"Clap",tom:"Tom",perc:"Cowbell"}
 };
+var KIT_ORDER = ["synth","blackpearl","redzeppelin","blondebop","hotrods","tr808","lm2"];
+var KIT_BTN = {synth:"kitsynth",blackpearl:"kitbp",redzeppelin:"kitrz",blondebop:"kitbop",hotrods:"kithr",tr808:"kit808",lm2:"kitlm2"};
+var KIT_NICK = {synth:"Synth",blackpearl:"Pearl",redzeppelin:"Zepp",blondebop:"Bop",hotrods:"Rods",tr808:"808",lm2:"Linn"};
+var KIT_LABEL = {synth:"Synth",blackpearl:"Black Pearl",redzeppelin:"Red Zeppelin",blondebop:"Blonde Bop",hotrods:"Hot Rods",tr808:"TR-808",lm2:"LinnDrum"};
 function kitId(){
   if (typeof KIT==="undefined" || !KIT) return "synth";
   if (KIT.want) return KIT.want;
@@ -5135,10 +5145,10 @@ function hit(name, time, vel){
 function kitLabel(){
   var sel = kitId();
   var on = sel !== "synth";
-  $("kitsynth").classList.toggle("on", !on);
-  $("kitbp").classList.toggle("on", sel === "blackpearl");
-  $("kitrz").classList.toggle("on", sel === "redzeppelin");
-  $("kit808").classList.toggle("on", sel === "tr808");
+  KIT_ORDER.forEach(function(id){
+    var btn = $(KIT_BTN[id]);
+    if (btn) btn.classList.toggle("on", sel === id || (id === "synth" && !on));
+  });
   var kith=$("kithint");
   if(kith){
     var committed = (KIT.on && KIT.ready && KIT.id) ? KIT.id : null;
@@ -5149,8 +5159,7 @@ function kitLabel(){
       : "";
     if (kith.textContent !== nextHint) kith.textContent = nextHint;
   }
-  var nick={synth:"Synth",blackpearl:"Pearl",redzeppelin:"Zepp",tr808:"808"};
-  if($("kitcycle")) $("kitcycle").textContent = nick[sel]||"Synth";
+  if($("kitcycle")) $("kitcycle").textContent = KIT_NICK[sel]||"Synth";
   /* Names follow the committed kit only — never the in-flight want —
      so the step grid does not relabel (and reflow) through Synth. */
   var namesId = (KIT.on && KIT.ready && KIT.id) ? KIT.id : "synth";
@@ -5164,13 +5173,10 @@ function kitLabel(){
   }
 }
 $("kitcycle").onclick=function(){
-  var order=["synth","blackpearl","redzeppelin","tr808"];
-  var i=order.indexOf(kitId());
-  var nx=order[(i+1)%order.length];
-  if(nx==="synth") $("kitsynth").click();
-  else if(nx==="blackpearl") $("kitbp").click();
-  else if(nx==="redzeppelin") $("kitrz").click();
-  else $("kit808").click();
+  var i=KIT_ORDER.indexOf(kitId());
+  var nx=KIT_ORDER[(i+1)%KIT_ORDER.length];
+  var btn=$(KIT_BTN[nx]);
+  if(btn) btn.click();
 };
 $("kitsynth").onclick = function(){
   kitAbort();
@@ -5195,7 +5201,10 @@ function pickKit(id, label){
 }
 $("kitbp").onclick = pickKit("blackpearl", "Black Pearl");
 $("kitrz").onclick = pickKit("redzeppelin", "Red Zeppelin");
+$("kitbop").onclick = pickKit("blondebop", "Blonde Bop");
+$("kithr").onclick = pickKit("hotrods", "Hot Rods");
 $("kit808").onclick = pickKit("tr808", "TR-808");
+$("kitlm2").onclick = pickKit("lm2", "LinnDrum");
 
 var _retired = function(){
   if (!eng.ctx) { toast("Power on first."); return; }
@@ -5261,7 +5270,7 @@ function applySnapshot(d){
     if(MEM.audio && eng && eng.setMaster) eng.setMaster(S.master);
     drawGrid(); drawArr(); info();
     if(d.kit && d.kit !== "synth" && KIT.man !== undefined){
-      if(d.kit === "blackpearl" || d.kit === "redzeppelin" || d.kit === "tr808") loadKit(d.kit);
+      if(KIT_ORDER.indexOf(d.kit) > 0) loadKit(d.kit);
     }
     return true;
   }catch(err){ return false; }

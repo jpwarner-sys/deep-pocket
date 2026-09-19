@@ -51,6 +51,8 @@ VER_RE = re.compile(
     re.IGNORECASE,
 )
 
+# Hard integrity check when these dirs are present. Newer AVL kits
+# (blondebop, hotrods) are covered by check_referenced_samples instead.
 AVL_KITS = ("blackpearl", "redzeppelin")
 VOICES = ("kick", "snare", "rim", "clap", "hh", "oh", "ride", "tom", "perc")
 LAYERS = 5
