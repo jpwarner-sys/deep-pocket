@@ -4,7 +4,7 @@
  * Bump CACHE on every release. The old cache is deleted on activate, so a
  * stale build can never outlive one launch.
  */
-var CACHE = "deep-pocket-v52";
+var CACHE = "deep-pocket-v53";
 
 /* The shell — everything needed to open and show a UI with no network. */
 var SHELL = [
@@ -54,7 +54,7 @@ self.addEventListener("fetch", function (e) {
      with this worker answering them, iOS showed a letter tile ("D") — suspected cause, 2026-09-16. */
   if (/\.(png|webmanifest)$/i.test(url.pathname)) return;
 
-  /* Samples: cache-first, forever. 5.3 MB of FLAC across 137 files is the
+  /* Samples: cache-first, forever. 5.3 MB of FLAC across 136 files is the
      whole reason this worker exists — it must be fetched once, not once a day. */
   if (/\.(flac|wav|ogg|mp3|m4a)$/i.test(url.pathname)) {
     e.respondWith(
