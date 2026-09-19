@@ -1521,8 +1521,9 @@ body.orient-land.mode-play .prow button.key#play2{
 
 /* ===================================================================
    Pattern pad — 5×5 tiles. A–D down the left, DEL + copy A–D across
-   the bottom. PATTERN sits in the open 4×4. Lamp strips stay above
-   (portrait) or beside (landscape Beat). Compose keeps its 4×6 sheet.
+   the bottom. PATTERN sits in the open 4×4 on portrait only.
+   Landscape Beat is lamps + mute strip + a right column of A–D + DEL.
+   Compose keeps its 4×6 sheet.
    =================================================================== */
 #playbars{display:none}
 .pat-pad{
@@ -1648,9 +1649,10 @@ body.mode-play:not(.orient-land) #playbars{
              inset 0 1px 0 rgba(255,220,160,.35);
 }
 
-/* Landscape Beat: lamp strips + mute rail, square 5×5 pad on the right. */
+/* Landscape Beat: lamp strips + mute rail + one column of square A–D + DEL.
+   PATTERN / 5×5 empty wells are portrait-only. */
 body.orient-land.land-beat #face-pat{
-  --pat-key:52px;
+  --pat-key:56px;
   display:flex;flex-direction:row;align-items:stretch;gap:8px;
   min-height:0;min-width:0;height:100%;
 }
@@ -1673,23 +1675,33 @@ body.orient-land.land-beat #face-pat .gridwrap{
   overflow-x:auto;overflow-y:hidden;
 }
 body.orient-land.land-beat .pat-pad{
-  --pat-gap:5px;
-  flex:0 0 auto;
-  width:min(320px,36vw);
-  max-height:100%;
-  aspect-ratio:1;
-  height:auto;
-  grid-template-columns:repeat(5,minmax(0,1fr));
+  --pat-gap:8px;
+  display:grid;
+  grid-template-columns:minmax(0,1fr);
   grid-template-rows:repeat(5,minmax(0,1fr));
-  align-self:center;
+  gap:var(--pat-gap);
+  flex:0 0 auto;
+  height:100%;
+  width:auto;
+  aspect-ratio:1 / 5.45;
+  align-self:stretch;
+  justify-content:stretch;
 }
+body.orient-land.land-beat .pat-holes,
+body.orient-land.land-beat .pat-mark,
+body.orient-land.land-beat .pat-pad #cpy-targets,
+body.orient-land.land-beat .pat-pad .cpy-targets{display:none !important}
 body.orient-land.land-beat .pat-pad button.key.slot[data-slot],
-body.orient-land.land-beat .pat-pad #cpy-targets .key,
 body.orient-land.land-beat .pat-pad button.key#clr{
+  grid-column:1;
   width:100%;height:100%;min-width:0;min-height:0;max-width:none;
-  flex:none;border-radius:10px;
+  flex:none;border-radius:12px;aspect-ratio:auto;
 }
-body.orient-land.land-beat .pat-mark{font-size:clamp(16px,2.6vw,26px);letter-spacing:.26em}
+body.orient-land.land-beat .pat-pad button.key.slot[data-slot="0"]{grid-row:1}
+body.orient-land.land-beat .pat-pad button.key.slot[data-slot="1"]{grid-row:2}
+body.orient-land.land-beat .pat-pad button.key.slot[data-slot="2"]{grid-row:3}
+body.orient-land.land-beat .pat-pad button.key.slot[data-slot="3"]{grid-row:4}
+body.orient-land.land-beat .pat-pad button.key#clr{grid-row:5}
 
 /* Track mutes sit between lamps and the pattern column, not on labels. */
 .mute-rail{display:none}
