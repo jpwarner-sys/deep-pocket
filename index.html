@@ -1122,12 +1122,12 @@ body.orient-land.land-beat .ruler{
   gap:3px 3px;align-items:center;justify-items:center;
 }
 body.orient-land.land-beat .vn{justify-self:stretch}
-/* Full-width Beat: round trigger lamps, sized to the row, extra air in the cells. */
+/* Full-width Beat: round lamps. Width follows the step column so 32 steps stay circular. */
 body.orient-land.land-beat .st{
   box-sizing:border-box;
-  height:calc(100% - 2px);width:auto;
+  width:calc(100% - 2px);height:auto;
   min-width:0;min-height:0;
-  aspect-ratio:1;max-width:calc(100% - 2px);
+  aspect-ratio:1;max-height:calc(100% - 2px);
   border-radius:50%;
   justify-self:center;align-self:center;
 }
